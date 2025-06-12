@@ -1,6 +1,6 @@
-﻿namespace OmegaFY.Chat.API.Application.Result;
+﻿namespace OmegaFY.Chat.API.Application.Shared;
 
-public sealed class ValidationError
+public sealed record class ValidationError
 {
     public string Code { get; }
 

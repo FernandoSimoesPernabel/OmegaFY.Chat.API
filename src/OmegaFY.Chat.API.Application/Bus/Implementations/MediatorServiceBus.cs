@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using OmegaFY.Chat.API.Application.Result;
+using OmegaFY.Chat.API.Application.Shared;
 using OmegaFY.Chat.API.Domain.Events;
 
 namespace OmegaFY.Chat.API.Application.Bus.Implementations;
@@ -14,7 +14,7 @@ internal sealed class MediatorServiceBus : IServiceBus
         => _mediator.Publish(domainEvent);
 
     public async Task<TResult> SendMessageAsync<TRequest, TResult>(TRequest request, CancellationToken cancellationToken)
-        where TRequest : Request.IRequest
+        where TRequest : Shared.IRequest
         where TResult : IResult
         => (TResult)await _mediator.Send(request, cancellationToken);
 }

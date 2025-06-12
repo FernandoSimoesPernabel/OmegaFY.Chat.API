@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Application.Result;
+﻿namespace OmegaFY.Chat.API.Application.Shared;
 
 public abstract record class GenericResult : IResult
 {

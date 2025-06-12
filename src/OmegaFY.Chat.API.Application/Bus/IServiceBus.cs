@@ -1,5 +1,4 @@
-﻿using OmegaFY.Chat.API.Application.Request;
-using OmegaFY.Chat.API.Application.Result;
+﻿using OmegaFY.Chat.API.Application.Shared;
 using OmegaFY.Chat.API.Domain.Events;
 
 namespace OmegaFY.Chat.API.Application.Bus;
