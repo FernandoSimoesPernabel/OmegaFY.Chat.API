@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="OmegaFY.Chat.API.Tests.Benchmark" />
     <InternalsVisibleTo Include="OmegaFY.Chat.API.Tests.Unit" />
   </ItemGroup>
 
