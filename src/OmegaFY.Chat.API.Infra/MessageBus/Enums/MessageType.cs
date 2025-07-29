@@ -2,5 +2,5 @@
 
 public enum MessageType
 {
-
+    RegisterNewUser = 0
 }
