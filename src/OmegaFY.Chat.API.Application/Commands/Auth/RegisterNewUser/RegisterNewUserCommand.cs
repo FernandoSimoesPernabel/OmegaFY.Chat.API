@@ -1,6 +1,6 @@
 ﻿namespace OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 
-public sealed record class RegisterNewUserCommand : CommandMediatRBase<RegisterNewUserCommandResult>
+public sealed record class RegisterNewUserCommand : ICommand
 {
     public string Email { get; init; }
 

@@ -1,6 +1,6 @@
 ﻿namespace OmegaFY.Chat.API.Common.Exceptions.Constants;
 
-public abstract class ApplicationErrorCodesConstants
+public static class ApplicationErrorCodesConstants
 {
     public const string UNAUTHORIZED = nameof(UNAUTHORIZED);
 

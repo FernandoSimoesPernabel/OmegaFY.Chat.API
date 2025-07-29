@@ -1,8 +1,11 @@
-﻿namespace OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
+﻿using OmegaFY.Chat.API.Infra.MessageBus;
 
-internal sealed class RegisterNewUserCommandHandler : CommandHandlerMediatRBase<RegisterNewUserCommandHandler, RegisterNewUserCommand, RegisterNewUserCommandResult>
+namespace OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
+
+public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterNewUserCommandHandler, RegisterNewUserCommand, RegisterNewUserCommandResult>
 {
-    public RegisterNewUserCommandHandler(IUserInformation currentUser, ILogger<RegisterNewUserCommandHandler> logger) : base(currentUser, logger) { }
+    public RegisterNewUserCommandHandler(IMessageBus messageBus, IUserInformation currentUser, ILogger<RegisterNewUserCommandHandler> logger)
+        : base(messageBus, currentUser, logger) { }
 
     public override Task<RegisterNewUserCommandResult> HandleAsync(RegisterNewUserCommand command, CancellationToken cancellationToken)
     {

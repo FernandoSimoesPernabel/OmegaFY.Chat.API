@@ -9,7 +9,4 @@ namespace OmegaFY.Chat.API.WebAPI.Controllers.Base;
 [Route("api/[controller]/")]
 public abstract class ApiControllerBase : ControllerBase
 {
-    protected readonly IServiceBus _serviceBus;
-
-    public ApiControllerBase(IServiceBus serviceBus) => _serviceBus = serviceBus;
 }

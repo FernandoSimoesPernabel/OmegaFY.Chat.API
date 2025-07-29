@@ -1,17 +1,20 @@
-﻿using MediatR;
+﻿using OmegaFY.Chat.API.Infra.MessageBus;
 
 namespace OmegaFY.Chat.API.Application.Commands.Base;
 
-public abstract class CommandHandlerMediatRBase<TCommandHandler, TCommand, TCommandResult> : IRequestHandler<TCommand, TCommandResult>, ICommandHandler<TCommand, TCommandResult>
-    where TCommand : ICommand, IRequest<TCommandResult>
+public abstract class CommandHandlerBase<TCommandHandler, TCommand, TCommandResult> : ICommandHandler<TCommand, TCommandResult>
+    where TCommand : ICommand
     where TCommandResult : ICommandResult
 {
+    protected readonly IMessageBus _messageBus;
+
     protected readonly IUserInformation _currentUser;
 
     protected readonly ILogger<TCommandHandler> _logger;
 
-    public CommandHandlerMediatRBase(IUserInformation currentUser, ILogger<TCommandHandler> logger)
+    protected CommandHandlerBase(IMessageBus messageBus, IUserInformation currentUser, ILogger<TCommandHandler> logger)
     {
+        _messageBus = messageBus;
         _currentUser = currentUser;
         _logger = logger;
     }

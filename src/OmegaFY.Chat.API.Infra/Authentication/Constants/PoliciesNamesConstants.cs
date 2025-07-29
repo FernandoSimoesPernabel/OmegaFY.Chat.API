@@ -1,6 +1,6 @@
 ﻿namespace OmegaFY.Chat.API.Infra.Authentication.Constants;
 
-public abstract class PoliciesNamesConstants
+public static class PoliciesNamesConstants
 {
     public const string BEARER_JWT_POLICY = "BearerJwtPolicy";
 
