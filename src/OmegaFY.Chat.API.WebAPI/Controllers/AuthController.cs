@@ -6,8 +6,8 @@ namespace OmegaFY.Chat.API.WebAPI.Controllers;
 public sealed class AuthController : ApiControllerBase
 {
     [HttpPost("/register-new-user")]
-    public async Task<RegisterNewUserCommandResult> RegisterNewUser(
+    public async Task<IActionResult> RegisterNewUser(
         [FromServices] RegisterNewUserCommandHandler handler,
         [FromBody] RegisterNewUserRequest request,
-        CancellationToken cancellationToken) => await handler.HandleAsync(request.ToCommand(), cancellationToken);
+        CancellationToken cancellationToken) => Ok(await handler.HandleAsync(request.ToCommand(), cancellationToken));
 }

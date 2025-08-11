@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using OmegaFY.Chat.API.Application.Shared;
 using OmegaFY.Chat.API.Application.Shared.Extensions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Constants;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
+using OmegaFY.Chat.API.WebAPI.Filters.Extensions;
 using System.Diagnostics;
 
 namespace OmegaFY.Chat.API.WebAPI.Filters;
@@ -20,10 +20,6 @@ public sealed class OpenTelemetryInstrumentationFilter : IAsyncActionFilter
 
         ActionExecutedContext resultContext = await next();
 
-        IRequest request = context.ActionArguments.Values.OfType<IRequest>().FirstOrDefault();
-
-        GenericResult result = (resultContext.Result as ObjectResult)?.Value as GenericResult;
-
-        activity.SetCurrentRequestTracingInformation(request, result);
+        activity.SetCurrentRequestTracingInformation(context.GetRequestFromContext(), resultContext.ToGenericResult());
     }
 }

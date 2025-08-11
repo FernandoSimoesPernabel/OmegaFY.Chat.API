@@ -1,5 +1,5 @@
 ﻿using OmegaFY.Chat.API.Application.Shared;
-using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Common.Exceptions.Constants;
 using OmegaFY.Chat.API.Common.Extensions;
 
 namespace OmegaFY.Chat.API.WebAPI.Models;

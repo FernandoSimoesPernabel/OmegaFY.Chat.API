@@ -10,6 +10,8 @@ public sealed class WebApiRegistration : IDependencyInjectionRegister
     {
         builder.Services.AddControllers(controllerOptions =>
         {
+            controllerOptions.Filters.Add<ErrorHandlerExceptionFilter>(); 
+
             controllerOptions.Filters.Add<ApiResponseActionFilter>();
             controllerOptions.Filters.Add<OpenTelemetryInstrumentationFilter>();
 

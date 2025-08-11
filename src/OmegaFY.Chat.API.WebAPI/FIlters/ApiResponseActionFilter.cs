@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using OmegaFY.Chat.API.Application.Shared;
-using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Common.Exceptions.Constants;
 using OmegaFY.Chat.API.Common.Extensions;
 using OmegaFY.Chat.API.WebAPI.Models;
 

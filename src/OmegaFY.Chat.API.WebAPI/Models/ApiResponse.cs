@@ -8,7 +8,7 @@ public class ApiResponse : ApiResponse<object>
 
     public ApiResponse(object data) : base(data) { }
 
-    public ApiResponse(IReadOnlyCollection<ValidationError> erros) : base(erros) { }
+    public ApiResponse(IReadOnlyCollection<ValidationError> errors) : base(errors) { }
 
-    public ApiResponse(string codigo, string mensagem) : base(codigo, mensagem) { }
+    public ApiResponse(string code, string mensagem) : base(code, mensagem) { }
 }
