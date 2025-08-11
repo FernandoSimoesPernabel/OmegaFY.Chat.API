@@ -4,7 +4,7 @@ using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Common.Extensions;
 using OmegaFY.Chat.API.WebAPI.Models;
 
-namespace OmegaFY.Chat.API.WebAPI.FIlters;
+namespace OmegaFY.Chat.API.WebAPI.Filters;
 
 public sealed class ApiResponseActionFilter : IActionFilter
 {

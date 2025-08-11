@@ -1,12 +1,22 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using OmegaFY.Chat.API.Common.Models;
+using OmegaFY.Chat.API.Infra.Authentication.Constants;
+using OmegaFY.Chat.API.Infra.Authentication.Users;
+using OmegaFY.Chat.API.Infra.Authentication.Users.Implementations;
+using OmegaFY.Chat.API.Infra.MessageBus;
+using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Configs;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Extensions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers.Implementations;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Text;
 
 namespace OmegaFY.Chat.API.Infra.DependencyInjection;
 
@@ -36,7 +46,7 @@ public static class DependencyInjectionExtensions
                 .AddHoneycomb(honeycombOptions =>
                 {
                     honeycombOptions.ServiceName = openTelemetrySettings.ServiceName;
-                    honeycombOptions.ApiKey = openTelemetrySettings.HoneycombApiKey;
+                    honeycombOptions.ApiKey = openTelemetrySettings.HoneycombSettings.HoneycombApiKey;
                     honeycombOptions.ServiceVersion = ProjectVersion.Instance.ToString();
                 });
         });
@@ -51,6 +61,64 @@ public static class DependencyInjectionExtensions
         //        otlpOptions.Headers = openTelemetrySettings.HoneycombApiKeyHeader;
         //    });
         //}));
+
+        return services;
+    }
+
+    public static IServiceCollection AddInMemoryMessageBus(this IServiceCollection services)
+    {
+        return services.AddSingleton<IMessageBus, InMemoryMessageBus>();
+    }
+
+    public static IServiceCollection AddIdentityUserConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        //services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
+
+        //services.AddScoped<CustomJwtBearerEvents>();
+
+        services.AddHttpContextAccessor();
+        services.AddScoped<IUserInformation, HttpContextAccessorUserInformation>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        //services.AddScoped<IJwtProvider, JwtSecurityTokenProvider>();
+
+        //JwtSettings jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
+
+        //TokenValidationParameters tokenValidationParameters = new TokenValidationParameters()
+        //{
+        //    ClockSkew = TimeSpan.Zero,
+        //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+        //    RequireAudience = true,
+        //    RequireExpirationTime = true,
+        //    RequireSignedTokens = true,
+        //    ValidateLifetime = true,
+        //    ValidateIssuer = true,
+        //    ValidateAudience = true,
+        //    ValidateIssuerSigningKey = true,
+        //    ValidAudience = jwtSettings.Audience,
+        //    ValidIssuer = jwtSettings.Issuer
+        //};
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.SaveToken = true;
+            options.RequireHttpsMetadata = true;
+            //options.TokenValidationParameters = tokenValidationParameters;
+            //options.EventsType = typeof(CustomJwtBearerEvents);
+        });
+
+        //services.AddPolicy(
+        //    PoliciesNamesConstants.BEARER_JWT_POLICY,
+        //    new AuthorizationPolicyBuilder()
+        //        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
+        //        .RequireAuthenticatedUser()
+        //        .Build());
+
+        //services.AddSingleton(tokenValidationParameters);
 
         return services;
     }

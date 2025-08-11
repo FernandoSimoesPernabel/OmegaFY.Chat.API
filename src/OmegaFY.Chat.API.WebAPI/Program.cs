@@ -15,7 +15,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseErrorHandlerExceptionMiddleware();
+//app.UseErrorHandlerExceptionMiddleware();
 
 app.UseHttpsRedirection();
 

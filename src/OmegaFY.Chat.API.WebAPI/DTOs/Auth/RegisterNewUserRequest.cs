@@ -1,8 +1,9 @@
 ﻿using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
+using OmegaFY.Chat.API.Application.Shared;
 
 namespace OmegaFY.Chat.API.WebAPI.DTOs.Auth;
 
-public sealed record class RegisterNewUserRequest
+public sealed record class RegisterNewUserRequest : IRequest
 {
     public string Email { get; init; }
 

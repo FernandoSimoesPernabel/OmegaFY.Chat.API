@@ -9,6 +9,6 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
 
     public override Task<RegisterNewUserCommandResult> HandleAsync(RegisterNewUserCommand command, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(new RegisterNewUserCommandResult(Guid.NewGuid(), "", DateTime.Now, Guid.NewGuid(), DateTime.UtcNow));
     }
 }

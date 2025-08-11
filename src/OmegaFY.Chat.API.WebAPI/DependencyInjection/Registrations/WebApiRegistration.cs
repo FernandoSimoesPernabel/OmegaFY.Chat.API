@@ -1,10 +1,10 @@
 ﻿
-using OmegaFY.Chat.API.WebAPI.FIlters;
+using OmegaFY.Chat.API.WebAPI.Filters;
 using System.Text.Json.Serialization;
 
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
 
-internal sealed class WebApiRegistration : IDependencyInjectionRegister
+public sealed class WebApiRegistration : IDependencyInjectionRegister
 {
     public void Register(WebApplicationBuilder builder)
     {

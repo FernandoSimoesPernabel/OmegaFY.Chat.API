@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Extensions;
+﻿namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Extensions;
 
 public static class IServiceCollectionExtensions
 {
