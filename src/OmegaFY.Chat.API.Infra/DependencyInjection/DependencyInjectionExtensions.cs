@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OmegaFY.Chat.API.Common.Models;
 using OmegaFY.Chat.API.Infra.Authentication.Constants;
+using OmegaFY.Chat.API.Infra.Authentication.JwtEvents;
+using OmegaFY.Chat.API.Infra.Authentication.Models;
+using OmegaFY.Chat.API.Infra.Authentication.Services;
+using OmegaFY.Chat.API.Infra.Authentication.Services.Implementations;
 using OmegaFY.Chat.API.Infra.Authentication.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Users.Implementations;
 using OmegaFY.Chat.API.Infra.MessageBus;
@@ -72,31 +75,31 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddIdentityUserConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        //services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
+        services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
 
         //services.AddScoped<CustomJwtBearerEvents>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<IUserInformation, HttpContextAccessorUserInformation>();
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
-        //services.AddScoped<IJwtProvider, JwtSecurityTokenProvider>();
+        services.AddScoped<IAuthenticationService, IdentityAuthenticationService>();
+        services.AddScoped<IJwtProvider, JwtSecurityTokenProvider>();
 
-        //JwtSettings jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
+        JwtSettings jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
 
-        //TokenValidationParameters tokenValidationParameters = new TokenValidationParameters()
-        //{
-        //    ClockSkew = TimeSpan.Zero,
-        //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-        //    RequireAudience = true,
-        //    RequireExpirationTime = true,
-        //    RequireSignedTokens = true,
-        //    ValidateLifetime = true,
-        //    ValidateIssuer = true,
-        //    ValidateAudience = true,
-        //    ValidateIssuerSigningKey = true,
-        //    ValidAudience = jwtSettings.Audience,
-        //    ValidIssuer = jwtSettings.Issuer
-        //};
+        TokenValidationParameters tokenValidationParameters = new TokenValidationParameters()
+        {
+            ClockSkew = TimeSpan.Zero,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+            RequireAudience = true,
+            RequireExpirationTime = true,
+            RequireSignedTokens = true,
+            ValidateLifetime = true,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidAudience = jwtSettings.Audience,
+            ValidIssuer = jwtSettings.Issuer
+        };
 
         services.AddAuthentication(options =>
         {
@@ -107,18 +110,18 @@ public static class DependencyInjectionExtensions
         {
             options.SaveToken = true;
             options.RequireHttpsMetadata = true;
-            //options.TokenValidationParameters = tokenValidationParameters;
-            //options.EventsType = typeof(CustomJwtBearerEvents);
+            options.TokenValidationParameters = tokenValidationParameters;
+            options.EventsType = typeof(CustomJwtBearerEvents);
         });
 
-        //services.AddPolicy(
-        //    PoliciesNamesConstants.BEARER_JWT_POLICY,
-        //    new AuthorizationPolicyBuilder()
-        //        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
-        //        .RequireAuthenticatedUser()
-        //        .Build());
+        services.AddAuthorization(auth => auth.AddPolicy(
+            PoliciesNamesConstants.BEARER_JWT_POLICY,
+            new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
+                .RequireAuthenticatedUser()
+                .Build()));
 
-        //services.AddSingleton(tokenValidationParameters);
+        services.AddSingleton(tokenValidationParameters);
 
         return services;
     }

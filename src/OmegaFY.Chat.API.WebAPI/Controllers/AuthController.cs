@@ -1,5 +1,5 @@
 ﻿using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
-using OmegaFY.Chat.API.WebAPI.DTOs.Auth;
+using OmegaFY.Chat.API.WebAPI.Models.Auth;
 
 namespace OmegaFY.Chat.API.WebAPI.Controllers;
 
