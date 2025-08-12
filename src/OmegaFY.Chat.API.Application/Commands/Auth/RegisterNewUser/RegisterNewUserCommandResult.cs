@@ -1,6 +1,6 @@
 ﻿namespace OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 
-public sealed record class RegisterNewUserCommandResult : GenericResult, ICommandResult
+public sealed record class RegisterNewUserCommandResult : ICommandResult
 {
     public Guid UserId { get; init; }
 

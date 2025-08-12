@@ -1,4 +1,8 @@
-﻿using OmegaFY.Chat.API.Infra.MessageBus;
+﻿using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Common.Exceptions.Base;
+using OmegaFY.Chat.API.Common.Exceptions.Constants;
+using OmegaFY.Chat.API.Common.Extensions;
+using OmegaFY.Chat.API.Infra.MessageBus;
 
 namespace OmegaFY.Chat.API.Application.Commands.Base;
 
@@ -8,18 +12,31 @@ public abstract class CommandHandlerBase<TCommandHandler, TCommand, TCommandResu
 {
     protected readonly IMessageBus _messageBus;
 
-    protected readonly IUserInformation _currentUser;
+    protected readonly IHostEnvironment _hostEnvironment;
 
-    protected readonly ILogger<TCommandHandler> _logger;
-
-    protected CommandHandlerBase(IMessageBus messageBus, IUserInformation currentUser, ILogger<TCommandHandler> logger)
+    protected CommandHandlerBase(IMessageBus messageBus, IHostEnvironment hostEnvironment)
     {
         _messageBus = messageBus;
-        _currentUser = currentUser;
-        _logger = logger;
+        _hostEnvironment = hostEnvironment;
     }
 
-    public Task<TCommandResult> Handle(TCommand request, CancellationToken cancellationToken) => HandleAsync(request, cancellationToken);
+    public async Task<HandlerResult<TCommandResult>> HandleAsync(TCommand command, CancellationToken cancellationToken)
+    {
+        try
+        {
+            //TODO aplicar validação
 
-    public abstract Task<TCommandResult> HandleAsync(TCommand command, CancellationToken cancellationToken);
+            return await InternalHandleAsync(command, cancellationToken);
+        }
+        catch (ErrorCodeException ex)
+        {
+            return new HandlerResult<TCommandResult>(ex.ErrorCode, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return new HandlerResult<TCommandResult>(ApplicationErrorCodesConstants.NOT_DOMAIN_ERROR, ex.GetSafeErrorMessageWhenInProd(_hostEnvironment.IsDevelopment()));
+        }
+    }
+
+    protected abstract Task<HandlerResult<TCommandResult>> InternalHandleAsync(TCommand command, CancellationToken cancellationToken);
 }

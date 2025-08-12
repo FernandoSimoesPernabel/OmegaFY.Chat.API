@@ -20,6 +20,6 @@ public sealed class OpenTelemetryInstrumentationFilter : IAsyncActionFilter
 
         ActionExecutedContext resultContext = await next();
 
-        activity.SetCurrentRequestTracingInformation(context.GetRequestFromContext(), resultContext.ToGenericResult());
+        activity.SetCurrentRequestTracingInformation(context.GetRequestFromContext(), resultContext.ToHandlerResult());
     }
 }

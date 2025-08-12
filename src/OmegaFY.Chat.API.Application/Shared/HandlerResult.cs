@@ -1,12 +1,12 @@
 ﻿namespace OmegaFY.Chat.API.Application.Shared;
 
-public record class GenericResult : IResult
+public abstract record class HandlerResult
 {
     private readonly List<ValidationError> _errors;
 
-    public GenericResult() => _errors = new List<ValidationError>(2);
+    public HandlerResult() => _errors = new List<ValidationError>(2);
 
-    public GenericResult(string code, string message) : this() => AddError(code, message);
+    public HandlerResult(string code, string message) : this() => AddError(code, message);
 
     public void AddError(string code, string message) => _errors.Add(new ValidationError(code, message));
 

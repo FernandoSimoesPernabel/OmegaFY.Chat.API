@@ -18,11 +18,11 @@ public sealed class ApiResponseActionFilter : IActionFilter
     {
         try
         {
-            if (context.Result is ObjectResult result && result.Value is GenericResult genericResult)
+            if (context.Result is ObjectResult result && result.Value is HandlerResult handlerResult)
             {
-                if (genericResult.Failed())
+                if (handlerResult.Failed())
                 {
-                    ApiResponse response = new ApiResponse(genericResult.Errors());
+                    ApiResponse response = new ApiResponse(handlerResult.Errors());
                     context.Result = new ObjectResult(response) { StatusCode = response.StatusCode() };
                     return;
                 }
