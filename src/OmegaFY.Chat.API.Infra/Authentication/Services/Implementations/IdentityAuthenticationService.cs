@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OmegaFY.Chat.API.Common.Exceptions;
+using OmegaFY.Chat.API.Infra.Authentication.Extensions;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 
 namespace OmegaFY.Chat.API.Infra.Authentication.Services.Implementations;
@@ -33,8 +34,9 @@ internal sealed class IdentityAuthenticationService : IAuthenticationService
 
     public async Task<AuthenticationToken> LoginAsync(LoginInput loginInput, CancellationToken cancellationToken)
     {
-        if (!await _userManager.CheckPasswordAsync(loginInput, cancellationToken))
-            throw new UnauthorizedException();
+        SignInResult signInResult = await _userManager.PasswordSignInAsync(loginInput, cancellationToken);
+
+        signInResult.EnsureSuccessStatus();
 
         return _jwtProvider.WriteToken(loginInput);
     }

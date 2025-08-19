@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -17,6 +18,7 @@ using OmegaFY.Chat.API.Infra.OpenTelemetry.Configs;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Extensions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers.Implementations;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Text;
@@ -35,35 +37,35 @@ public static class DependencyInjectionExtensions
 
         ResourceBuilder resourceBuilder = ResourceBuilder.CreateDefault().AddService(openTelemetrySettings.ServiceName, serviceVersion: ProjectVersion.Instance.ToString());
 
-        services.AddOpenTelemetry().WithTracing(builder =>
-        {
-            builder.AddSource(openTelemetrySettings.ServiceName)
-                .SetResourceBuilder(resourceBuilder)
-                .AddAspNetCoreInstrumentation(aspnetOptions => aspnetOptions.Filter = (context) => context.Request.Path.Value.ShouldMonitorRoute())
-                .AddHttpClientInstrumentation(httpClientOptions =>
-                {
-                    httpClientOptions.FilterHttpWebRequest = (context) => context.RequestUri.AbsolutePath.ShouldMonitorRoute();
-                    httpClientOptions.FilterHttpRequestMessage = (context) => context.RequestUri.AbsolutePath.ShouldMonitorRoute();
-                })
-                .AddEntityFrameworkCoreInstrumentation(efOptions => efOptions.SetDbStatementForText = true)
+        services.AddOpenTelemetry()
+            .WithTracing(builder =>
+            {
+                builder.AddSource(openTelemetrySettings.ServiceName)
+                    .SetResourceBuilder(resourceBuilder)
+                    .AddAspNetCoreInstrumentation(aspnetOptions => aspnetOptions.Filter = (context) => context.Request.Path.Value.ShouldMonitorRoute())
+                    .AddHttpClientInstrumentation(httpClientOptions =>
+                    {
+                        httpClientOptions.FilterHttpWebRequest = (context) => context.RequestUri.AbsolutePath.ShouldMonitorRoute();
+                        httpClientOptions.FilterHttpRequestMessage = (context) => context.RequestUri.AbsolutePath.ShouldMonitorRoute();
+                    })
+                    .AddEntityFrameworkCoreInstrumentation(efOptions => efOptions.SetDbStatementForText = true)
+                    .AddHoneycomb(honeycombOptions =>
+                    {
+                        honeycombOptions.ServiceName = openTelemetrySettings.ServiceName;
+                        honeycombOptions.ApiKey = openTelemetrySettings.HoneycombSettings.HoneycombApiKey;
+                        honeycombOptions.ServiceVersion = ProjectVersion.Instance.ToString();
+                    });
+            }).WithMetrics(builder =>
+            {
+                builder.AddHttpClientInstrumentation()
+                .AddAspNetCoreInstrumentation()
                 .AddHoneycomb(honeycombOptions =>
                 {
                     honeycombOptions.ServiceName = openTelemetrySettings.ServiceName;
                     honeycombOptions.ApiKey = openTelemetrySettings.HoneycombSettings.HoneycombApiKey;
                     honeycombOptions.ServiceVersion = ProjectVersion.Instance.ToString();
                 });
-        });
-
-        //TODO
-        //services.AddLogging(loggingBuilder => loggingBuilder.AddOpenTelemetry(openTelemetryBuilder =>
-        //{
-        //    openTelemetryBuilder.SetResourceBuilder(resourceBuilder);
-        //    openTelemetryBuilder.AddOtlpExporter(otlpOptions =>
-        //    {
-        //        otlpOptions.Endpoint = new Uri(openTelemetrySettings.HoneycombUrl);
-        //        otlpOptions.Headers = openTelemetrySettings.HoneycombApiKeyHeader;
-        //    });
-        //}));
+            }).WithLogging();
 
         return services;
     }
@@ -83,6 +85,8 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IUserInformation, HttpContextAccessorUserInformation>();
         services.AddScoped<IAuthenticationService, IdentityAuthenticationService>();
         services.AddScoped<IJwtProvider, JwtSecurityTokenProvider>();
+
+        services.AddAuthenticationSettings(configuration);
 
         JwtSettings jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
 
@@ -125,4 +129,33 @@ public static class DependencyInjectionExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddAuthenticationSettings(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<AuthenticationSettings>(configuration.GetSection(nameof(AuthenticationSettings)));
+
+        AuthenticationSettings authSettings = configuration.GetSection(nameof(AuthenticationSettings)).Get<AuthenticationSettings>();
+
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireDigit = authSettings.PasswordRequireDigit;
+            options.Password.RequireLowercase = authSettings.PasswordRequireLowercase;
+            options.Password.RequireNonAlphanumeric = authSettings.PasswordRequireNonAlphanumeric;
+            options.Password.RequireUppercase = authSettings.PasswordRequireUppercase;
+            options.Password.RequiredLength = authSettings.PasswordMinRequiredLength;
+            options.Password.RequiredUniqueChars = authSettings.PasswordRequiredUniqueChars;
+
+            options.Lockout.DefaultLockoutTimeSpan = authSettings.DefaultLockoutTimeSpan;
+            options.Lockout.MaxFailedAccessAttempts = authSettings.MaxFailedAccessAttempts;
+
+            options.User.RequireUniqueEmail = authSettings.RequireUniqueEmail;
+
+            options.SignIn.RequireConfirmedEmail = authSettings.RequireConfirmedEmail;
+            options.SignIn.RequireConfirmedAccount = authSettings.RequireConfirmedAccount;
+        });
+
+        return services;
+    }
+
+    public static IdentityBuilder AddIdentity(this IServiceCollection services) => services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>();
 }

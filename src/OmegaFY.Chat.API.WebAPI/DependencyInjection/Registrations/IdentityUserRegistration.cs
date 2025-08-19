@@ -1,4 +1,6 @@
-﻿using OmegaFY.Chat.API.Infra.DependencyInjection;
+﻿using Microsoft.AspNetCore.Identity;
+using OmegaFY.Chat.API.Data.EF.DependencyInjection;
+using OmegaFY.Chat.API.Infra.DependencyInjection;
 
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
 
@@ -8,9 +10,8 @@ public sealed class IdentityUserRegistration : IDependencyInjectionRegister
     {
         builder.Services.AddIdentityUserConfiguration(builder.Configuration);
 
-        //builder.Services.AddAuthenticationSettings(builder.Configuration);
+        builder.Services.AddEntityFrameworkUserManager();
 
-        //builder.Services.AddEntityFrameworkUserManager();
-        //builder.Services.AddIdentity().AddEntityFrameworkStores().AddDefaultTokenProviders();
+        builder.Services.AddIdentity().AddEntityFrameworkStores().AddDefaultTokenProviders();
     }
 }
