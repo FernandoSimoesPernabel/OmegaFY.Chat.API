@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace OmegaFY.Chat.API.Data.EF.Context;
 
-internal sealed class QueryContext : IdentityDbContext<IdentityUser>
+internal sealed class ApplicationContext : IdentityDbContext<IdentityUser>
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(QueryContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationContext).Assembly);
         
         base.OnModelCreating(modelBuilder);
     }

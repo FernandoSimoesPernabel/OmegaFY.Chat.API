@@ -3,7 +3,7 @@ using OmegaFY.Chat.API.Common.Exceptions.Constants;
 
 namespace OmegaFY.Chat.API.Common.Exceptions;
 
-public sealed class NotFoundException : DomainErrorCodeException
+public sealed class NotFoundException : ErrorCodeException
 {
     public NotFoundException() : this(string.Empty) { }
 

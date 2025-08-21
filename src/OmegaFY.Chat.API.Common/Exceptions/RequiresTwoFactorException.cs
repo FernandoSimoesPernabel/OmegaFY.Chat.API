@@ -3,7 +3,7 @@ using OmegaFY.Chat.API.Common.Exceptions.Constants;
 
 namespace OmegaFY.Chat.API.Common.Exceptions;
 
-public sealed class RequiresTwoFactorException : DomainErrorCodeException
+public sealed class RequiresTwoFactorException : ErrorCodeException
 {
     public RequiresTwoFactorException() : this(string.Empty) { }
 

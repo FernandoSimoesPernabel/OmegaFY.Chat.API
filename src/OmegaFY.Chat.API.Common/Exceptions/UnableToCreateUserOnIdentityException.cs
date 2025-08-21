@@ -3,7 +3,7 @@ using OmegaFY.Chat.API.Common.Exceptions.Constants;
 
 namespace OmegaFY.Chat.API.Common.Exceptions;
 
-public sealed class UnableToCreateUserOnIdentityException : DomainErrorCodeException
+public sealed class UnableToCreateUserOnIdentityException : ErrorCodeException
 {
     public UnableToCreateUserOnIdentityException() : this(string.Empty) { }
 

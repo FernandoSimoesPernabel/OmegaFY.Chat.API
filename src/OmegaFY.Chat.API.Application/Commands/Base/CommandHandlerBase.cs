@@ -28,7 +28,7 @@ public abstract class CommandHandlerBase<TCommandHandler, TCommand, TCommandResu
 
             return await InternalHandleAsync(command, cancellationToken);
         }
-        catch (DomainErrorCodeException ex)
+        catch (ErrorCodeException ex)
         {
             return new HandlerResult<TCommandResult>(ex.ErrorCode, ex.Message);
         }

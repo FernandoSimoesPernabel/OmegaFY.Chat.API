@@ -6,4 +6,8 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OmegaFY.Chat.API.Common\OmegaFY.Chat.API.Common.csproj" />
+  </ItemGroup>
+
 </Project>
