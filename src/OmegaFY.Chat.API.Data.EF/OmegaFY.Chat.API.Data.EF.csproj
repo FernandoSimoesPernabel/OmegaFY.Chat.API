@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OmegaFY.Chat.API.Domain\OmegaFY.Chat.API.Domain.csproj" />
     <ProjectReference Include="..\OmegaFY.Chat.API.Infra\OmegaFY.Chat.API.Infra.csproj" />
   </ItemGroup>
 

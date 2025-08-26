@@ -1,14 +1,60 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Events.Extensions;
+using OmegaFY.Chat.API.Common.Exceptions;
+using OmegaFY.Chat.API.Domain.Entities.Users;
+using OmegaFY.Chat.API.Domain.Repositories.Users;
+using OmegaFY.Chat.API.Infra.Authentication.Models;
+using OmegaFY.Chat.API.Infra.Authentication.Services;
+using OmegaFY.Chat.API.Infra.Cache.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
 
 namespace OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 
 public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterNewUserCommandHandler, RegisterNewUserCommand, RegisterNewUserCommandResult>
 {
-    public RegisterNewUserCommandHandler(IMessageBus messageBus, IHostEnvironment hostEnvironment) : base(messageBus, hostEnvironment) { }
+    private readonly IAuthenticationService _authenticationService;
 
-    protected override Task<HandlerResult<RegisterNewUserCommandResult>> InternalHandleAsync(RegisterNewUserCommand command, CancellationToken cancellationToken)
+    private readonly IDistributedCache _distributedCache;
+
+    private readonly IUserRepository _repository;
+
+    public RegisterNewUserCommandHandler(
+        IMessageBus messageBus,
+        IHostEnvironment hostEnvironment,
+        IAuthenticationService authenticationService,
+        IDistributedCache distributedCache,
+        IUserRepository repository) : base(messageBus, hostEnvironment)
     {
-        return Task.FromResult(new HandlerResult<RegisterNewUserCommandResult>(new RegisterNewUserCommandResult(Guid.NewGuid(), "", DateTime.Now, Guid.NewGuid(), DateTime.UtcNow)));
+        _authenticationService = authenticationService;
+        _distributedCache = distributedCache;
+        _repository = repository;
+    }
+
+    protected async override Task<HandlerResult<RegisterNewUserCommandResult>> InternalHandleAsync(RegisterNewUserCommand command, CancellationToken cancellationToken)
+    {
+        if (await _repository.CheckIfUserAlreadyExistsAsync(command.Email, cancellationToken))
+            throw new ConflictedException();
+
+        User newUser = new User(command.Email, command.DisplayName);
+
+        await _repository.CreateUserAsync(newUser, cancellationToken);
+
+        AuthenticationToken authToken = await _authenticationService.RegisterNewUserAsync(
+            new LoginInput(newUser.Id, newUser.Email, command.Password, newUser.DisplayName),
+            cancellationToken);
+
+        await _messageBus.RaiseUserRegisteredEventAsync(newUser, cancellationToken);
+
+        await _repository.SaveChangesAsync(cancellationToken);
+
+        await _distributedCache.SetAuthenticationTokenCacheAsync(newUser.Id, authToken, cancellationToken);
+
+        return HandlerResult.Create(new RegisterNewUserCommandResult(
+            newUser.Id,
+            authToken.Token,
+            authToken.TokenExpirationDate,
+            authToken.RefreshToken,
+            authToken.RefreshTokenExpirationDate));
     }
 }

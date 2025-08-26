@@ -17,4 +17,6 @@ public abstract record class HandlerResult
     public IReadOnlyCollection<ValidationError> Errors() => _errors.AsReadOnly();
 
     public string GetErrorsAsStringSeparatedByNewLine() => string.Join(Environment.NewLine, _errors.Select(error => error.Message));
+
+    public static HandlerResult<TResult> Create<TResult>(TResult result) => new HandlerResult<TResult>(result);
 }

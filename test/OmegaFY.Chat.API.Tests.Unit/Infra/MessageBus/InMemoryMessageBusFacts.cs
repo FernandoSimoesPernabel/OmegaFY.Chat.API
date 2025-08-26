@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using OmegaFY.Chat.API.Infra.MessageBus.Enums;
-using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
+﻿using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using System.Collections.Concurrent;
 
@@ -133,8 +131,7 @@ public class InMemoryMessageBusFacts
         MessageEnvelope originalMessage = new MessageEnvelope
         {
             DestinationQueue = "integrity-test",
-            Sender = "Test Sender",
-            Type = MessageType.RegisterNewUser,
+            EventType = typeof(InMemoryMessageBusFacts).FullName,
             Payload = new { OrderId = 123, Amount = 99.95, CreatedDate = DateTime.UtcNow }
         };
 
@@ -145,8 +142,7 @@ public class InMemoryMessageBusFacts
         // Assert
         Assert.NotNull(receivedMessage);
         Assert.Equal(originalMessage.Id, receivedMessage.Id);
-        Assert.Equal(originalMessage.Sender, receivedMessage.Sender);
-        Assert.Equal(originalMessage.Type, receivedMessage.Type);
+        Assert.Equal(originalMessage.EventType, receivedMessage.EventType);
         Assert.Equal(originalMessage.Payload, receivedMessage.Payload);
     }
 }
