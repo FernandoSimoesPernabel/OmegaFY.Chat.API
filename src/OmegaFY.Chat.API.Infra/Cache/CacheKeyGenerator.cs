@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Infra.Cache.Constants;
+﻿using OmegaFY.Chat.API.Infra.Constants;
 
 namespace OmegaFY.Chat.API.Infra.Cache;
 

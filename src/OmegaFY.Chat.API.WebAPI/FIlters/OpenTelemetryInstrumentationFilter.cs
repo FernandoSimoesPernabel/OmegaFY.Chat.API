@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using OmegaFY.Chat.API.Application.Shared.Extensions;
-using OmegaFY.Chat.API.Infra.OpenTelemetry.Constants;
+using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
-using OmegaFY.Chat.API.WebAPI.Filters.Extensions;
+using OmegaFY.Chat.API.WebAPI.Extensions;
 using System.Diagnostics;
 
 namespace OmegaFY.Chat.API.WebAPI.Filters;

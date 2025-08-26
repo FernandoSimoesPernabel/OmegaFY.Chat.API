@@ -1,6 +1,6 @@
-﻿using OmegaFY.Chat.API.Infra.OpenTelemetry.Constants;
+﻿using OmegaFY.Chat.API.Infra.Constants;
 
-namespace OmegaFY.Chat.API.Infra.OpenTelemetry.Extensions;
+namespace OmegaFY.Chat.API.Infra.Extensions;
 
 public static class OpenTelemetryExtensions
 {

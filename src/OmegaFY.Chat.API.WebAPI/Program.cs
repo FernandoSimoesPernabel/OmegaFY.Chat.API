@@ -1,4 +1,4 @@
-using OmegaFY.Chat.API.WebAPI.DependencyInjection.Extensions;
+using OmegaFY.Chat.API.WebAPI.Extensions;
 using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

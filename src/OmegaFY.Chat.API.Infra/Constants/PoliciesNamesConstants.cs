@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Infra.Authentication.Constants;
+﻿namespace OmegaFY.Chat.API.Infra.Constants;
 
 public static class PoliciesNamesConstants
 {

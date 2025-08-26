@@ -1,9 +1,9 @@
 ﻿using OmegaFY.Chat.API.Common.Helpers;
+using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus;
-using OmegaFY.Chat.API.Infra.MessageBus.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 
-namespace OmegaFY.Chat.API.Application.Events.Extensions;
+namespace OmegaFY.Chat.API.Application.Extensions;
 
 public static class IMessageBusExtensions
 {
@@ -12,7 +12,7 @@ public static class IMessageBusExtensions
 
     public static async Task SimplePublishAsync<TData>(this IMessageBus messageBus, TData payload, CancellationToken cancellationToken)
     {
-        MessageEnvelope envelope = new MessageEnvelope()
+        var envelope = new MessageEnvelope()
         {
             DestinationQueue = QueueConstants.DEFAULT_QUEUE_NAME,
             EventType = payload.GetType().FullName,

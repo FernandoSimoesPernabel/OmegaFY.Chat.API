@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Infra.OpenTelemetry.Constants;
+﻿using OmegaFY.Chat.API.Infra.Constants;
 using System.Diagnostics;
 
 namespace OmegaFY.Chat.API.Application.Shared.Extensions;

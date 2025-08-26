@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Domain.Entities.Constants;
+﻿namespace OmegaFY.Chat.API.Domain.Constants;
 
 public class UserConstants
 {

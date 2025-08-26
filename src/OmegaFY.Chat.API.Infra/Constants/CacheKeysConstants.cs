@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Infra.Cache.Constants;
+﻿namespace OmegaFY.Chat.API.Infra.Constants;
 
 internal static class CacheKeysConstants
 {

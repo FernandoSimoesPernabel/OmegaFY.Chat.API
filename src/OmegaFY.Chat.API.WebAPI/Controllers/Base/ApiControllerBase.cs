@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using OmegaFY.Chat.API.Infra.Authentication.Constants;
-
-namespace OmegaFY.Chat.API.WebAPI.Controllers.Base;
+﻿namespace OmegaFY.Chat.API.WebAPI.Controllers.Base;
 
 [ApiController]
 [ApiConventionType(typeof(DefaultApiConventions))]

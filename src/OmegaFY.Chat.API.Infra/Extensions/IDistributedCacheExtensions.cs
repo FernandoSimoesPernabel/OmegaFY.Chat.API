@@ -2,20 +2,21 @@
 using OmegaFY.Chat.API.Common.Extensions;
 using OmegaFY.Chat.API.Common.Helpers;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
+using OmegaFY.Chat.API.Infra.Cache;
 
-namespace OmegaFY.Chat.API.Infra.Cache.Extensions;
+namespace OmegaFY.Chat.API.Infra.Extensions;
 
 public static class IDistributedCacheExtensions
 {
     public static async Task<T> GetAsync<T>(this IDistributedCache distributedCache, string key, CancellationToken cancellationToken)
     {
-        string valueFromCache = await distributedCache.GetStringAsync(key, cancellationToken);
+        var valueFromCache = await distributedCache.GetStringAsync(key, cancellationToken);
         return valueFromCache is null ? default : JsonSerializerHelper.Deserialize<T>(valueFromCache);
     }
 
     public static Task SetAsync<T>(this IDistributedCache distributedCache, string key, T value, DistributedCacheEntryOptions options, CancellationToken cancellationToken)
     {
-        string valueAsJsonString = value.ToJson();
+        var valueAsJsonString = value.ToJson();
         return distributedCache.SetStringAsync(key, valueAsJsonString, options, cancellationToken);
     }
 

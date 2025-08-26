@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace OmegaFY.Chat.API.Infra.Authentication.Extensions;
+namespace OmegaFY.Chat.API.Infra.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {

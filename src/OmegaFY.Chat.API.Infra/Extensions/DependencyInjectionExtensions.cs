@@ -5,17 +5,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OmegaFY.Chat.API.Common.Models;
-using OmegaFY.Chat.API.Infra.Authentication.Constants;
 using OmegaFY.Chat.API.Infra.Authentication.JwtEvents;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
 using OmegaFY.Chat.API.Infra.Authentication.Services.Implementations;
 using OmegaFY.Chat.API.Infra.Authentication.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Users.Implementations;
+using OmegaFY.Chat.API.Infra.Constants;
+using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Configs;
-using OmegaFY.Chat.API.Infra.OpenTelemetry.Extensions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers.Implementations;
 using OpenTelemetry.Metrics;
@@ -23,7 +23,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Text;
 
-namespace OmegaFY.Chat.API.Infra.DependencyInjection;
+namespace OmegaFY.Chat.API.Infra.Extensions;
 
 public static class DependencyInjectionExtensions
 {
@@ -87,7 +87,7 @@ public static class DependencyInjectionExtensions
 
         JwtSettings jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
 
-        TokenValidationParameters tokenValidationParameters = new TokenValidationParameters()
+        var tokenValidationParameters = new TokenValidationParameters()
         {
             ClockSkew = TimeSpan.Zero,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),

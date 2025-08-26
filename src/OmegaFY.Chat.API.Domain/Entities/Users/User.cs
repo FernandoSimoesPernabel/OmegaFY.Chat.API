@@ -1,5 +1,5 @@
 ﻿using OmegaFY.Chat.API.Common.Exceptions;
-using OmegaFY.Chat.API.Domain.Entities.Constants;
+using OmegaFY.Chat.API.Domain.Constants;
 
 namespace OmegaFY.Chat.API.Domain.Entities.Users;
 

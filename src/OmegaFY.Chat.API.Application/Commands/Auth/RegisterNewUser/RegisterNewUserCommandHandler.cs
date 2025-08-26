@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Hosting;
-using OmegaFY.Chat.API.Application.Events.Extensions;
+using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
-using OmegaFY.Chat.API.Infra.Cache.Extensions;
+using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
 
 namespace OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;

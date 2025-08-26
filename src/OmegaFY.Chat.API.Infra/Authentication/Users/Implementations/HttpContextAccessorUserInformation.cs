@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using OmegaFY.Chat.API.Common.Exceptions;
-using OmegaFY.Chat.API.Infra.Authentication.Extensions;
+using OmegaFY.Chat.API.Infra.Extensions;
 
 namespace OmegaFY.Chat.API.Infra.Authentication.Users.Implementations;
 

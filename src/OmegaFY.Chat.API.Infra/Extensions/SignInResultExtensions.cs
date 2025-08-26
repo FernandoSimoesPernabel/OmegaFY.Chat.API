@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OmegaFY.Chat.API.Common.Exceptions;
 
-namespace OmegaFY.Chat.API.Infra.Authentication.Extensions;
+namespace OmegaFY.Chat.API.Infra.Extensions;
 
 public static class SignInResultExtensions
 {

@@ -1,11 +1,13 @@
-﻿namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Extensions;
+﻿using OmegaFY.Chat.API.WebAPI.DependencyInjection;
 
-public static class IServiceCollectionExtensions
+namespace OmegaFY.Chat.API.WebAPI.Extensions;
+
+public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddDependencyInjectionRegister(this IServiceCollection services, WebApplicationBuilder builder)
     {
         typeof(Program).Assembly?.ExportedTypes
-            .Where(t => typeof(IDependencyInjectionRegister).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
+            .Where(type => typeof(IDependencyInjectionRegister).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface)
             .Select(Activator.CreateInstance)
             .Cast<IDependencyInjectionRegister>()
             .ToList()

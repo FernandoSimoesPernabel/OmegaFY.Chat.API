@@ -10,7 +10,7 @@ using OmegaFY.Chat.API.Data.EF.Repositories.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
 
-namespace OmegaFY.Chat.API.Data.EF.DependencyInjection;
+namespace OmegaFY.Chat.API.Data.EF.Extensions;
 
 public static class DependencyInjectionExtensions
 {

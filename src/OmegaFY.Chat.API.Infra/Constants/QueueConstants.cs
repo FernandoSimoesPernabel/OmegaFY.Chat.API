@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Infra.MessageBus.Constants;
+﻿namespace OmegaFY.Chat.API.Infra.Constants;
 
 public static class QueueConstants
 {
