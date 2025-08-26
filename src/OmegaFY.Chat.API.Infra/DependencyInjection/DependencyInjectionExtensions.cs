@@ -70,10 +70,7 @@ public static class DependencyInjectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddInMemoryMessageBus(this IServiceCollection services)
-    {
-        return services.AddSingleton<IMessageBus, InMemoryMessageBus>();
-    }
+    public static IServiceCollection AddInMemoryMessageBus(this IServiceCollection services) => services.AddSingleton<IMessageBus, InMemoryMessageBus>();
 
     public static IServiceCollection AddIdentityUserConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
@@ -158,4 +155,6 @@ public static class DependencyInjectionExtensions
     }
 
     public static IdentityBuilder AddIdentity(this IServiceCollection services) => services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>();
+
+    public static IServiceCollection AddDistributedCache(this IServiceCollection services) => services.AddDistributedMemoryCache();
 }
