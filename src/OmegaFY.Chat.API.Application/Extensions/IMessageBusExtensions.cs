@@ -10,17 +10,19 @@ public static class IMessageBusExtensions
     public static async Task RaiseUserRegisteredEventAsync(this IMessageBus messageBus, object user, CancellationToken cancellationToken) 
         => await messageBus.SimplePublishAsync(user, cancellationToken);
 
-    public static async Task SimplePublishAsync<TData>(this IMessageBus messageBus, TData payload, CancellationToken cancellationToken)
+    public static async Task SimplePublishAsync<TData>(this IMessageBus messageBus, TData payload, CancellationToken cancellationToken) 
+        => await messageBus.SimplePublishAsync(QueueConstants.CHAT_EVENTS_QUEUE_NAME, payload, cancellationToken);
+
+    public static async Task SimplePublishAsync<TData>(this IMessageBus messageBus, string destinationQueue, TData payload, CancellationToken cancellationToken)
     {
-        var envelope = new MessageEnvelope()
+        MessageEnvelope message = new MessageEnvelope()
         {
-            DestinationQueue = QueueConstants.DEFAULT_QUEUE_NAME,
+            DestinationQueue = destinationQueue,
             EventType = payload.GetType().FullName,
             Headers = OpenTelemetryPropagatorsHelper.GetInjectedItems(),
-            Metadata = [],
             Payload = payload
         };
 
-        await messageBus.PublishAsync(envelope, cancellationToken);
+        await messageBus.PublishAsync(message, cancellationToken);
     }
 }

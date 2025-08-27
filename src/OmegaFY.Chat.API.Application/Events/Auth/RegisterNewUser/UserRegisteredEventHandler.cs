@@ -1,9 +1,10 @@
-﻿
+﻿using OmegaFY.Chat.API.Application.Events.Base;
+
 namespace OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
 
-internal sealed class UserRegisteredEventHandler : IEventHandler<UserRegisteredEvent>
+internal sealed class UserRegisteredEventHandler : EventHandlerHandlerBase<UserRegisteredEvent>
 {
-    public Task HandleAsync(UserRegisteredEvent @event, CancellationToken cancellationToken)
+    protected override Task HandleAsync(UserRegisteredEvent @event, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

@@ -1,4 +1,6 @@
-﻿using OmegaFY.Chat.API.Infra.MessageBus.Models;
+﻿using OmegaFY.Chat.API.Infra.Constants;
+using OmegaFY.Chat.API.Infra.Extensions;
+using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using System.Collections.Concurrent;
 
 namespace OmegaFY.Chat.API.Infra.MessageBus.Implementations;
@@ -6,6 +8,28 @@ namespace OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 internal sealed class InMemoryMessageBus : IMessageBus
 {
     private readonly ConcurrentDictionary<string, ConcurrentBag<MessageEnvelope>> _queueStorage = new();
+
+    public Task AckAsync(MessageEnvelope message, CancellationToken cancellationToken) => Task.CompletedTask;
+
+    public async Task NackAsync(MessageEnvelope message, CancellationToken cancellationToken)
+    {
+        MessageEnvelope retryMessage = message with { RetryCount = message.RetryCount + 1 };
+
+        if (retryMessage.RetryCount >= message.MaxRetryCount)
+        {
+            await RejectAsync(message, cancellationToken);
+            return;
+        }
+        
+        await PublishAsync(message, cancellationToken);
+    }
+
+    public async Task RejectAsync(MessageEnvelope message, CancellationToken cancellationToken)
+    {
+        MessageEnvelope deadLetterMessage = message with { DestinationQueue = message.GetDeadLetterQueue() };
+
+        await PublishAsync(deadLetterMessage, cancellationToken);
+    }
 
     public Task PublishAsync(MessageEnvelope message, CancellationToken cancellationToken)
     {

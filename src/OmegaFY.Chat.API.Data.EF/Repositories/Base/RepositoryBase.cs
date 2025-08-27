@@ -4,13 +4,13 @@ using OmegaFY.Chat.API.Domain.Repositories;
 
 namespace OmegaFY.Chat.API.Data.EF.Repositories.Base;
 
-public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : Entity, IAggregateRoot<TEntity>
+public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Entity, IAggregateRoot<TEntity>
 {
     protected readonly DbContext _context;
 
     protected readonly DbSet<TEntity> _dbSet;
 
-    public BaseRepository(DbContext dbContext)
+    public RepositoryBase(DbContext dbContext)
     {
         _context = dbContext;
         _dbSet = dbContext.Set<TEntity>();

@@ -1,6 +1,6 @@
 ﻿namespace OmegaFY.Chat.API.Application.Events;
 
-public interface IEventHandler<TEvent> where TEvent : IEvent
+public interface IEventHandler
 {
-    public Task HandleAsync(TEvent @event, CancellationToken cancellationToken);
+    public Task HandleAsync(object @event, CancellationToken cancellationToken);
 }

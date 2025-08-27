@@ -7,7 +7,7 @@ using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Data.EF.Repositories.Users;
 
-internal sealed class UserRepository : BaseRepository<User>, IUserRepository
+internal sealed class UserRepository : RepositoryBase<User>, IUserRepository
 {
     public UserRepository(ApplicationContext applicationContext) : base(applicationContext) { }
 
