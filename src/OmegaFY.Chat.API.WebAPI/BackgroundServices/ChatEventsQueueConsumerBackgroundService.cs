@@ -5,7 +5,7 @@ using OmegaFY.Chat.API.Infra.MessageBus.Models;
 
 namespace OmegaFY.Chat.API.WebAPI.BackgroundServices;
 
-public class ChatEventsQueueConsumerBackgroundService : BackgroundService
+public sealed class ChatEventsQueueConsumerBackgroundService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -14,8 +14,8 @@ public class ChatEventsQueueConsumerBackgroundService : BackgroundService
     private readonly ILogger<ChatEventsQueueConsumerBackgroundService> _logger;
 
     public ChatEventsQueueConsumerBackgroundService(
-        IServiceProvider serviceProvider, 
-        IMessageBus messageBus, 
+        IServiceProvider serviceProvider,
+        IMessageBus messageBus,
         ILogger<ChatEventsQueueConsumerBackgroundService> logger)
     {
         _serviceProvider = serviceProvider;
@@ -25,9 +25,9 @@ public class ChatEventsQueueConsumerBackgroundService : BackgroundService
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        //TODO ver como usar o timer com o nick
+        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(15));
 
-        while (!stoppingToken.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
         {
             MessageEnvelope message = await _messageBus.ReadMessageAync(QueueConstants.CHAT_EVENTS_QUEUE_NAME, stoppingToken);
 

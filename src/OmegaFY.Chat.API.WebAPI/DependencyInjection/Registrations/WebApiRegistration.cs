@@ -1,5 +1,4 @@
-﻿
-using OmegaFY.Chat.API.WebAPI.Filters;
+﻿using OmegaFY.Chat.API.WebAPI.Filters;
 using System.Text.Json.Serialization;
 
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
@@ -11,9 +10,7 @@ public sealed class WebApiRegistration : IDependencyInjectionRegister
         builder.Services.AddControllers(controllerOptions =>
         {
             controllerOptions.Filters.Add<ErrorHandlerExceptionFilter>(); 
-
             controllerOptions.Filters.Add<ApiResponseActionFilter>();
-            controllerOptions.Filters.Add<OpenTelemetryInstrumentationFilter>();
 
             controllerOptions.SuppressAsyncSuffixInActionNames = true;
         })

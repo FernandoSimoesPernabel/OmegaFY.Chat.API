@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using FluentValidation;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Common.Exceptions;
@@ -8,6 +9,7 @@ using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
+using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 
@@ -22,9 +24,11 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
     public RegisterNewUserCommandHandler(
         IMessageBus messageBus,
         IHostEnvironment hostEnvironment,
+        IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IAuthenticationService authenticationService,
         IDistributedCache distributedCache,
-        IUserRepository repository) : base(messageBus, hostEnvironment)
+        IUserRepository repository,
+        IValidator<RegisterNewUserCommand> validator) : base(messageBus, hostEnvironment, openTelemetryRegisterProvider, validator)
     {
         _authenticationService = authenticationService;
         _distributedCache = distributedCache;

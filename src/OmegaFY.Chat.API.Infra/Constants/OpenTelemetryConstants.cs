@@ -10,5 +10,7 @@ public static class OpenTelemetryConstants
 
     public const string RESULT_CONTENT_KEY = $"{ACTIVITY_BASE_NAME}.result_content";
 
+    public const string HANDLER_NAME_KEY = $"{ACTIVITY_BASE_NAME}.handler_name";
+
     public const string API_ROUTE = "api/";
 }
