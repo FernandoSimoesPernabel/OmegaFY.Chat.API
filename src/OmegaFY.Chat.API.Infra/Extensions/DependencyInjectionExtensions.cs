@@ -156,5 +156,10 @@ public static class DependencyInjectionExtensions
 
     public static IdentityBuilder AddIdentity(this IServiceCollection services) => services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>();
 
-    public static IServiceCollection AddDistributedCache(this IServiceCollection services) => services.AddDistributedMemoryCache();
+    public static IServiceCollection AddCache(this IServiceCollection services)
+    {
+        services.AddHybridCache();
+
+        return services;
+    }
 }

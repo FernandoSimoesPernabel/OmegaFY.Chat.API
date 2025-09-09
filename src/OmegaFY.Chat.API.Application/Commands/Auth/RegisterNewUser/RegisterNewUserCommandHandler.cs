@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Common.Exceptions;
@@ -17,21 +17,21 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
 {
     private readonly IAuthenticationService _authenticationService;
 
-    private readonly IDistributedCache _distributedCache;
+    private readonly HybridCache _hybridCache;
 
     private readonly IUserRepository _repository;
 
     public RegisterNewUserCommandHandler(
-        IMessageBus messageBus,
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
+        IValidator<RegisterNewUserCommand> validator,
+        IMessageBus messageBus,
         IAuthenticationService authenticationService,
-        IDistributedCache distributedCache,
-        IUserRepository repository,
-        IValidator<RegisterNewUserCommand> validator) : base(messageBus, hostEnvironment, openTelemetryRegisterProvider, validator)
+        HybridCache hybridCache,
+        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
     {
         _authenticationService = authenticationService;
-        _distributedCache = distributedCache;
+        _hybridCache = hybridCache;
         _repository = repository;
     }
 
@@ -52,7 +52,7 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
 
         await _repository.SaveChangesAsync(cancellationToken);
 
-        await _distributedCache.SetAuthenticationTokenCacheAsync(newUser.Id, authToken, cancellationToken);
+        await _hybridCache.SetAuthenticationTokenCacheAsync(newUser.Id, authToken, cancellationToken);
 
         return HandlerResult.Create(new RegisterNewUserCommandResult(
             newUser.Id,

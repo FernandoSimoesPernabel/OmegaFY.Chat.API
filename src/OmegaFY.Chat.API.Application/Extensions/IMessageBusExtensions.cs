@@ -1,4 +1,5 @@
 ﻿using OmegaFY.Chat.API.Common.Helpers;
+using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
@@ -7,7 +8,7 @@ namespace OmegaFY.Chat.API.Application.Extensions;
 
 public static class IMessageBusExtensions
 {
-    public static async Task RaiseUserRegisteredEventAsync(this IMessageBus messageBus, object user, CancellationToken cancellationToken) 
+    public static async Task RaiseUserRegisteredEventAsync(this IMessageBus messageBus, User user, CancellationToken cancellationToken) 
         => await messageBus.SimplePublishAsync(user, cancellationToken);
 
     public static async Task SimplePublishAsync<TData>(this IMessageBus messageBus, TData payload, CancellationToken cancellationToken) 

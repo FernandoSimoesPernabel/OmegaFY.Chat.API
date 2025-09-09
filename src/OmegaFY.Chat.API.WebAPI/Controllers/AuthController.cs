@@ -9,5 +9,8 @@ public sealed class AuthController : ApiControllerBase
     public async Task<IActionResult> RegisterNewUser(
         [FromServices] RegisterNewUserCommandHandler handler,
         [FromBody] RegisterNewUserRequest request,
-        CancellationToken cancellationToken) => Ok(await handler.HandleAsync(request.ToCommand(), cancellationToken));
+        CancellationToken cancellationToken)
+    {
+        return CreatedAtAction(nameof(UsersController.GetCurrentUserInfo), await handler.HandleAsync(request.ToCommand(), cancellationToken));
+    }
 }

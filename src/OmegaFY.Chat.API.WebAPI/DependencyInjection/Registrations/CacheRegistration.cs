@@ -4,5 +4,5 @@ namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
 
 public sealed class CacheRegistration : IDependencyInjectionRegister
 {
-    public void Register(WebApplicationBuilder builder) => builder.Services.AddDistributedCache();
+    public void Register(WebApplicationBuilder builder) => builder.Services.AddCache();
 }

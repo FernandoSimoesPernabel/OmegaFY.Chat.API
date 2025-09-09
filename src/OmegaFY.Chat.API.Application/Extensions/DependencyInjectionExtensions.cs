@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
+using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 
-namespace OmegaFY.Chat.API.Application.DependencyInjection;
+namespace OmegaFY.Chat.API.Application.Extensions;
 
 public static class DependencyInjectionExtensions
 {
@@ -14,6 +15,8 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddQueryHandlers(this IServiceCollection services)
     {
+        services.AddScoped<GetCurrentUserInfoQueryHandler>();
+
         return services;
     }
 

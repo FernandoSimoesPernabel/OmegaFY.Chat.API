@@ -1,5 +1,4 @@
-﻿
-using OmegaFY.Chat.API.Application.DependencyInjection;
+﻿using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Infra.Extensions;
 
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
