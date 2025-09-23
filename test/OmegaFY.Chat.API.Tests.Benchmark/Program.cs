@@ -7,6 +7,6 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        BenchmarkDotNet.Reports.Summary summary = BenchmarkRunner.Run<InMemoryBusBenchmark>();
+        BenchmarkDotNet.Reports.Summary summary = BenchmarkRunner.Run<InMemoryMessageBusBenchmark>();
     }
 }

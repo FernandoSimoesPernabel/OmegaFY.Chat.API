@@ -4,17 +4,17 @@ using System.Collections.Concurrent;
 
 namespace OmegaFY.Chat.API.Tests.Unit.Infra.MessageBus;
 
-public class InMemoryMessageBusFacts
+public class ConcurrentBagInMemoryMessageBusFacts
 {
     [Fact]
-    public async Task PublishAsync_ShouldHandleConcurrentMessagesToMultipleQueues_WithCorrectlyValuesAndCount()
+    public async Task PublishAsync_ShouldHandleConcurrentMessagesFromMultipleSources_WithCorrectlyValuesAndCount()
     {
         // Arrange
-        InMemoryMessageBus sut = new InMemoryMessageBus();
+        ConcurrentBagInMemoryMessageBus sut = new ConcurrentBagInMemoryMessageBus();
 
-        Dictionary<string, int> queuesToTest = new Dictionary<string, int>()
+        Dictionary<string, int> sourcesToTest = new Dictionary<string, int>()
         {
-            { "fila_A", 1000 }, 
+            { "fila_A", 1000 },
             { "fila_B", 3234 },
             { "fila_C", 501 },
             { "fila_D", 2150 }
@@ -27,50 +27,47 @@ public class InMemoryMessageBusFacts
         };
 
         // Act
-        await Parallel.ForEachAsync(queuesToTest, parallelOptions, async (queue, cancellationToken) =>
+        await Parallel.ForEachAsync(sourcesToTest, parallelOptions, async (source, cancellationToken) =>
         {
-            await Parallel.ForEachAsync(Enumerable.Range(0, queue.Value), parallelOptions, async (_, cancellationToken) =>
+            await Parallel.ForEachAsync(Enumerable.Range(0, source.Value), parallelOptions, async (_, cancellationToken) =>
             {
-                await sut.PublishAsync(new MessageEnvelope { DestinationQueue = queue.Key }, cancellationToken);
+                await sut.PublishAsync(new MessageEnvelope(), cancellationToken);
             });
         });
 
         // Assert
-        foreach (KeyValuePair<string, int> queue in queuesToTest)
-            Assert.Equal(queue.Value, sut.GetQueueMessageCount(queue.Key));
+        Assert.Equal(sourcesToTest.Sum(queue => queue.Value), sut.GetMessageCount());
     }
 
     [Fact]
-    public async Task ReadMessageAync_ShouldReturnMessageAndDecreaseQueueCount_WhenQueueIsNotEmpty()
+    public async Task ReadMessageAync_ShouldReturnMessageAndDecreaseCount_WhenIsNotEmpty()
     {
         // Arrange
-        InMemoryMessageBus sut = new InMemoryMessageBus();
-        const string queueName = "read-test-queue";
-        MessageEnvelope message = new MessageEnvelope { DestinationQueue = queueName, Payload = "Hello World" };
-        
+        ConcurrentBagInMemoryMessageBus sut = new ConcurrentBagInMemoryMessageBus();
+        MessageEnvelope message = new MessageEnvelope { Payload = "Hello World" };
+
         await sut.PublishAsync(message, CancellationToken.None);
 
         // Act
-        int publishQueueMessageCount = sut.GetQueueMessageCount(queueName);
-        MessageEnvelope receivedMessage = await sut.ReadMessageAync(queueName, CancellationToken.None);
+        int publishMessageCount = sut.GetMessageCount();
+        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(CancellationToken.None);
 
         // Assert
         Assert.NotNull(receivedMessage);
         Assert.Equal(message.Id, receivedMessage.Id);
         Assert.Equal("Hello World", receivedMessage.Payload);
-        Assert.Equal(1, publishQueueMessageCount);
-        Assert.Equal(0, sut.GetQueueMessageCount(queueName));
+        Assert.Equal(1, publishMessageCount);
+        Assert.Equal(0, sut.GetMessageCount());
     }
 
     [Fact]
-    public async Task ReadMessageAync_ShouldReturnNull_WhenQueueIsEmpty()
+    public async Task ReadMessageAync_ShouldReturnNull_WhenIsEmpty()
     {
         // Arrange
-        InMemoryMessageBus sut = new InMemoryMessageBus();
-        const string queueName = "empty-queue";
+        ConcurrentBagInMemoryMessageBus sut = new ConcurrentBagInMemoryMessageBus();
 
         // Act
-        MessageEnvelope receivedMessage = await sut.ReadMessageAync(queueName, CancellationToken.None);
+        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(CancellationToken.None);
 
         // Assert
         Assert.Null(receivedMessage);
@@ -80,9 +77,8 @@ public class InMemoryMessageBusFacts
     public async Task ProducerConsumer_ShouldProcessAllMessages_UnderParallelLoad()
     {
         // Arrange
-        InMemoryMessageBus sut = new InMemoryMessageBus();
+        ConcurrentBagInMemoryMessageBus sut = new ConcurrentBagInMemoryMessageBus();
         ConcurrentBag<MessageEnvelope> consumedMessages = new ConcurrentBag<MessageEnvelope>();
-        const string queueName = "parallel-producer-consumer-queue";
         const int messagesToProcess = 2000;
 
         ParallelOptions parallelOptions = new ParallelOptions
@@ -95,15 +91,15 @@ public class InMemoryMessageBusFacts
         // Produtores: Múltiplas "threads" publicam mensagens em paralelo.
         Task producerTask = Parallel.ForEachAsync(Enumerable.Range(0, messagesToProcess), parallelOptions, async (index, _) =>
         {
-            await sut.PublishAsync(new MessageEnvelope { DestinationQueue = queueName, Payload = index }, CancellationToken.None);
+            await sut.PublishAsync(new MessageEnvelope { Payload = index }, CancellationToken.None);
         });
 
         Task consumerTask = Task.Run(async () =>
         {
             while (consumedMessages.Count < messagesToProcess)
             {
-                MessageEnvelope message = await sut.ReadMessageAync(queueName, CancellationToken.None);
-                
+                MessageEnvelope message = await sut.ReadMessageAsync(CancellationToken.None);
+
                 if (message is not null)
                 {
                     consumedMessages.Add(message);
@@ -120,29 +116,26 @@ public class InMemoryMessageBusFacts
 
         // Assert
         Assert.Equal(messagesToProcess, consumedMessages.Count);
-        Assert.Equal(0, sut.GetQueueMessageCount(queueName));
+        Assert.Equal(0, sut.GetMessageCount());
     }
 
     [Fact]
     public async Task PublishAndRead_ShouldPreserveMessageIntegrity()
     {
         // Arrange
-        InMemoryMessageBus sut = new InMemoryMessageBus();
+        ConcurrentBagInMemoryMessageBus sut = new ConcurrentBagInMemoryMessageBus();
         MessageEnvelope originalMessage = new MessageEnvelope
         {
-            DestinationQueue = "integrity-test",
-            EventType = typeof(InMemoryMessageBusFacts).FullName,
             Payload = new { OrderId = 123, Amount = 99.95, CreatedDate = DateTime.UtcNow }
         };
 
         // Act
         await sut.PublishAsync(originalMessage, CancellationToken.None);
-        MessageEnvelope receivedMessage = await sut.ReadMessageAync(originalMessage.DestinationQueue, CancellationToken.None);
+        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(CancellationToken.None);
 
         // Assert
         Assert.NotNull(receivedMessage);
         Assert.Equal(originalMessage.Id, receivedMessage.Id);
-        Assert.Equal(originalMessage.EventType, receivedMessage.EventType);
         Assert.Equal(originalMessage.Payload, receivedMessage.Payload);
     }
 }

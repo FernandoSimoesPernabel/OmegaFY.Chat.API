@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Entities.Users;
@@ -48,7 +49,7 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
             new LoginInput(newUser.Id, newUser.Email, command.Password, newUser.DisplayName),
             cancellationToken);
 
-        await _messageBus.RaiseUserRegisteredEventAsync(newUser, cancellationToken);
+        await _messageBus.RaiseUserRegisteredEventAsync(new UserRegisteredEvent(), cancellationToken);
 
         await _repository.SaveChangesAsync(cancellationToken);
 

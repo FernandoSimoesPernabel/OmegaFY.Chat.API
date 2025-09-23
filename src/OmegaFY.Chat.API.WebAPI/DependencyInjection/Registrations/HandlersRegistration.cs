@@ -7,7 +7,9 @@ public sealed class HandlersRegistration : IDependencyInjectionRegister
 {
     public void Register(WebApplicationBuilder builder)
     {
-        builder.Services.AddInMemoryMessageBus();
+        //builder.Services.AddChannelInMemoryMessageBus();
+
+        builder.Services.AddConcurrentBagInMemoryMessageBus();
 
         builder.Services.AddCommandHandlers();
 

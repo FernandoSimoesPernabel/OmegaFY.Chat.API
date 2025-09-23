@@ -70,7 +70,11 @@ public static class DependencyInjectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddInMemoryMessageBus(this IServiceCollection services) => services.AddSingleton<IMessageBus, InMemoryMessageBus>();
+    public static IServiceCollection AddConcurrentBagInMemoryMessageBus(this IServiceCollection services) 
+        => services.AddSingleton<IMessageBus, ConcurrentBagInMemoryMessageBus>();
+
+    public static IServiceCollection AddChannelInMemoryMessageBus(this IServiceCollection services) 
+        => services.AddSingleton<IMessageBus, ChannelInMemoryMessageBus>();
 
     public static IServiceCollection AddIdentityUserConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
