@@ -11,7 +11,13 @@ internal sealed class UserRepository : RepositoryBase<User>, IUserRepository
 {
     public UserRepository(ApplicationContext applicationContext) : base(applicationContext) { }
 
-    public async Task CreateUserAsync(User user, CancellationToken cancellationToken) => await _dbSet.AddAsync(user, cancellationToken);
+    public Task CreateUserAsync(User user, CancellationToken cancellationToken)
+    {
+        _dbSet.Add(user);
+        return Task.CompletedTask;
+    }
+
+    public Task UpdateUserAsync(User user, CancellationToken cancellationToken) => Task.CompletedTask;
 
     public async Task<User> GetByIdAsync(ReferenceId id, CancellationToken cancellationToken) => await _dbSet.FindAsync([id], cancellationToken);
 

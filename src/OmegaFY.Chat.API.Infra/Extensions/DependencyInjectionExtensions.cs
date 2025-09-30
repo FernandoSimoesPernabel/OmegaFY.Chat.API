@@ -58,29 +58,29 @@ public static class DependencyInjectionExtensions
             }).WithMetrics(builder =>
             {
                 builder.AddHttpClientInstrumentation()
-                .AddAspNetCoreInstrumentation()
-                .AddHoneycomb(honeycombOptions =>
-                {
-                    honeycombOptions.ServiceName = openTelemetrySettings.ServiceName;
-                    honeycombOptions.ApiKey = openTelemetrySettings.HoneycombSettings.HoneycombApiKey;
-                    honeycombOptions.ServiceVersion = ProjectVersion.Instance.ToString();
-                });
+                    .AddAspNetCoreInstrumentation()
+                    .AddHoneycomb(honeycombOptions =>
+                    {
+                        honeycombOptions.ServiceName = openTelemetrySettings.ServiceName;
+                        honeycombOptions.ApiKey = openTelemetrySettings.HoneycombSettings.HoneycombApiKey;
+                        honeycombOptions.ServiceVersion = ProjectVersion.Instance.ToString();
+                    });
             }).WithLogging();
 
         return services;
     }
 
-    public static IServiceCollection AddConcurrentBagInMemoryMessageBus(this IServiceCollection services) 
+    public static IServiceCollection AddConcurrentBagInMemoryMessageBus(this IServiceCollection services)
         => services.AddSingleton<IMessageBus, ConcurrentBagInMemoryMessageBus>();
 
-    public static IServiceCollection AddChannelInMemoryMessageBus(this IServiceCollection services) 
+    public static IServiceCollection AddChannelInMemoryMessageBus(this IServiceCollection services)
         => services.AddSingleton<IMessageBus, ChannelInMemoryMessageBus>();
 
     public static IServiceCollection AddIdentityUserConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
 
-        //services.AddScoped<CustomJwtBearerEvents>();
+        services.AddScoped<CustomJwtBearerEvents>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<IUserInformation, HttpContextAccessorUserInformation>();

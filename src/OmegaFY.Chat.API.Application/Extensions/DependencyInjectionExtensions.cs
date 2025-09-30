@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
+using OmegaFY.Chat.API.Application.Events;
 using OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 
@@ -27,7 +28,7 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddEventHandlers(this IServiceCollection services)
     {
-        services.AddScoped<SendWelcomeEmailEventHandler>();
+        services.AddScoped<IEventHandler<UserRegisteredEvent>, SendWelcomeEmailEventHandler>();
 
         return services;
     }

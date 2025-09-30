@@ -23,9 +23,9 @@ public sealed class ChatEventsQueueConsumerBackgroundService : BackgroundService
     private readonly ILogger<ChatEventsQueueConsumerBackgroundService> _logger;
 
     public ChatEventsQueueConsumerBackgroundService(
-        IServiceProvider serviceProvider, 
+        IServiceProvider serviceProvider,
         IMessageBus messageBus,
-        IOpenTelemetryRegisterProvider openTelemetryRegisterProvider, 
+        IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         ILogger<ChatEventsQueueConsumerBackgroundService> logger)
     {
         _serviceProvider = serviceProvider;
@@ -50,7 +50,9 @@ public sealed class ChatEventsQueueConsumerBackgroundService : BackgroundService
 
             Type eventType = message.Payload.GetType();
 
-            IEventHandler[] handlers = _serviceProvider.GetServices(typeof(IEventHandler<>).MakeGenericType(eventType)).Cast<IEventHandler>().ToArray();
+            using IServiceScope serviceScope = _serviceProvider.CreateScope();
+
+            IEventHandler[] handlers = serviceScope.ServiceProvider.GetServices(typeof(IEventHandler<>).MakeGenericType(eventType)).Cast<IEventHandler>().ToArray();
 
             foreach (IEventHandler handler in handlers)
             {

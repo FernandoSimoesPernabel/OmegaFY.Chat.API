@@ -21,7 +21,7 @@ public static class OpenTelemetryPropagatorsHelper
     public static PropagationContext GetPropagationContext(Dictionary<string, string> items)
     {
         return Propagators.DefaultTextMapPropagator.Extract(
-            new PropagationContext(Activity.Current.Context, Baggage.Current),
+            default,
             items,
             (props, key) => props.TryGetValue(key, out string value) ? [value]: []);
     }

@@ -11,5 +11,7 @@ public interface IUserRepository : IRepository<User>
 
     public Task CreateUserAsync(User user, CancellationToken cancellationToken);
 
+    public Task UpdateUserAsync(User user, CancellationToken cancellationToken);
+
     public Task<bool> CheckIfUserAlreadyExistsAsync(string email, CancellationToken cancellationToken);
 }

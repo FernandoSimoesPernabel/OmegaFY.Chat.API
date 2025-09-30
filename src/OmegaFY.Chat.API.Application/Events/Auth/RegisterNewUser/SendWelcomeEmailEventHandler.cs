@@ -6,6 +6,6 @@ internal sealed class SendWelcomeEmailEventHandler : EventHandlerHandlerBase<Use
 {
     protected override Task HandleAsync(UserRegisteredEvent @event, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

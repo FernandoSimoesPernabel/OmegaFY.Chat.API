@@ -19,6 +19,6 @@ internal sealed  class UserMapping : IEntityTypeConfiguration<User>
 
         builder.Property(user => user.DisplayName).HasMaxLength(UserConstants.MAX_DISPLAY_NAME_LENGTH).IsUnicode(false).IsUnicode(false).IsRequired();
 
-        builder.ToTable("Users");
+        builder.ToTable("Users", "chat");
     }
 }
