@@ -42,6 +42,9 @@ public class ApiResponse<T>
         if (_errors.Any(erro => erro.Code == ApplicationErrorCodesConstants.UNAUTHORIZED))
             return StatusCodes.Status401Unauthorized;
 
+        if (_errors.Any(erro => erro.Code == ApplicationErrorCodesConstants.UNAUTHENTICATED))
+            return StatusCodes.Status403Forbidden;
+
         return StatusCodes.Status500InternalServerError;
     }
 }

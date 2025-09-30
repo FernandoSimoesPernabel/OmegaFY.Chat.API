@@ -60,5 +60,5 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
         }
     }
 
-    protected abstract Task<HandlerResult<TResult>> InternalHandleAsync(TRequest command, CancellationToken cancellationToken);
+    protected abstract Task<HandlerResult<TResult>> InternalHandleAsync(TRequest request, CancellationToken cancellationToken);
 }

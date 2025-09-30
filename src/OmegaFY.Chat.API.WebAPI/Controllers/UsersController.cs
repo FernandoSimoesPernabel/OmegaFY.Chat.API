@@ -8,6 +8,6 @@ public class UsersController : ApiControllerBase
     [HttpGet("me")]
     public async Task<IActionResult> GetCurrentUserInfo(
         [FromServices] GetCurrentUserInfoQueryHandler handler,
-        GetCurrentUserInfoRequest request,
+        [FromRoute] GetCurrentUserInfoRequest request,
         CancellationToken cancellationToken) => Ok(await handler.HandleAsync(request.ToQuery(), cancellationToken));
 }

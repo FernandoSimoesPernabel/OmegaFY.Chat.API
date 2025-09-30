@@ -2,6 +2,8 @@
 
 public interface IUserInformation
 {
+    public bool IsAuthenticated { get; }
+
     public Guid? CurrentRequestUserId { get; }
 
     public string Email { get; }

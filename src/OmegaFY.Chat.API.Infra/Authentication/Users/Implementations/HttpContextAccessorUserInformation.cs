@@ -6,26 +6,30 @@ namespace OmegaFY.Chat.API.Infra.Authentication.Users.Implementations;
 
 internal sealed class HttpContextAccessorUserInformation : IUserInformation
 {
+    public bool IsAuthenticated { get; }
+
     public Guid? CurrentRequestUserId { get; }
 
     public string Email { get; }
 
     public HttpContextAccessorUserInformation(IHttpContextAccessor httpContextAccessor)
     {
-        if (httpContextAccessor.HttpContext.User.IsAuthenticated())
-        {
-            Guid? userId = httpContextAccessor.HttpContext.User.TryGetUserIdFromClaims();
+        IsAuthenticated = httpContextAccessor.HttpContext.User.IsAuthenticated();
 
-            if (userId is null)
-                throw new UnauthorizedException();
+        if (!IsAuthenticated)
+            return;
 
-            string email = httpContextAccessor.HttpContext.User.TryGetEmailFromClaims();
+        Guid? userId = httpContextAccessor.HttpContext.User.TryGetUserIdFromClaims();
 
-            if (string.IsNullOrWhiteSpace(email))
-                throw new UnauthorizedException();
+        if (userId is null)
+            throw new UnauthorizedException();
 
-            CurrentRequestUserId = userId;
-            Email = email;
-        }
+        string email = httpContextAccessor.HttpContext.User.TryGetEmailFromClaims();
+
+        if (string.IsNullOrWhiteSpace(email))
+            throw new UnauthorizedException();
+
+        CurrentRequestUserId = userId;
+        Email = email;
     }
 }
