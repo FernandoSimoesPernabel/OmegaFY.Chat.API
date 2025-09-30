@@ -1,30 +1,42 @@
 ﻿using OmegaFY.Chat.API.Application.Events;
+using OmegaFY.Chat.API.Application.Shared.Extensions;
+using OmegaFY.Chat.API.Common.Helpers;
+using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
+using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
+using OpenTelemetry;
+using System.Diagnostics;
 
 namespace OmegaFY.Chat.API.WebAPI.BackgroundServices;
 
 public sealed class ChatEventsQueueConsumerBackgroundService : BackgroundService
 {
+    private static readonly TimeSpan INTERVAL_PERIOD = TimeSpan.FromSeconds(10);
+
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IMessageBus _messageBus;
 
+    private readonly IOpenTelemetryRegisterProvider _openTelemetryRegisterProvider;
+
     private readonly ILogger<ChatEventsQueueConsumerBackgroundService> _logger;
 
     public ChatEventsQueueConsumerBackgroundService(
-        IServiceProvider serviceProvider,
+        IServiceProvider serviceProvider, 
         IMessageBus messageBus,
+        IOpenTelemetryRegisterProvider openTelemetryRegisterProvider, 
         ILogger<ChatEventsQueueConsumerBackgroundService> logger)
     {
         _serviceProvider = serviceProvider;
         _messageBus = messageBus;
+        _openTelemetryRegisterProvider = openTelemetryRegisterProvider;
         _logger = logger;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(15));
+        using PeriodicTimer timer = new PeriodicTimer(INTERVAL_PERIOD);
 
         while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
         {
@@ -33,19 +45,25 @@ public sealed class ChatEventsQueueConsumerBackgroundService : BackgroundService
             if (message is null)
                 continue;
 
+            using Activity parentActivity = _openTelemetryRegisterProvider.ContinueParentActivity(OpenTelemetryConstants.ACTIVITY_CHAT_EVENTS_QUEUE_CONSUMER_NAME, message.Headers);
+            parentActivity.SetMessage(message);
+
             Type eventType = message.Payload.GetType();
 
-            IEventHandler[] handlers = (IEventHandler[])_serviceProvider.GetServices(typeof(IEventHandler<>).MakeGenericType(eventType));
+            IEventHandler[] handlers = _serviceProvider.GetServices(typeof(IEventHandler<>).MakeGenericType(eventType)).Cast<IEventHandler>().ToArray();
 
             foreach (IEventHandler handler in handlers)
             {
                 try
                 {
+                    using Activity activity = _openTelemetryRegisterProvider.StartActivity(OpenTelemetryConstants.ACTIVITY_EVENT_HANDLER_NAME);
+                    activity.SetHandlerName(handler.GetType().Name);
+
                     await handler.HandleAsync(message.Payload, stoppingToken);
                 }
                 catch (Exception ex)
                 {
-                    //TODO Log
+                    _logger.LogError(ex, "Error handling event {EventType} with handler {HandlerType}", eventType.Name, handler.GetType().Name);
                 }
             }
         }

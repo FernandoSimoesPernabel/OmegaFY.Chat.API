@@ -1,6 +1,6 @@
 ﻿namespace OmegaFY.Chat.API.Infra.Authentication.Models;
 
-internal sealed class AuthenticationSettings
+public sealed class AuthenticationSettings
 {
     public bool PasswordRequireDigit { get; set; }
 

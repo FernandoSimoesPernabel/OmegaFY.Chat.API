@@ -8,7 +8,7 @@ namespace OmegaFY.Chat.API.Data.EF.Context;
 
 internal sealed class ApplicationContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {
-    public ApplicationContext(DbContextOptions options) : base(options) { }
+    public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

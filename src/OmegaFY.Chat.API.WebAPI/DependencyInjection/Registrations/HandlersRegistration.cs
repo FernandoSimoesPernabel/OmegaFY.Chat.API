@@ -11,6 +11,8 @@ public sealed class HandlersRegistration : IDependencyInjectionRegister
 
         builder.Services.AddConcurrentBagInMemoryMessageBus();
 
+        builder.Services.AddValidators();
+
         builder.Services.AddCommandHandlers();
 
         builder.Services.AddQueryHandlers();

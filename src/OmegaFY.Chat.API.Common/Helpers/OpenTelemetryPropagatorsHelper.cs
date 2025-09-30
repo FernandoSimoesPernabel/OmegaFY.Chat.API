@@ -17,4 +17,12 @@ public static class OpenTelemetryPropagatorsHelper
 
         return items;
     }
+
+    public static PropagationContext GetPropagationContext(Dictionary<string, string> items)
+    {
+        return Propagators.DefaultTextMapPropagator.Extract(
+            new PropagationContext(Activity.Current.Context, Baggage.Current),
+            items,
+            (props, key) => props.TryGetValue(key, out string value) ? [value]: []);
+    }
 }

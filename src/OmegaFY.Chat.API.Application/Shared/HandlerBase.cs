@@ -41,9 +41,8 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
 
             ValidationResult validationResult = _validator.Validate(request);
 
-            HandlerResult<TResult> result = validationResult.IsValid 
-                ? await InternalHandleAsync(request, cancellationToken) 
-                : validationResult.ToHandlerResult<TResult>();
+            HandlerResult<TResult> result = 
+                validationResult.IsValid ? await InternalHandleAsync(request, cancellationToken) : validationResult.ToHandlerResult<TResult>();
 
             activity.SetResult(result);
 
