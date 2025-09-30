@@ -7,7 +7,7 @@ namespace OmegaFY.Chat.API.WebAPI.Controllers;
 public sealed class AuthController : ApiControllerBase
 {
     [AllowAnonymous]
-    [HttpPost("/register-new-user")]
+    [HttpPost("register-new-user")]
     public async Task<IActionResult> RegisterNewUser(
         [FromServices] RegisterNewUserCommandHandler handler,
         [FromBody] RegisterNewUserRequest request,

@@ -5,7 +5,7 @@ namespace OmegaFY.Chat.API.WebAPI.Controllers;
 
 public class UsersController : ApiControllerBase
 {
-    [HttpGet("/me")]
+    [HttpGet("me")]
     public async Task<IActionResult> GetCurrentUserInfo(
         [FromServices] GetCurrentUserInfoQueryHandler handler,
         GetCurrentUserInfoRequest request,
