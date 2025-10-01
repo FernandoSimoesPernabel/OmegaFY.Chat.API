@@ -1,4 +1,7 @@
-﻿namespace OmegaFY.Chat.API.Application.Shared;
+﻿using OmegaFY.Chat.API.Common.Exceptions;
+using OmegaFY.Chat.API.Common.Exceptions.Base;
+
+namespace OmegaFY.Chat.API.Application.Shared;
 
 public abstract record class HandlerResult
 {
@@ -19,4 +22,10 @@ public abstract record class HandlerResult
     public string GetErrorsAsStringSeparatedByNewLine() => string.Join(Environment.NewLine, _errors.Select(error => error.Message));
 
     public static HandlerResult<TResult> Create<TResult>(TResult result) => new HandlerResult<TResult>(result);
+
+    public static HandlerResult<TResult> CreateUnauthorized<TResult>() => CreateError<TResult>(new UnauthorizedException());
+
+    public static HandlerResult<TResult> CreateNotFound<TResult>() => CreateError<TResult>(new NotFoundException());
+
+    public static HandlerResult<TResult> CreateError<TResult>(ErrorCodeException ex) => new HandlerResult<TResult>(ex.ErrorCode, ex.Message);
 }
