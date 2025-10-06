@@ -4,7 +4,7 @@ public sealed record class LoginCommand : ICommand
 {
     public string Email { get; init; }
 
-    public string Password { get; init; }
+    public string Password { internal get; init; }
 
     public bool RememberMe { get; init; }
 

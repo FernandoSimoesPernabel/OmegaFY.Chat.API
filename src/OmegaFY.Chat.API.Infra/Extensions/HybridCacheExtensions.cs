@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Hybrid;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Cache;
 
@@ -6,6 +7,14 @@ namespace OmegaFY.Chat.API.Infra.Extensions;
 
 public static class HybridCacheExtensions
 {
+    public static async ValueTask<T> GetOrDefaultAsync<T>(this HybridCache hybridCache, string key, CancellationToken cancellationToken)
+    {
+        return await hybridCache.GetOrCreateAsync(
+            key,
+            (cancellationToken) => ValueTask.FromResult(default(T)),
+            cancellationToken: cancellationToken);
+    }
+
     public static ValueTask SetAuthenticationTokenCacheAsync(
         this HybridCache hybridCache,
         Guid userId,
@@ -19,4 +28,7 @@ public static class HybridCacheExtensions
            [userId.ToString()],
            cancellationToken);
     }
+
+    public static ValueTask RemoveAuthenticationTokenCacheAsync(this HybridCache hybridCache, Guid userId, string refreshToken, CancellationToken cancellationToken)
+        => hybridCache.RemoveAsync(CacheKeyGenerator.RefreshTokenKey(userId, refreshToken), cancellationToken);
 }
