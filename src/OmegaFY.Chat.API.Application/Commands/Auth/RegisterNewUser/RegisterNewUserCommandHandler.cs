@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Application.Extensions;
+using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
@@ -57,9 +58,7 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
 
         return HandlerResult.Create(new RegisterNewUserCommandResult(
             newUser.Id,
-            authToken.Token,
-            authToken.TokenExpirationDate,
-            authToken.RefreshToken,
-            authToken.RefreshTokenExpirationDate));
+            new Token(authToken.Token, authToken.TokenExpirationDate),
+            new Token(authToken.RefreshToken, authToken.TokenExpirationDate)));
     }
 }

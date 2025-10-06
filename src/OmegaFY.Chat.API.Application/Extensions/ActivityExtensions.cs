@@ -2,7 +2,7 @@
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using System.Diagnostics;
 
-namespace OmegaFY.Chat.API.Application.Shared.Extensions;
+namespace OmegaFY.Chat.API.Application.Extensions;
 
 public static class ActivityExtensions
 {

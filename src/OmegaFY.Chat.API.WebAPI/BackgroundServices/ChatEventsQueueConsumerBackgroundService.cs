@@ -1,5 +1,5 @@
 ﻿using OmegaFY.Chat.API.Application.Events;
-using OmegaFY.Chat.API.Application.Shared.Extensions;
+using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Common.Helpers;
 using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus;

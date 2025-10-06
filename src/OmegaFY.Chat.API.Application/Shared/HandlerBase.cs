@@ -2,7 +2,6 @@
 using FluentValidation.Results;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Extensions;
-using OmegaFY.Chat.API.Application.Shared.Extensions;
 using OmegaFY.Chat.API.Common.Exceptions.Base;
 using OmegaFY.Chat.API.Common.Exceptions.Constants;
 using OmegaFY.Chat.API.Common.Extensions;
