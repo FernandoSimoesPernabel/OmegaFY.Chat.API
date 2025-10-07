@@ -28,7 +28,7 @@ public sealed class LogoffCommandHandler : CommandHandlerBase<LogoffCommandHandl
     protected override async Task<HandlerResult<LogoffCommandResult>> InternalHandleAsync(LogoffCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            HandlerResult.CreateUnauthorized<LogoffCommandResult>();
+            return HandlerResult.CreateUnauthorized<LogoffCommandResult>();
 
         await _hybridCache.RemoveAsync(CacheKeyGenerator.RefreshTokenKey(_userInformation.CurrentRequestUserId.Value, request.RefreshToken), cancellationToken);
 

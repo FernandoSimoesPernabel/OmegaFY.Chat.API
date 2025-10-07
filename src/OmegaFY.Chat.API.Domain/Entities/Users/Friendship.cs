@@ -3,7 +3,7 @@ using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Domain.Entities.Users;
 
-public sealed class Friend : Entity
+public sealed class Friendship : Entity
 {
     public ReferenceId RequestingUserId { get; }
 
@@ -13,7 +13,7 @@ public sealed class Friend : Entity
 
     public FriendshipStatus Status { get; private set; }
 
-    public Friend(ReferenceId requestingUserId, ReferenceId invitedUserId)
+    public Friendship(ReferenceId requestingUserId, ReferenceId invitedUserId)
     {
         RequestingUserId = requestingUserId;
         InvitedUserId = invitedUserId;

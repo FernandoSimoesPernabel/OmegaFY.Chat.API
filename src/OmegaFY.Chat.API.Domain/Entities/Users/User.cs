@@ -6,15 +6,15 @@ namespace OmegaFY.Chat.API.Domain.Entities.Users;
 
 public sealed class User : Entity, IAggregateRoot<User>
 {
-    private readonly List<Friend> _friendsRequested = new();
+    private readonly List<Friendship> _friendshipRequested = new();
 
-    private readonly List<Friend> _friendsAccepted = new();
+    private readonly List<Friendship> _friendshipAccepted = new();
 
     public string Email { get; }
 
     public string DisplayName { get; private set; }
 
-    public IReadOnlyCollection<Friend> Friends => _friendsRequested.Concat(_friendsAccepted).ToArray();
+    public IReadOnlyCollection<Friendship> Friendships => _friendshipRequested.Concat(_friendshipAccepted).ToArray();
 
     public User(string email, string displayName)
     {
@@ -36,44 +36,48 @@ public sealed class User : Entity, IAggregateRoot<User>
         DisplayName = displayName;
     }
 
-    public void SendFriendshipRequest(ReferenceId invitedUserId)
+    public Friendship SendFriendshipRequest(ReferenceId invitedUserId)
     {
         if (invitedUserId == Id)
             throw new DomainArgumentException("Um usuário não pode enviar uma solicitação de amizade para si mesmo.");
 
-        if (Friends.Any(friend =>
-            (friend.RequestingUserId == Id && friend.InvitedUserId == invitedUserId) ||
-            (friend.RequestingUserId == invitedUserId && friend.InvitedUserId == Id)))
+        if (Friendships.Any(friendship =>
+            (friendship.RequestingUserId == Id && friendship.InvitedUserId == invitedUserId) ||
+            (friendship.RequestingUserId == invitedUserId && friendship.InvitedUserId == Id)))
         {
             throw new DomainArgumentException("Já existe uma solicitação de amizade entre esses usuários.");
         }
 
-        _friendsRequested.Add(new Friend(Id, invitedUserId));
+        Friendship friendshipRequest = new Friendship(Id, invitedUserId);
+
+        _friendshipRequested.Add(friendshipRequest);
+
+        return friendshipRequest;
     }
 
-    public void AcceptFriendshipRequest(ReferenceId friendId) => GetFriendIfPending(friendId).Accept();
+    public void AcceptFriendshipRequest(ReferenceId friendshipId) => GetFriendshipIfPending(friendshipId).Accept();
 
-    public void RejectFriendshipRequest(ReferenceId friendId) => GetFriendIfPending(friendId).Reject();
+    public void RejectFriendshipRequest(ReferenceId friendshipId) => GetFriendshipIfPending(friendshipId).Reject();
 
-    public void RemoveFriendship(ReferenceId friendId)
+    public void RemoveFriendship(ReferenceId friendshipId)
     {
-        if (_friendsRequested.RemoveAll(friend => friend.Id == friendId) > 0)
-            _friendsAccepted.RemoveAll(friend => friend.Id == friendId);
+        if (_friendshipRequested.RemoveAll(friendship => friendship.Id == friendshipId) == 0)
+            _friendshipAccepted.RemoveAll(friendship => friendship.Id == friendshipId);
     }
 
-    private Friend GetFriendIfPending(ReferenceId friendId)
+    private Friendship GetFriendshipIfPending(ReferenceId friendshipId)
     {
-        Friend friend = Friends.FirstOrDefault(friend => friend.Id == friendId);
+        Friendship friendship = Friendships.FirstOrDefault(friendship => friendship.Id == friendshipId);
 
-        if (friend is null)
+        if (friendship is null)
             throw new NotFoundException("Solicitação de amizade não encontrada.");
 
-        if (friend.InvitedUserId != Id)
+        if (friendship.InvitedUserId != Id)
             throw new DomainInvalidOperationException("A solicitação de amizade não pertence a este usuário.");
 
-        if (friend.Status != Enums.FriendshipStatus.Pending)
+        if (friendship.Status != Enums.FriendshipStatus.Pending)
             throw new DomainInvalidOperationException("A solicitação de amizade já foi respondida.");
 
-        return friend;
+        return friendship;
     }
 }
