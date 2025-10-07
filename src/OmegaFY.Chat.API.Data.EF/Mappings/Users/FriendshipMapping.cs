@@ -18,6 +18,8 @@ internal sealed class FriendshipMapping : IEntityTypeConfiguration<Friendship>
 
         builder.Property(friendship => friendship.StartedDate).IsRequired();
 
+        builder.Property(friendship => friendship.Status).HasColumnType("varchar(10)").IsRequired();
+
         builder.ToTable("Friendships", "chat");
     }
 }

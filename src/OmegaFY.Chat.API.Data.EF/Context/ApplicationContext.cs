@@ -31,6 +31,20 @@ internal sealed class ApplicationContext : IdentityDbContext<IdentityUser<Guid>,
     private void RegisterNoKeyModels(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<GetCurrentUserInfoQueryResult>().HasNoKey();
-        modelBuilder.Entity<FriendshipModel>().HasNoKey();
+
+        modelBuilder.Entity<FriendshipModel>(builder =>
+        {
+            builder.Property(friendship => friendship.FriendshipId).IsRequired().ValueGeneratedNever();
+
+            builder.Property(friendship => friendship.RequestingUserId).IsRequired();
+
+            builder.Property(friendship => friendship.InvitedUserId).IsRequired();
+
+            builder.Property(friendship => friendship.StartedDate).IsRequired();
+
+            builder.Property(friendship => friendship.Status).HasColumnType("varchar(10)").IsRequired();
+
+            builder.HasNoKey();
+        });
     }   
 }

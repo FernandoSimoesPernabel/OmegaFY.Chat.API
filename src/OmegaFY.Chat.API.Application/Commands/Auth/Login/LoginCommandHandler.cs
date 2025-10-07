@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Events.Auth.Login;
+using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
@@ -39,7 +41,7 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
         User user = await _repository.GetByEmailAsync(request.Email, cancellationToken);
 
         if (user is null)
-            return HandlerResult.CreateNotFound<LoginCommandResult>();
+            return HandlerResult.CreateUnauthorized<LoginCommandResult>();
 
         AuthenticationToken authToken =
             await _authenticationService.LoginAsync(new LoginInput(user.Id, user.Email, request.Password, user.DisplayName), cancellationToken);
@@ -47,11 +49,13 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
         if (request.RememberMe)
             await _hybridCache.SetAuthenticationTokenCacheAsync(user.Id, authToken, cancellationToken);
 
+        await _messageBus.SimplePublishAsync(new UserLoggedInEvent(user.Id), cancellationToken);
+
         return HandlerResult.Create(new LoginCommandResult(
             user.Id,
             user.DisplayName,
             user.Email,
             new Token(authToken.Token, authToken.TokenExpirationDate),
-            request.RememberMe ? new Token(authToken.RefreshToken, authToken.TokenExpirationDate) : null));
+            request.RememberMe ? new Token(authToken.RefreshToken, authToken.RefreshTokenExpirationDate) : null));
     }
 }

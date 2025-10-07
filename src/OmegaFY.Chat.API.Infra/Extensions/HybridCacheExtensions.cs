@@ -21,10 +21,14 @@ public static class HybridCacheExtensions
         AuthenticationToken authToken,
         CancellationToken cancellationToken)
     {
-        return hybridCache.SetAsync(
+        return hybridCache.SetAsync<AuthenticationToken?>(
            CacheKeyGenerator.RefreshTokenKey(userId, authToken.RefreshToken),
            authToken,
-           new HybridCacheEntryOptions() { Expiration = authToken.RefreshTokenExpirationDate - DateTime.UtcNow },
+           new HybridCacheEntryOptions()
+           {
+               Expiration = authToken.RefreshTokenExpirationDate - DateTime.UtcNow,
+               LocalCacheExpiration = authToken.RefreshTokenExpirationDate - DateTime.UtcNow
+           },
            [userId.ToString()],
            cancellationToken);
     }

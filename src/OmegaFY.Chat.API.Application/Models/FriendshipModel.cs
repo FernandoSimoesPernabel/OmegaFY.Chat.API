@@ -1,5 +1,4 @@
 ﻿using OmegaFY.Chat.API.Domain.Enums;
-using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Application.Models;
 
@@ -7,9 +6,9 @@ public sealed record class FriendshipModel
 {
     public Guid FriendshipId { get; init; }
 
-    public ReferenceId RequestingUserId { get; init; }
+    public Guid RequestingUserId { get; init; }
 
-    public ReferenceId InvitedUserId { get; init; }
+    public Guid InvitedUserId { get; init; }
 
     public DateTime StartedDate { get; init; }
 
@@ -17,7 +16,7 @@ public sealed record class FriendshipModel
 
     public FriendshipModel() { }
 
-    public FriendshipModel(Guid friendshipId, ReferenceId requestingUserId, ReferenceId invitedUserId, DateTime startedDate, FriendshipStatus status)
+    public FriendshipModel(Guid friendshipId, Guid requestingUserId, Guid invitedUserId, DateTime startedDate, FriendshipStatus status)
     {
         FriendshipId = friendshipId;
         RequestingUserId = requestingUserId;

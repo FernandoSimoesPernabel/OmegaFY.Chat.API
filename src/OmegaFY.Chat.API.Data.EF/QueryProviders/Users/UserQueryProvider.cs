@@ -3,7 +3,6 @@ using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Data.EF.Context;
-using OmegaFY.Chat.API.Domain.Entities.Users;
 
 namespace OmegaFY.Chat.API.Data.EF.QueryProviders.Users;
 
@@ -33,7 +32,7 @@ internal sealed class UserQueryProvider : IUserQueryProvider
                     Status
                 
                 FROM 
-                    chat.Friendship 
+                    chat.Friendships
                 
                 WHERE 
                     Id = {friendshipId} AND (RequestingUserId = {userId} OR InvitedUserId = {userId})")

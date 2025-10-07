@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Events.Auth.Logoff;
+using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Infra.Cache;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
@@ -30,7 +32,9 @@ public sealed class LogoffCommandHandler : CommandHandlerBase<LogoffCommandHandl
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthorized<LogoffCommandResult>();
 
-        await _hybridCache.RemoveAsync(CacheKeyGenerator.RefreshTokenKey(_userInformation.CurrentRequestUserId.Value, request.RefreshToken), cancellationToken);
+        Guid userId = _userInformation.CurrentRequestUserId.Value;
+
+        await _messageBus.SimplePublishAsync(new UserLoggedOffEvent(userId, request.RefreshToken), cancellationToken);
 
         return HandlerResult.Create(new LogoffCommandResult());
     }

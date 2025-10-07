@@ -22,7 +22,6 @@ public sealed class AuthController : ApiControllerBase
     [HttpPost("login")]
     [ProducesResponseType(typeof(ApiResponse<LoginCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Login([FromServices] LoginCommandHandler handler, [FromBody] LoginRequest request, CancellationToken cancellationToken) 
         => Ok(await handler.HandleAsync(request.ToCommand(), cancellationToken));
 
@@ -30,7 +29,6 @@ public sealed class AuthController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<RefreshTokenCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RefreshToken([FromServices] RefreshTokenCommandHandler handler, [FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
         => Ok(await handler.HandleAsync(request.ToCommand(), cancellationToken));
 

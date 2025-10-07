@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Events.Auth.RefreshToken;
+using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Entities.Users;
@@ -48,26 +50,23 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 
         if (user is null)
-            return HandlerResult.CreateNotFound<RefreshTokenCommandResult>();
+            return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
 
         AuthenticationToken? currentToken = await _hybridCache.GetOrDefaultAsync<AuthenticationToken?>(
             CacheKeyGenerator.RefreshTokenKey(_userInformation.CurrentRequestUserId.Value, request.RefreshToken), 
             cancellationToken);
 
-        if (!currentToken.HasValue)
-            throw new NotFoundException();
-
-        if (request.CurrentToken != currentToken.Value.Token)
-            throw new DomainInvalidOperationException("O token informado não corresponde ao token armazenado.");
+        if (!currentToken.HasValue || request.CurrentToken != currentToken.Value.Token)
+            return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
 
         AuthenticationToken newAuthToken = await _authenticationService.RefreshTokenAsync(
             currentToken.Value,
             new RefreshTokenInput(user.Id, user.Email, user.DisplayName),
             cancellationToken);
 
-        await _hybridCache.RemoveAuthenticationTokenCacheAsync(user.Id, request.RefreshToken, cancellationToken);
-
         await _hybridCache.SetAuthenticationTokenCacheAsync(user.Id, newAuthToken, cancellationToken);
+
+        await _messageBus.SimplePublishAsync(new UserTokenRefreshedEvent(user.Id, request.RefreshToken, newAuthToken.RefreshToken), cancellationToken);
 
         return HandlerResult.Create(new RefreshTokenCommandResult(
             new Token(newAuthToken.Token, newAuthToken.TokenExpirationDate),

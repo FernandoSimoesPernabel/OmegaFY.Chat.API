@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Events.Users.SendFriendshipRequest;
+using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.MessageBus;
@@ -38,6 +40,10 @@ public sealed class SendFriendshipRequestCommandHandler : CommandHandlerBase<Sen
         Friendship friendship = user.SendFriendshipRequest(request.InvitedUserId);
 
         await _repository.SaveChangesAsync(cancellationToken);
+
+        await _messageBus.SimplePublishAsync(
+            new FriendshipRequestedEvent(friendship.Id, friendship.RequestingUserId, friendship.InvitedUserId, friendship.StartedDate), 
+            cancellationToken);
 
         return HandlerResult.Create(new SendFriendshipRequestCommandResult(friendship.Id));
     }

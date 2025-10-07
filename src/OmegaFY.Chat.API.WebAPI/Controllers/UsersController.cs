@@ -12,7 +12,6 @@ public class UsersController : ApiControllerBase
     [HttpGet("me")]
     [ProducesResponseType(typeof(ApiResponse<GetCurrentUserInfoQueryResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCurrentUserInfo([FromServices] GetCurrentUserInfoQueryHandler handler, CancellationToken cancellationToken)
         => Ok(await handler.HandleAsync(new GetCurrentUserInfoQuery(), cancellationToken));
 
@@ -26,9 +25,15 @@ public class UsersController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<SendFriendshipRequestCommandResult>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> SendFriendshipRequest([FromServices] SendFriendshipRequestCommandHandler handler, SendFriendshipRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> SendFriendshipRequest([FromServices] SendFriendshipRequestCommandHandler handler, [FromBody] SendFriendshipRequest request, CancellationToken cancellationToken)
     {
         HandlerResult<SendFriendshipRequestCommandResult> result = await handler.HandleAsync(request.ToCommand(), cancellationToken);
-        return CreatedAtAction(nameof(GetFriendshipById), new { result.Data?.FriendshipId });
+        return CreatedAtAction(nameof(GetFriendshipById), new { result.Data?.FriendshipId }, result);
     }
+
+    //[HttpPost("me/friendships/{friendshipId:guid}/accept")]
+
+    //[HttpPost("me/friendships/{friendshipId:guid}/reject")]
+
+    //[HttpDelete("me/friendships/{friendshipId:guid}")]
 }

@@ -27,6 +27,8 @@ internal sealed class UserMapping : IEntityTypeConfiguration<User>
 
         builder.Navigation("_friendshipAccepted").AutoInclude();
 
+        builder.Ignore(user => user.Friendships);
+
         builder.ToTable("Users", "chat");
     }
 }
