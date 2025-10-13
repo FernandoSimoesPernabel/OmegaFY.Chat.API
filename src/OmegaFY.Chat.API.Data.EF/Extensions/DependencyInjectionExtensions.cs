@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
 using OmegaFY.Chat.API.Data.EF.Authentication.Services;
 using OmegaFY.Chat.API.Data.EF.Context;
 using OmegaFY.Chat.API.Data.EF.Interceptors;
-using OmegaFY.Chat.API.Data.EF.QueryProviders.Users;
 using OmegaFY.Chat.API.Data.EF.Repositories.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
@@ -47,13 +45,6 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddEntityFrameworkRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddEntityFrameworkQueryProviders(this IServiceCollection services)
-    {
-        services.AddScoped<IUserQueryProvider, UserQueryProvider>();
 
         return services;
     }
