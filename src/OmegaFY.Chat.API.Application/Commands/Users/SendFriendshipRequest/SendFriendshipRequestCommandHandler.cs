@@ -37,14 +37,16 @@ public sealed class SendFriendshipRequestCommandHandler : CommandHandlerBase<Sen
         if (user is null)
             return HandlerResult.CreateNotFound<SendFriendshipRequestCommandResult>();
 
-        Friendship friendship = user.SendFriendshipRequest(request.InvitedUserId);
+        Friendship friendshipRequest = new Friendship(_userInformation.CurrentRequestUserId.Value, request.InvitedUserId);
+
+        user.SendFriendshipRequest(friendshipRequest);
 
         await _repository.SaveChangesAsync(cancellationToken);
 
         await _messageBus.SimplePublishAsync(
-            new FriendshipRequestedEvent(friendship.Id, friendship.RequestingUserId, friendship.InvitedUserId, friendship.StartedDate), 
+            new FriendshipRequestedEvent(friendshipRequest.Id, friendshipRequest.RequestingUserId, friendshipRequest.InvitedUserId, friendshipRequest.StartedDate), 
             cancellationToken);
 
-        return HandlerResult.Create(new SendFriendshipRequestCommandResult(friendship.Id));
+        return HandlerResult.Create(new SendFriendshipRequestCommandResult(friendshipRequest.Id));
     }
 }

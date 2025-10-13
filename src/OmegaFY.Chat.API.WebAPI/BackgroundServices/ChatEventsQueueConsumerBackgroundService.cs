@@ -1,18 +1,16 @@
 ﻿using OmegaFY.Chat.API.Application.Events;
 using OmegaFY.Chat.API.Application.Extensions;
-using OmegaFY.Chat.API.Common.Helpers;
 using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
-using OpenTelemetry;
 using System.Diagnostics;
 
 namespace OmegaFY.Chat.API.WebAPI.BackgroundServices;
 
 public sealed class ChatEventsQueueConsumerBackgroundService : BackgroundService
 {
-    private static readonly TimeSpan INTERVAL_PERIOD = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan INTERVAL_PERIOD = TimeSpan.FromSeconds(1);
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -58,6 +56,8 @@ public sealed class ChatEventsQueueConsumerBackgroundService : BackgroundService
             {
                 try
                 {
+                    _logger.LogInformation("Handling event {EventType} with handler {HandlerType}", eventType.Name, handler.GetType().Name);
+
                     using Activity activity = _openTelemetryRegisterProvider.StartActivity(OpenTelemetryConstants.ACTIVITY_EVENT_HANDLER_NAME);
                     activity.SetHandlerName(handler.GetType().Name);
 

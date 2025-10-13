@@ -36,23 +36,25 @@ public sealed class User : Entity, IAggregateRoot<User>
         DisplayName = displayName;
     }
 
-    public Friendship SendFriendshipRequest(ReferenceId invitedUserId)
+    public void SendFriendshipRequest(Friendship friendshipRequest)
     {
-        if (invitedUserId == Id)
+        if (friendshipRequest is null)
+            throw new DomainArgumentException("A solicitação de amizade não pode ser nula.");
+
+        if (friendshipRequest.RequestingUserId != Id)
+            throw new DomainInvalidOperationException("A solicitação de amizade não pertence a este usuário."); 
+
+        if (friendshipRequest.InvitedUserId == Id)
             throw new DomainArgumentException("Um usuário não pode enviar uma solicitação de amizade para si mesmo.");
 
         if (Friendships.Any(friendship =>
-            (friendship.RequestingUserId == Id && friendship.InvitedUserId == invitedUserId) ||
-            (friendship.RequestingUserId == invitedUserId && friendship.InvitedUserId == Id)))
+            (friendship.RequestingUserId == Id && friendship.InvitedUserId == friendshipRequest.InvitedUserId) ||
+            (friendship.RequestingUserId == friendshipRequest.InvitedUserId && friendship.InvitedUserId == Id)))
         {
             throw new DomainArgumentException("Já existe uma solicitação de amizade entre esses usuários.");
         }
 
-        Friendship friendshipRequest = new Friendship(Id, invitedUserId);
-
         _friendshipRequested.Add(friendshipRequest);
-
-        return friendshipRequest;
     }
 
     public void AcceptFriendshipRequest(ReferenceId friendshipId) => GetFriendshipIfPending(friendshipId).Accept();

@@ -29,7 +29,7 @@ public static class DependencyInjectionExtensions
         return services.AddDbContextPool<ApplicationContext>(options =>
         {
             options.UseSqlServer(connectionString);
-
+            
             if (environment.IsDevelopment())
             {
                 options.EnableDetailedErrors();

@@ -15,6 +15,8 @@ public class UsersController : ApiControllerBase
     public async Task<IActionResult> GetCurrentUserInfo([FromServices] GetCurrentUserInfoQueryHandler handler, CancellationToken cancellationToken)
         => Ok(await handler.HandleAsync(new GetCurrentUserInfoQuery(), cancellationToken));
 
+    //[HttpGet("{userId:guid}")]
+
     [HttpGet("me/friendships/{friendshipId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetFriendshipByIdQueryResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]

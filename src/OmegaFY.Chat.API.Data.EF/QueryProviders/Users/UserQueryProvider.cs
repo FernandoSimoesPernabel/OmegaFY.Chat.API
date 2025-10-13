@@ -15,7 +15,24 @@ internal sealed class UserQueryProvider : IUserQueryProvider
     public async Task<GetCurrentUserInfoQueryResult> GetCurrentUserInfoAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await _context.Set<GetCurrentUserInfoQueryResult>()
-            .FromSqlInterpolated($"SELECT Id, DisplayName, Email FROM chat.Users WHERE Id = {userId}")
+            .FromSqlInterpolated(@$"
+                SELECT 
+                    U.Id, 
+                    U.DisplayName, 
+                    U.Email,
+                    F.Id AS FriendshipId,
+                    F.RequestingUserId,
+                    F.InvitedUserId,
+                    F.StartedDate
+
+                FROM 
+                    chat.Users AS U
+
+                LEFT JOIN 
+                    chat.Friendships AS F ON (F.RequestingUserId = U.Id OR F.InvitedUserId = U.Id)
+
+                WHERE 
+                    Id = {userId}")
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
     }
