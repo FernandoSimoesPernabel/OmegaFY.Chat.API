@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
-using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;

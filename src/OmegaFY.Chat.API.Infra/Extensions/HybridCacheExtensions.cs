@@ -29,7 +29,7 @@ public static class HybridCacheExtensions
                Expiration = authToken.RefreshTokenExpirationDate - DateTime.UtcNow,
                LocalCacheExpiration = authToken.RefreshTokenExpirationDate - DateTime.UtcNow
            },
-           [userId.ToString()],
+           [],
            cancellationToken);
     }
 

@@ -11,8 +11,6 @@ namespace OmegaFY.Chat.API.Application.Commands.Auth.Logoff;
 
 public sealed class LogoffCommandHandler : CommandHandlerBase<LogoffCommandHandler, LogoffCommand, LogoffCommandResult>
 {
-    private readonly HybridCache _hybridCache;
-
     private readonly IUserInformation _userInformation;
 
     public LogoffCommandHandler(
@@ -20,10 +18,8 @@ public sealed class LogoffCommandHandler : CommandHandlerBase<LogoffCommandHandl
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<LogoffCommand> validator,
         IMessageBus messageBus,
-        HybridCache hybridCache,
         IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
     {
-        _hybridCache = hybridCache;
         _userInformation = userInformation;
     }
 
