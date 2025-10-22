@@ -7,6 +7,6 @@ public sealed class GetFriendshipByIdQueryValidator : AbstractValidator<GetFrien
 {
     public GetFriendshipByIdQueryValidator()
     {
-        RuleFor(x => x).NotNull().WithMessage("A consulta não foi informada.");
+        RuleFor(x => x.FriendshipId).NotEmpty().WithMessage("O ID da amizade não pode ser vazio.");
     }
 }

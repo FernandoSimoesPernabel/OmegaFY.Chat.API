@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using OmegaFY.Chat.API.Application.Commands.Users.SendFriendshipRequest;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Auth;
+namespace OmegaFY.Chat.API.Application.Validators.Commands.Users;
 
 public sealed class SendFriendshipRequestCommandValidator : AbstractValidator<SendFriendshipRequestCommand>
 {

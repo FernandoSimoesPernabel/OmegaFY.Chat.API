@@ -2,6 +2,7 @@
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
+using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
 using System.Data;
 
 namespace OmegaFY.Chat.API.Data.Dapper.QueryProviders.Users;
@@ -39,7 +40,7 @@ internal sealed class UserQueryProvider : IUserQueryProvider
             WHERE 
                 (F.RequestingUserId = @UserId OR F.InvitedUserId = @UserId)";
 
-        using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { UserId = userId });
+        await using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { UserId = userId });
 
         GetCurrentUserInfoQueryResult result = await gridReader.ReadFirstOrDefaultAsync<GetCurrentUserInfoQueryResult>();
 
@@ -52,7 +53,7 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         };
     }
 
-    public async Task<FriendshipModel> GetFriendshipByIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
+    public Task<FriendshipModel> GetFriendshipByIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
     {
         const string sql = @"
             SELECT TOP 1
@@ -68,6 +69,27 @@ internal sealed class UserQueryProvider : IUserQueryProvider
             WHERE 
                 Id = @FriendshipId AND (RequestingUserId = @UserId OR InvitedUserId = @UserId)";
 
-        return await _dbConnection.QueryFirstOrDefaultAsync<FriendshipModel>(sql, new { FriendshipId = friendshipId, UserId = userId });
+        return _dbConnection.QueryFirstOrDefaultAsync<FriendshipModel>(sql, new { FriendshipId = friendshipId, UserId = userId });
+    }
+
+    public Task<GetUserByIdQueryResult> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        const string sql = @"
+            SELECT TOP 1
+                U.Id, 
+                U.DisplayName, 
+                U.Email,
+                F.Status AS FriendshipStatus
+            
+            FROM 
+                chat.Users AS U
+
+            LEFT JOIN 
+                chat.Friendships AS F ON (F.InvitedUserId = U.Id) OR (F.RequestingUserId = U.Id)
+            
+            WHERE 
+                U.Id = @UserId;";
+
+        return _dbConnection.QueryFirstOrDefaultAsync<GetUserByIdQueryResult>(sql, new { UserId = userId });
     }
 }
