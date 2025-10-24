@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,11 +21,15 @@ using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Configs;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers.Implementations;
+using OmegaFY.Chat.API.Infra.RateLimite.Configs;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Globalization;
 using System.Text;
+using System.Threading;
+using System.Threading.RateLimiting;
 
 namespace OmegaFY.Chat.API.Infra.Extensions;
 
@@ -171,6 +177,48 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddCache(this IServiceCollection services)
     {
         services.AddHybridCache();
+
+        return services;
+    }
+
+    public static IServiceCollection AddWebApiRateLimiter(this IServiceCollection services, IConfiguration configuration)
+    {
+        IpOrUserTokenBucketPolicySettings ipOrUserTokenPolicySettings = configuration.GetSection(nameof(IpOrUserTokenBucketPolicySettings)).Get<IpOrUserTokenBucketPolicySettings>();
+
+        services.AddRateLimiter(limiterOptions =>
+        {
+            limiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            limiterOptions.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+            {
+                TokenBucketRateLimiterOptions tokenBucketOptions = new TokenBucketRateLimiterOptions()
+                {
+                    AutoReplenishment = true,
+                    QueueLimit = 0,
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    ReplenishmentPeriod = ipOrUserTokenPolicySettings.ReplenishmentPeriod,
+                    TokenLimit = ipOrUserTokenPolicySettings.TokenLimit,
+                    TokensPerPeriod = ipOrUserTokenPolicySettings.TokensPerPeriod
+                };
+
+                string userEmail = null;
+
+                if (context.User.IsAuthenticated())
+                    userEmail = context.User.TryGetEmailFromClaims();
+
+                return userEmail is not null
+                    ? RateLimitPartition.GetTokenBucketLimiter(userEmail, _ => tokenBucketOptions)
+                    : RateLimitPartition.GetTokenBucketLimiter(context.Connection.RemoteIpAddress.ToString(), _ => tokenBucketOptions);
+            });
+
+            limiterOptions.OnRejected = async (context, cancellationToken) =>
+            {
+                if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out TimeSpan retryAfter))
+                    context.HttpContext.Response.Headers.RetryAfter = retryAfter.TotalSeconds.ToString();
+
+                await context.HttpContext.Response.WriteAsync("Rate limit exceeded. Please try again later...", cancellationToken);
+            };
+        });
 
         return services;
     }
