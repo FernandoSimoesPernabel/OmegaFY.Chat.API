@@ -201,10 +201,7 @@ public static class DependencyInjectionExtensions
                     TokensPerPeriod = ipOrUserTokenPolicySettings.TokensPerPeriod
                 };
 
-                string userEmail = null;
-
-                if (context.User.IsAuthenticated())
-                    userEmail = context.User.TryGetEmailFromClaims();
+                string userEmail = context.User.IsAuthenticated() ? context.User.TryGetEmailFromClaims() : null;
 
                 return userEmail is not null
                     ? RateLimitPartition.GetTokenBucketLimiter(userEmail, _ => tokenBucketOptions)
