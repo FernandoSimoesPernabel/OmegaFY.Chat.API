@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OmegaFY.Chat.API.Common.Models;
 using OmegaFY.Chat.API.Infra.Authentication.JwtEvents;
@@ -18,6 +19,7 @@ using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Configs;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers.Implementations;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -40,8 +42,7 @@ public static class DependencyInjectionExtensions
         services.AddOpenTelemetry()
             .WithTracing(builder =>
             {
-                builder.AddSource(openTelemetrySettings.ServiceName)
-                    .SetResourceBuilder(resourceBuilder)
+                builder.AddSource(openTelemetrySettings.ServiceName).SetResourceBuilder(resourceBuilder)
                     .AddAspNetCoreInstrumentation(aspnetOptions => aspnetOptions.Filter = (context) => context.Request.Path.Value.ShouldMonitorRoute())
                     .AddHttpClientInstrumentation(httpClientOptions =>
                     {
@@ -57,7 +58,7 @@ public static class DependencyInjectionExtensions
                     });
             }).WithMetrics(builder =>
             {
-                builder.AddHttpClientInstrumentation()
+                builder.AddHttpClientInstrumentation().SetResourceBuilder(resourceBuilder)
                     .AddAspNetCoreInstrumentation()
                     .AddHoneycomb(honeycombOptions =>
                     {
@@ -65,7 +66,14 @@ public static class DependencyInjectionExtensions
                         honeycombOptions.ApiKey = openTelemetrySettings.HoneycombSettings.HoneycombApiKey;
                         honeycombOptions.ServiceVersion = ProjectVersion.Instance.ToString();
                     });
-            }).WithLogging();
+            }).WithLogging(builder =>
+            {
+                builder.SetResourceBuilder(resourceBuilder).AddOtlpExporter(otlpOptions =>
+                {
+                    otlpOptions.Endpoint = openTelemetrySettings.HoneycombSettings.HoneycombApiEndpoint;
+                    otlpOptions.Headers = openTelemetrySettings.HoneycombSettings.HoneycombApiKeyHeader;
+                });
+            });
 
         return services;
     }

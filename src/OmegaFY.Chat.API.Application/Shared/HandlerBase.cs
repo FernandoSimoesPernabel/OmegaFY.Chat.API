@@ -49,12 +49,12 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
         }
         catch (ErrorCodeException ex)
         {
-            activity.AddException(ex);
+            activity.SetResult(ex);
             return new HandlerResult<TResult>(ex.ErrorCode, ex.Message);
         }
         catch (Exception ex)
         {
-            activity.AddException(ex);
+            activity.SetResult(ex);
             return new HandlerResult<TResult>(ApplicationErrorCodesConstants.NOT_DOMAIN_ERROR, ex.GetSafeErrorMessageWhenInProd(_hostEnvironment.IsDevelopment()));
         }
     }

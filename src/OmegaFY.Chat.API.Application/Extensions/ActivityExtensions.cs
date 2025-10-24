@@ -27,6 +27,12 @@ public static class ActivityExtensions
         return activity.SetStatus(result);
     }
 
+    public static Activity SetResult(this Activity activity, Exception ex)
+    {
+        activity.AddException(ex);
+        return activity.SetStatus(ActivityStatusCode.Error);
+    }
+
     public static Activity SetStatus(this Activity activity, HandlerResult result)
     {
         if (result is null)
