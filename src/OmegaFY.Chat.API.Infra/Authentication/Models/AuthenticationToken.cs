@@ -6,15 +6,15 @@ public readonly record struct AuthenticationToken
 
     public DateTime TokenExpirationDate { get; }
 
-    public Guid RefreshToken { get; }
+    public string RefreshToken { get; }
 
     public DateTime RefreshTokenExpirationDate { get; }
 
     public AuthenticationToken(string token, DateTime tokenExpirationDate, DateTime refreshTokenExpirationDate)
-        : this(token, tokenExpirationDate, Guid.NewGuid(), refreshTokenExpirationDate) { }
+        : this(token, tokenExpirationDate, Guid.NewGuid().ToString(), refreshTokenExpirationDate) { }
 
     [System.Text.Json.Serialization.JsonConstructor]
-    public AuthenticationToken(string token, DateTime tokenExpirationDate, Guid refreshToken, DateTime refreshTokenExpirationDate)
+    public AuthenticationToken(string token, DateTime tokenExpirationDate, string refreshToken, DateTime refreshTokenExpirationDate)
     {
         Token = token;
         TokenExpirationDate = tokenExpirationDate;

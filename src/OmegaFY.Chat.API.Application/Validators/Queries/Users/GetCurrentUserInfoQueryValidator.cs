@@ -5,4 +5,8 @@ namespace OmegaFY.Chat.API.Application.Validators.Queries.Users;
 
 public sealed class GetCurrentUserInfoQueryValidator : AbstractValidator<GetCurrentUserInfoQuery>
 {
+    public GetCurrentUserInfoQueryValidator()
+    {
+        RuleFor(x => x).NotNull().WithMessage("A consulta não foi informada.");
+    }
 }

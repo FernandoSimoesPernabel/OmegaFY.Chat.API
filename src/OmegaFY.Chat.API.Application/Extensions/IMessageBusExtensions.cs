@@ -7,9 +7,6 @@ namespace OmegaFY.Chat.API.Application.Extensions;
 
 public static class IMessageBusExtensions
 {
-    public static async Task RaiseUserRegisteredEventAsync(this IMessageBus messageBus, UserRegisteredEvent @event, CancellationToken cancellationToken) 
-        => await messageBus.SimplePublishAsync(@event, cancellationToken);
-
     public static async Task SimplePublishAsync<TData>(this IMessageBus messageBus, TData payload, CancellationToken cancellationToken)
     {
         MessageEnvelope message = new MessageEnvelope()

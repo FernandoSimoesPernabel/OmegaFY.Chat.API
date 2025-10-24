@@ -21,7 +21,7 @@ internal sealed class HttpContextAccessorUserInformation : IUserInformation
 
         Guid? userId = httpContextAccessor.HttpContext.User.TryGetUserIdFromClaims();
 
-        if (userId is null)
+        if (userId is null || userId.Value == Guid.Empty)
             throw new UnauthorizedException();
 
         string email = httpContextAccessor.HttpContext.User.TryGetEmailFromClaims();

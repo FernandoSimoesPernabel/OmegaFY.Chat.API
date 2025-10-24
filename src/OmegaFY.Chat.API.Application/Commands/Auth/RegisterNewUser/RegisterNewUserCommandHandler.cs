@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Application.Extensions;
+using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
@@ -49,17 +50,13 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
             new LoginInput(newUser.Id, newUser.Email, command.Password, newUser.DisplayName),
             cancellationToken);
 
-        await _messageBus.RaiseUserRegisteredEventAsync(new UserRegisteredEvent(newUser.Id, newUser.Email, newUser.DisplayName), cancellationToken);
-
-        await _repository.SaveChangesAsync(cancellationToken);
-
         await _hybridCache.SetAuthenticationTokenCacheAsync(newUser.Id, authToken, cancellationToken);
+        
+        await _messageBus.SimplePublishAsync(new UserRegisteredEvent(newUser.Id, newUser.Email, newUser.DisplayName), cancellationToken);
 
         return HandlerResult.Create(new RegisterNewUserCommandResult(
             newUser.Id,
-            authToken.Token,
-            authToken.TokenExpirationDate,
-            authToken.RefreshToken,
-            authToken.RefreshTokenExpirationDate));
+            new Token(authToken.Token, authToken.TokenExpirationDate),
+            new Token(authToken.RefreshToken, authToken.TokenExpirationDate)));
     }
 }

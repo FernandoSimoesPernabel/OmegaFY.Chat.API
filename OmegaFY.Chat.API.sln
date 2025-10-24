@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.Data.EF", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.Tests.Benchmark", "test\OmegaFY.Chat.API.Tests.Benchmark\OmegaFY.Chat.API.Tests.Benchmark.csproj", "{8000E866-F587-4BBF-B0A5-E3374A0F06F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.Data.Dapper", "src\OmegaFY.Chat.API.Data.Dapper\OmegaFY.Chat.API.Data.Dapper.csproj", "{7034C2CE-89D6-4FA8-B76A-D7C0974694C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{8000E866-F587-4BBF-B0A5-E3374A0F06F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8000E866-F587-4BBF-B0A5-E3374A0F06F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8000E866-F587-4BBF-B0A5-E3374A0F06F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{737B1D12-291E-4779-8FC2-23D76AE469D7} = {ACEDD0B1-2763-4CC0-9A77-5CB7597D2805}
 		{C7AD18AD-B9E3-479A-8B28-B377AB51EF48} = {643747C7-0307-8931-84D8-A7D1915E22E5}
 		{8000E866-F587-4BBF-B0A5-E3374A0F06F4} = {ACEDD0B1-2763-4CC0-9A77-5CB7597D2805}
+		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9} = {643747C7-0307-8931-84D8-A7D1915E22E5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F5E0E93-9783-4F31-A9B0-63967A0E72BD}

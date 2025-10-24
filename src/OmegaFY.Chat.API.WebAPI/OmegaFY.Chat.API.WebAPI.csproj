@@ -8,17 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageReference Include="System.Text.Json" Version="9.0.10" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OmegaFY.Chat.API.Application\OmegaFY.Chat.API.Application.csproj" />
     <ProjectReference Include="..\OmegaFY.Chat.API.Common\OmegaFY.Chat.API.Common.csproj" />
+    <ProjectReference Include="..\OmegaFY.Chat.API.Data.Dapper\OmegaFY.Chat.API.Data.Dapper.csproj" />
     <ProjectReference Include="..\OmegaFY.Chat.API.Data.EF\OmegaFY.Chat.API.Data.EF.csproj" />
     <ProjectReference Include="..\OmegaFY.Chat.API.Infra\OmegaFY.Chat.API.Infra.csproj" />
   </ItemGroup>

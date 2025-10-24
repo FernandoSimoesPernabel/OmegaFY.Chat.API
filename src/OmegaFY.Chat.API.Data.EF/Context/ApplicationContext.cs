@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Data.EF.ValueConverts;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
@@ -15,8 +14,6 @@ internal sealed class ApplicationContext : IdentityDbContext<IdentityUser<Guid>,
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationContext).Assembly);
 
-        RegisterNoKeyModels(modelBuilder);
-
         base.OnModelCreating(modelBuilder);
     }
 
@@ -26,9 +23,4 @@ internal sealed class ApplicationContext : IdentityDbContext<IdentityUser<Guid>,
         
         base.ConfigureConventions(configurationBuilder);
     }
-
-    private void RegisterNoKeyModels(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<GetCurrentUserInfoQueryResult>().HasNoKey();
-    }   
 }

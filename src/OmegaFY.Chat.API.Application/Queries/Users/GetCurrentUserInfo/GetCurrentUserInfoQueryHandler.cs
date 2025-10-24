@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
-using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
@@ -27,9 +26,9 @@ public sealed class GetCurrentUserInfoQueryHandler : QueryHandlerBase<GetCurrent
     protected override async Task<HandlerResult<GetCurrentUserInfoQueryResult>> InternalHandleAsync(GetCurrentUserInfoQuery query, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            HandlerResult.CreateUnauthorized<GetCurrentUserInfoQueryResult>();
+            return HandlerResult.CreateUnauthorized<GetCurrentUserInfoQueryResult>();
 
-        GetCurrentUserInfoQueryResult result = 
+        GetCurrentUserInfoQueryResult result =
             await _userQueryProvider.GetCurrentUserInfoAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 
         if (result is null)

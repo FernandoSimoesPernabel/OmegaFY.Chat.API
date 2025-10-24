@@ -1,4 +1,5 @@
-﻿using OmegaFY.Chat.API.Data.EF.Extensions;
+﻿using OmegaFY.Chat.API.Data.Dapper.Extensions;
+using OmegaFY.Chat.API.Data.EF.Extensions;
 
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
 
@@ -10,6 +11,6 @@ public sealed class DatabaseRegistration : IDependencyInjectionRegister
         
         builder.Services.AddEntityFrameworkRepositories();
         
-        builder.Services.AddEntityFrameworkQueryProviders();
+        builder.Services.AddDapperQueryProviders(builder.Configuration);
     }
 }
