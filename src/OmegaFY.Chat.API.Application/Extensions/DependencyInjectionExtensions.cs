@@ -4,6 +4,9 @@ using OmegaFY.Chat.API.Application.Commands.Auth.Login;
 using OmegaFY.Chat.API.Application.Commands.Auth.Logoff;
 using OmegaFY.Chat.API.Application.Commands.Auth.RefreshToken;
 using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
+using OmegaFY.Chat.API.Application.Commands.Users.AcceptFriendshipRequest;
+using OmegaFY.Chat.API.Application.Commands.Users.RejectFriendshipRequest;
+using OmegaFY.Chat.API.Application.Commands.Users.RemoveFriendship;
 using OmegaFY.Chat.API.Application.Commands.Users.SendFriendshipRequest;
 using OmegaFY.Chat.API.Application.Events;
 using OmegaFY.Chat.API.Application.Events.Auth.Login;
@@ -16,6 +19,7 @@ using OmegaFY.Chat.API.Application.Events.Users.RemoveFriendship;
 using OmegaFY.Chat.API.Application.Events.Users.SendFriendshipRequest;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
+using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
 
 namespace OmegaFY.Chat.API.Application.Extensions;
 
@@ -30,6 +34,10 @@ public static class DependencyInjectionExtensions
         services.AddScoped<LoginCommandHandler>();
         services.AddScoped<LogoffCommandHandler>();
         services.AddScoped<RefreshTokenCommandHandler>();
+        
+        services.AddScoped<AcceptFriendshipRequestCommandHandler>();
+        services.AddScoped<RejectFriendshipRequestCommandHandler>();
+        services.AddScoped<RemoveFriendshipCommandHandler>();
         services.AddScoped<SendFriendshipRequestCommandHandler>();
 
         return services;
@@ -39,6 +47,7 @@ public static class DependencyInjectionExtensions
     {
         services.AddScoped<GetCurrentUserInfoQueryHandler>();
         services.AddScoped<GetFriendshipByIdQueryHandler>();
+        services.AddScoped<GetUserByIdQueryResultHandler>();
 
         return services;
     }

@@ -74,7 +74,7 @@ public sealed class User : Entity, IAggregateRoot<User>
         if (friendship is null)
             throw new NotFoundException("Solicitação de amizade não encontrada.");
 
-        if (friendship.InvitedUserId != Id)
+        if (friendship.RequestingUserId != Id)
             throw new DomainInvalidOperationException("A solicitação de amizade não pertence a este usuário.");
 
         if (friendship.Status != Enums.FriendshipStatus.Pending)
