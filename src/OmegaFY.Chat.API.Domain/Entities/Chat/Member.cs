@@ -10,6 +10,8 @@ public sealed class Member : Entity
 
     public DateTime JoinedDate { get; }
 
+    internal Member() { }
+
     public Member(ReferenceId conversationId, ReferenceId userId)
     {
         //TODO

@@ -30,7 +30,7 @@ public sealed class GetFriendshipByIdQueryHandler : QueryHandlerBase<GetFriendsh
             return HandlerResult.CreateUnauthorized<GetFriendshipByIdQueryResult>();
 
         FriendshipModel friendshipModel = 
-            await _userQueryProvider.GetFriendshipByIdAsync(_userInformation.CurrentRequestUserId.Value, request.FriendshipId, cancellationToken);
+            await _userQueryProvider.GetFriendshipByIdAndUserIdAsync(_userInformation.CurrentRequestUserId.Value, request.FriendshipId, cancellationToken);
 
         if (friendshipModel is null)
             return HandlerResult.CreateNotFound<GetFriendshipByIdQueryResult>();

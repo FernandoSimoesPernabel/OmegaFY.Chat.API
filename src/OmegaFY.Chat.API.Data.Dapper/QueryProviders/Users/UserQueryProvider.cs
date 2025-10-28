@@ -3,6 +3,7 @@ using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
+using OmegaFY.Chat.API.Domain.Entities.Users;
 using System.Data;
 
 namespace OmegaFY.Chat.API.Data.Dapper.QueryProviders.Users;
@@ -53,7 +54,7 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         };
     }
 
-    public Task<FriendshipModel> GetFriendshipByIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
+    public Task<FriendshipModel> GetFriendshipByIdAndUserIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
     {
         const string sql = @"
             SELECT TOP 1
@@ -70,6 +71,25 @@ internal sealed class UserQueryProvider : IUserQueryProvider
                 Id = @FriendshipId AND (RequestingUserId = @UserId OR InvitedUserId = @UserId)";
 
         return _dbConnection.QueryFirstOrDefaultAsync<FriendshipModel>(sql, new { FriendshipId = friendshipId, UserId = userId });
+    }
+
+    public Task<FriendshipModel> GetFriendshipByIdAsync(Guid friendshipId, CancellationToken cancellationToken)
+    {
+        const string sql = @"
+            SELECT TOP 1
+                Id AS FriendshipId, 
+                RequestingUserId, 
+                InvitedUserId,
+                StartedDate,
+                Status
+            
+            FROM 
+                chat.Friendships
+            
+            WHERE 
+                Id = @FriendshipId";
+
+        return _dbConnection.QueryFirstOrDefaultAsync<FriendshipModel>(sql, new { FriendshipId = friendshipId });
     }
 
     public Task<GetUserByIdQueryResult> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)

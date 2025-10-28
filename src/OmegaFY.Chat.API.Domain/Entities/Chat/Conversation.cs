@@ -1,5 +1,6 @@
 ﻿using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Enums;
+using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Domain.Entities.Chat;
 
@@ -17,12 +18,14 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     public IReadOnlyCollection<Member> Members => _members.AsReadOnly();
 
+    internal Conversation() { }
+
     private Conversation(GroupConfig groupConfig) : this(ConversationType.GroupChat, groupConfig) { }
 
-    private Conversation(Member memberOne, Member memberTwo) : this(ConversationType.MemberToMember, null)
+    private Conversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId) : this(ConversationType.MemberToMember, null)
     {
-        _members.Add(memberOne);
-        _members.Add(memberTwo);
+        _members.Add(new Member(Id, memberOneUserId));
+        _members.Add(new Member(Id, memberTwoUserId));
     }
 
     private Conversation(ConversationType conversationType, GroupConfig groupConfig)
@@ -38,7 +41,7 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
         CreatedDate = DateTime.UtcNow;
     }
 
-    public static Conversation StartMemberToMemberConversation(Member memberOne, Member memberTwo) => new Conversation(memberOne, memberTwo);
+    public static Conversation StartMemberToMemberConversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId) => new Conversation(memberOneUserId, memberTwoUserId);
 
     public static Conversation CreateGroupChat(GroupConfig groupConfig) => new Conversation(groupConfig);
 }

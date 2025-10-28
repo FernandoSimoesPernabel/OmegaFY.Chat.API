@@ -13,6 +13,8 @@ public sealed class GroupConfig : Entity
 
     public byte MaxNumberOfMembers { get; }
 
+    internal GroupConfig() { }
+
     public GroupConfig(ReferenceId conversationId, ReferenceId createdByUserId, string groupName, byte maxNumberOfMembers)
     {
         //TODO
