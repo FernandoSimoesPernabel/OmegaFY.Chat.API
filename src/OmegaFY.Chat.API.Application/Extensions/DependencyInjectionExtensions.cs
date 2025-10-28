@@ -63,13 +63,13 @@ public static class DependencyInjectionExtensions
         
         services.AddScoped<IEventHandler<UserTokenRefreshedEvent>, ExpireUsedRefreshTokenEventHandler>();
         
-        services.AddScoped<IEventHandler<FriendshipAcceptedEvent>, FriendshipAcceptedEventHandler>();
+        services.AddScoped<IEventHandler<FriendshipAcceptedEvent>, InitiateConversationEventHandler>();
 
         services.AddScoped<IEventHandler<FriendshipRejectedEvent>, FriendshipRejectedEventHandler>();
 
         services.AddScoped<IEventHandler<FriendshipRequestedEvent>, FriendshipRequestedEventHandler>();
 
-        services.AddScoped<IEventHandler<FriendshipRemovedEvent>, FriendshipRemovedEventHandler>();
+        services.AddScoped<IEventHandler<FriendshipRemovedEvent>, CloseConversationEventHandler>();
 
         return services;
     }

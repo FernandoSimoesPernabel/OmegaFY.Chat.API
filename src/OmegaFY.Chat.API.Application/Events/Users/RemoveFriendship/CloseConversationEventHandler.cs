@@ -2,7 +2,7 @@
 
 namespace OmegaFY.Chat.API.Application.Events.Users.RemoveFriendship;
 
-internal sealed class FriendshipRemovedEventHandler : EventHandlerHandlerBase<FriendshipRemovedEvent>
+internal sealed class CloseConversationEventHandler : EventHandlerHandlerBase<FriendshipRemovedEvent>
 {
     protected override Task HandleAsync(FriendshipRemovedEvent @event, CancellationToken cancellationToken)
     {

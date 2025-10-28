@@ -11,7 +11,7 @@ using OmegaFY.Chat.API.WebAPI.Models.Users;
 
 namespace OmegaFY.Chat.API.WebAPI.Controllers;
 
-public class UsersController : ApiControllerBase
+public sealed class UsersController : ApiControllerBase
 {
     [HttpGet("me")]
     [ProducesResponseType(typeof(ApiResponse<GetCurrentUserInfoQueryResult>), StatusCodes.Status200OK)]
