@@ -9,13 +9,22 @@ public sealed class GroupConfig : Entity
 
     public ReferenceId CreatedByUserId { get; }
 
-    public string GroupName { get; }
+    public string GroupName { get; private set; }
 
-    public byte MaxNumberOfMembers { get; }
+    public byte MaxNumberOfMembers { get; private set; }
 
     internal GroupConfig() { }
 
     public GroupConfig(ReferenceId conversationId, ReferenceId createdByUserId, string groupName, byte maxNumberOfMembers)
+    {
+        //TODO validar
+        ConversationId = conversationId;
+        CreatedByUserId = createdByUserId;
+        ChangeGroupName(groupName);
+        ChangeMaxNumberOfMembers(maxNumberOfMembers);
+    }
+
+    internal void ChangeGroupName(string groupName)
     {
         //TODO
         if (string.IsNullOrWhiteSpace(groupName))
@@ -24,9 +33,8 @@ public sealed class GroupConfig : Entity
         if (groupName.Length > 100) //TODO 
             throw new DomainArgumentException("");
 
-        ConversationId = conversationId;
-        CreatedByUserId = createdByUserId;
         GroupName = groupName;
-        MaxNumberOfMembers = Math.Min(maxNumberOfMembers, (byte)100);
     }
+
+    internal void ChangeMaxNumberOfMembers(byte maxNumberOfMembers) => MaxNumberOfMembers = Math.Min(maxNumberOfMembers, (byte)100); //TODO constant
 }

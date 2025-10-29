@@ -14,15 +14,15 @@ public sealed class Message : Entity, IAggregateRoot<Message>
 
     public MessageType Type { get; }
 
-    public MessageBody Content { get; }
+    public MessageBody Body { get; }
 
-    public Message(ReferenceId conversationId, ReferenceId senderMemberId, MessageType messageType, MessageBody content)
+    public Message(ReferenceId conversationId, ReferenceId senderMemberId, MessageType messageType, MessageBody body)
     {
         //TODO
         ConversationId = conversationId;
         SenderMemberId = senderMemberId;
         Type = messageType;
-        Content = content;
+        Body = body;
 
         SendDate = DateTime.UtcNow;
     }

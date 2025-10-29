@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OmegaFY.Chat.API.Domain.Constants;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
 
 namespace OmegaFY.Chat.API.Data.EF.Mappings.Chat;
@@ -11,9 +10,9 @@ internal sealed class ConversationMapping : IEntityTypeConfiguration<Conversatio
     {
         builder.HasKey(conversation => conversation.Id);
 
-        builder.Property(conversation => conversation.Type).HasColumnType("varchar(15)").IsRequired();
+        builder.Property(conversation => conversation.Type).HasMaxLength(15).IsUnicode(false).IsRequired();
 
-        builder.Property(conversation => conversation.Status).HasColumnType("varchar(10)").IsRequired();
+        builder.Property(conversation => conversation.Status).HasMaxLength(10).IsUnicode(false).IsRequired();
 
         builder.Property(conversation => conversation.CreatedDate).IsRequired();
 

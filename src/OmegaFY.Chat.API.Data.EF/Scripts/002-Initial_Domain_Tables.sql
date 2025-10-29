@@ -4,7 +4,7 @@
     DisplayName varchar(100) NOT NULL,
 
     CONSTRAINT PK_Users PRIMARY KEY (Id),
-	CONSTRAINT UQ_Email UNIQUE (Email)
+	CONSTRAINT UQ_Users_Email UNIQUE (Email)
 );
 
 CREATE TABLE chat.Friendships (
@@ -34,7 +34,7 @@ CREATE TABLE chat.GroupConfigs (
 	Id UNIQUEIDENTIFIER NOT NULL,
 	ConversationId UNIQUEIDENTIFIER NOT NULL,
 	CreatedByUserId UNIQUEIDENTIFIER NOT NULL,
-	GroupName VARCHAR(100) NOT NULL,
+	GroupName NVARCHAR(100) NOT NULL,
 	MaxNumberOfMembers TINYINT NOT NULL,
 
 	CONSTRAINT PK_GroupConfigs PRIMARY KEY (Id),
@@ -50,7 +50,8 @@ CREATE TABLE chat.[Members] (
 
 	CONSTRAINT PK_Members PRIMARY KEY (Id),
 	CONSTRAINT FK_Conversations_Members_ConversationId FOREIGN KEY (ConversationId) REFERENCES chat.Conversations (Id),
-	CONSTRAINT FK_Users_Members_UserId FOREIGN KEY (UserId) REFERENCES chat.Users (Id)
+	CONSTRAINT FK_Users_Members_UserId FOREIGN KEY (UserId) REFERENCES chat.Users (Id),
+	CONSTRAINT UQ_Members_ConversationId_UserId UNIQUE (ConversationId, UserId)
 )
 
 CREATE TABLE chat.[Messages] (

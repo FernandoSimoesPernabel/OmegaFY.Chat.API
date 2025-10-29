@@ -16,6 +16,14 @@
   <ItemGroup>
     <ProjectReference Include="..\OmegaFY.Chat.API.Domain\OmegaFY.Chat.API.Domain.csproj" />
     <ProjectReference Include="..\OmegaFY.Chat.API.Infra\OmegaFY.Chat.API.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\Chat\AddMemberToGroup\" />
+    <Folder Include="Commands\Chat\CreateGroupConversation\" />
+    <Folder Include="Commands\Chat\ChangeGroupConfig\" />
+    <Folder Include="Commands\Chat\SendMessage\" />
+    <Folder Include="Commands\Chat\RemoveMemberFromGroup\" />
   </ItemGroup> 
   
 </Project>

@@ -13,8 +13,8 @@ internal sealed class GroupConfigMapping : IEntityTypeConfiguration<GroupConfig>
         builder.Property(group => group.ConversationId).IsRequired();
 
         builder.Property(group => group.CreatedByUserId).IsRequired();
-        //TODO constant
-        builder.Property(group => group.GroupName).HasMaxLength(100).IsUnicode(false).IsRequired();
+        
+        builder.Property(group => group.GroupName).HasMaxLength(100).IsUnicode().IsRequired();
 
         builder.Property(group => group.MaxNumberOfMembers).IsRequired();
 

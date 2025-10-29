@@ -24,6 +24,10 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     private Conversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId) : this(ConversationType.MemberToMember, null)
     {
+        //TODO
+        if (memberOneUserId == memberTwoUserId)
+            throw new DomainArgumentException("");
+
         _members.Add(new Member(Id, memberOneUserId));
         _members.Add(new Member(Id, memberTwoUserId));
     }
@@ -39,6 +43,40 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
         Status = ConversationStatus.Open;
         CreatedDate = DateTime.UtcNow;
+    }
+
+    public void AddMemberToGroup(ReferenceId userIdToAdd)
+    {
+        //TODO
+        if (Type != ConversationType.GroupChat)
+            throw new DomainInvalidOperationException("");
+
+        if (_members.Exists(member => member.UserId == userIdToAdd))
+            throw new DomainInvalidOperationException("");
+
+        _members.Add(new Member(Id, userIdToAdd));
+    }
+
+    public void RemoveMemberFromGroup(ReferenceId userIdToRemove)
+    {
+        //TODO
+        if (Type != ConversationType.GroupChat)
+            throw new DomainInvalidOperationException("");
+
+        _members.RemoveAll(member => member.UserId == userIdToRemove);
+    }
+
+    public void ChangeGroupConfig(string newGroupName, byte newMaxNumberOfMembers)
+    {
+        //TODO
+        if (Type != ConversationType.GroupChat)
+            throw new DomainInvalidOperationException("");
+
+        if (_members.Count > newMaxNumberOfMembers)
+            throw new DomainArgumentException("");
+
+        GroupConfig.ChangeGroupName(newGroupName);
+        GroupConfig.ChangeMaxNumberOfMembers(newMaxNumberOfMembers);
     }
 
     public static Conversation StartMemberToMemberConversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId) => new Conversation(memberOneUserId, memberTwoUserId);
