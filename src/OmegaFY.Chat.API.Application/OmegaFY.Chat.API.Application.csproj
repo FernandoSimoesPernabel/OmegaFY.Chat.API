@@ -22,14 +22,13 @@
     <Folder Include="Commands\Chat\AddMemberToGroup\" />
     <Folder Include="Commands\Chat\CreateGroupConversation\" />
     <Folder Include="Commands\Chat\ChangeGroupConfig\" />
-    <Folder Include="Commands\Chat\SendMessage\" />
     <Folder Include="Commands\Chat\RemoveMemberFromGroup\" />
     <Folder Include="Events\Chat\AddMemberToGroup\" />
     <Folder Include="Events\Chat\ChangeGroupConfig\" />
     <Folder Include="Events\Chat\CreateGroupConversation\" />
+    <Folder Include="Events\Chat\MarkMessageAsRead\" />
+    <Folder Include="Events\Chat\MarkMessageAsDeleted\" />
     <Folder Include="Events\Chat\RemoveMemberFromGroup\" />
-    <Folder Include="Events\Chat\SendMessage\" />
-    <Folder Include="Validators\Commands\Chat\" />
     <Folder Include="Validators\Queries\Chat\" />
   </ItemGroup> 
   

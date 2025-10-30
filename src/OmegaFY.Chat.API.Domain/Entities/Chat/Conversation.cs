@@ -24,9 +24,8 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     private Conversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId) : this(ConversationType.MemberToMember, null)
     {
-        //TODO
         if (memberOneUserId == memberTwoUserId)
-            throw new DomainArgumentException("");
+            throw new DomainArgumentException("Não é possível criar uma conversa entre o mesmo usuário.");
 
         _members.Add(new Member(Id, memberOneUserId));
         _members.Add(new Member(Id, memberTwoUserId));
@@ -34,9 +33,8 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     private Conversation(ConversationType conversationType, GroupConfig groupConfig)
     {
-        //TODO
         if (conversationType == ConversationType.GroupChat && groupConfig is null)
-            throw new DomainArgumentException("");
+            throw new DomainArgumentException("Não é possível criar uma conversa em grupo sem configuração de grupo.");
 
         Type = conversationType;
         GroupConfig = conversationType == ConversationType.GroupChat ? groupConfig : null;
@@ -47,37 +45,38 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     public void AddMemberToGroup(ReferenceId userIdToAdd)
     {
-        //TODO
         if (Type != ConversationType.GroupChat)
-            throw new DomainInvalidOperationException("");
+            throw new DomainInvalidOperationException("Não é possível adicionar membros em uma conversa que não é em grupo.");
 
-        if (_members.Exists(member => member.UserId == userIdToAdd))
-            throw new DomainInvalidOperationException("");
+        if (IsMemberInConversation(userIdToAdd))
+            throw new DomainInvalidOperationException("Usuário já é membro da conversa.");
 
         _members.Add(new Member(Id, userIdToAdd));
     }
 
     public void RemoveMemberFromGroup(ReferenceId userIdToRemove)
     {
-        //TODO
         if (Type != ConversationType.GroupChat)
-            throw new DomainInvalidOperationException("");
+            throw new DomainInvalidOperationException("Não é possível remover membros em uma conversa que não é em grupo.");
 
         _members.RemoveAll(member => member.UserId == userIdToRemove);
     }
 
     public void ChangeGroupConfig(string newGroupName, byte newMaxNumberOfMembers)
     {
-        //TODO
         if (Type != ConversationType.GroupChat)
-            throw new DomainInvalidOperationException("");
+            throw new DomainInvalidOperationException("Não é possível alterar a configuração de uma conversa que não é em grupo.");
 
         if (_members.Count > newMaxNumberOfMembers)
-            throw new DomainArgumentException("");
+            throw new DomainArgumentException("O número máximo de membros não pode ser menor que o número atual de membros.");
 
         GroupConfig.ChangeGroupName(newGroupName);
         GroupConfig.ChangeMaxNumberOfMembers(newMaxNumberOfMembers);
     }
+
+    public bool IsMemberInConversation(ReferenceId userId) => _members.Exists(member => member.UserId == userId);
+
+    public Member GetMemberByUserId(ReferenceId userId) => _members.Find(member => member.UserId == userId);
 
     public static Conversation StartMemberToMemberConversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId) => new Conversation(memberOneUserId, memberTwoUserId);
 

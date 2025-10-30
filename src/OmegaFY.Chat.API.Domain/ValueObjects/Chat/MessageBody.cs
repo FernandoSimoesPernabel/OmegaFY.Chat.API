@@ -1,4 +1,5 @@
 ﻿using OmegaFY.Chat.API.Common.Exceptions;
+using OmegaFY.Chat.API.Domain.Constants;
 
 namespace OmegaFY.Chat.API.Domain.ValueObjects.Chat;
 
@@ -11,8 +12,8 @@ public readonly record struct MessageBody
         if (string.IsNullOrWhiteSpace(content))
             throw new DomainArgumentException("Não foi informado nenhum conteudo para o corpo.");
 
-        if (content.Length > 1000) //TODO 
-            throw new DomainArgumentException("");
+        if (content.Length > ChatConstants.MESSAGE_BODY_MAX_LENGTH)
+            throw new DomainArgumentException($"A mensagem não pode exceder o limite de {ChatConstants.MESSAGE_BODY_MAX_LENGTH} caracteres.");
 
         Content = content.Trim();
     }

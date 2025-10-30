@@ -1,4 +1,5 @@
 ﻿using OmegaFY.Chat.API.Common.Exceptions;
+using OmegaFY.Chat.API.Domain.Constants;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Domain.Entities.Chat;
@@ -17,7 +18,6 @@ public sealed class GroupConfig : Entity
 
     public GroupConfig(ReferenceId conversationId, ReferenceId createdByUserId, string groupName, byte maxNumberOfMembers)
     {
-        //TODO validar
         ConversationId = conversationId;
         CreatedByUserId = createdByUserId;
         ChangeGroupName(groupName);
@@ -26,15 +26,14 @@ public sealed class GroupConfig : Entity
 
     internal void ChangeGroupName(string groupName)
     {
-        //TODO
         if (string.IsNullOrWhiteSpace(groupName))
-            throw new DomainArgumentException("");
+            throw new DomainArgumentException("O nome do grupo não foi informado.");
 
-        if (groupName.Length > 100) //TODO 
-            throw new DomainArgumentException("");
+        if (groupName.Length > ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH)
+            throw new DomainArgumentException($"O nome do grupo não pode exceder {ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH} caracteres.");
 
         GroupName = groupName;
     }
 
-    internal void ChangeMaxNumberOfMembers(byte maxNumberOfMembers) => MaxNumberOfMembers = Math.Min(maxNumberOfMembers, (byte)100); //TODO constant
+    internal void ChangeMaxNumberOfMembers(byte maxNumberOfMembers) => MaxNumberOfMembers = Math.Min(maxNumberOfMembers, ChatConstants.GROUP_CHAT_MAX_NUMBER_OF_MEMBERS);
 }

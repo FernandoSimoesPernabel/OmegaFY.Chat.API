@@ -10,15 +10,19 @@ internal sealed class ConversationMapping : IEntityTypeConfiguration<Conversatio
     {
         builder.HasKey(conversation => conversation.Id);
 
-        builder.Property(conversation => conversation.Type).HasMaxLength(15).IsUnicode(false).IsRequired();
+        builder.Property(conversation => conversation.Type).HasConversion<string>().HasMaxLength(15).IsUnicode(false).IsRequired();
 
-        builder.Property(conversation => conversation.Status).HasMaxLength(10).IsUnicode(false).IsRequired();
+        builder.Property(conversation => conversation.Status).HasConversion<string>().HasMaxLength(10).IsUnicode(false).IsRequired();
 
         builder.Property(conversation => conversation.CreatedDate).IsRequired();
 
         builder.HasOne(conversation => conversation.GroupConfig).WithOne().HasForeignKey<GroupConfig>(group => group.ConversationId);
 
         builder.HasMany(conversation => conversation.Members).WithOne().HasForeignKey(member => member.ConversationId);
+
+        builder.Navigation(conversation => conversation.GroupConfig).AutoInclude();
+
+        builder.Navigation(conversation => conversation.Members).AutoInclude();
 
         builder.ToTable("Conversations", "chat");
     }

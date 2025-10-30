@@ -58,7 +58,7 @@ CREATE TABLE chat.[Messages] (
 	Id UNIQUEIDENTIFIER NOT NULL,
 	ConversationId UNIQUEIDENTIFIER NOT NULL,
 	SenderMemberId UNIQUEIDENTIFIER NOT NULL,
-	JoinedDate DATETIME2 NOT NULL,
+	SendDate DATETIME2 NOT NULL,
 	[Type] VARCHAR(20) NOT NULL,
 	Content NVARCHAR(1000) NOT NULL,
 
@@ -69,14 +69,14 @@ CREATE TABLE chat.[Messages] (
 
 CREATE TABLE chat.MemberMessages (
 	Id UNIQUEIDENTIFIER NOT NULL,
-	ConversationId UNIQUEIDENTIFIER NOT NULL,
+	MessageId UNIQUEIDENTIFIER NOT NULL,
 	SenderMemberId UNIQUEIDENTIFIER NOT NULL,
 	DestinationMemberId UNIQUEIDENTIFIER NOT NULL,
 	DeliveryDate DATETIME2 NOT NULL,
 	[Status] VARCHAR(20) NOT NULL,
 
 	CONSTRAINT PK_MemberMessages PRIMARY KEY (Id),
-	CONSTRAINT FK_Conversations_MemberMessages_ConversationId FOREIGN KEY (ConversationId) REFERENCES chat.Conversations (Id),
+	CONSTRAINT FK_Conversations_MemberMessages_MessageId FOREIGN KEY (MessageId) REFERENCES chat.[Messages] (Id),
 	CONSTRAINT FK_Users_MemberMessages_SenderMemberId FOREIGN KEY (SenderMemberId) REFERENCES chat.[Members] (Id),
 	CONSTRAINT FK_Users_MemberMessages_DestinationMemberId FOREIGN KEY (DestinationMemberId) REFERENCES chat.[Members] (Id)
 )

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OmegaFY.Chat.API.Domain.Constants;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
 using OmegaFY.Chat.API.Domain.ValueObjects.Chat;
 
@@ -17,11 +18,11 @@ internal sealed class MessageMapping : IEntityTypeConfiguration<Message>
 
         builder.Property(message => message.SendDate).IsRequired();
 
-        builder.Property(message => message.Type).HasMaxLength(20).IsUnicode(false).IsRequired();
+        builder.Property(message => message.Type).HasConversion<string>().HasMaxLength(20).IsUnicode(false).IsRequired();
 
         builder.ComplexProperty(message => message.Body, navigationBuilder =>
         {
-            navigationBuilder.Property(body => body.Content).HasColumnName(nameof(MessageBody.Content)).HasMaxLength(1000).IsUnicode(true).IsRequired();
+            navigationBuilder.Property(body => body.Content).HasColumnName(nameof(MessageBody.Content)).HasMaxLength(ChatConstants.MESSAGE_BODY_MAX_LENGTH).IsUnicode(true).IsRequired();
         });
 
         builder.ToTable("Messages", "chat");

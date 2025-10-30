@@ -48,6 +48,7 @@ public static class DependencyInjectionExtensions
     {
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IConversationRepository, ConversationRepository>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
 
         return services;
     }

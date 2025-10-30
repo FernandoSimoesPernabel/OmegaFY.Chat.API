@@ -1,4 +1,6 @@
-﻿using OmegaFY.Chat.API.Domain.Enums;
+﻿using OmegaFY.Chat.API.Common.Exceptions;
+using OmegaFY.Chat.API.Common.Extensions;
+using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Domain.ValueObjects.Chat;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
@@ -16,9 +18,13 @@ public sealed class Message : Entity, IAggregateRoot<Message>
 
     public MessageBody Body { get; }
 
+    internal Message() { }
+
     public Message(ReferenceId conversationId, ReferenceId senderMemberId, MessageType messageType, MessageBody body)
     {
-        //TODO
+        if (!messageType.IsDefined())
+            throw new DomainArgumentException("Tipo de mensagem inválido.");
+
         ConversationId = conversationId;
         SenderMemberId = senderMemberId;
         Type = messageType;

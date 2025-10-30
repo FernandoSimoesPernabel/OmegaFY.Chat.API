@@ -18,7 +18,7 @@ internal sealed class MemberMessageMapping : IEntityTypeConfiguration<MemberMess
 
         builder.Property(message => message.DeliveryDate).IsRequired();
 
-        builder.Property(message => message.Status).HasMaxLength(20).IsUnicode(false).IsRequired();
+        builder.Property(message => message.Status).HasConversion<string>().HasMaxLength(20).IsUnicode(false).IsRequired();
 
         builder.ToTable("MemberMessages", "chat");
     }

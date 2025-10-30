@@ -14,7 +14,6 @@ public sealed class Member : Entity
 
     public Member(ReferenceId conversationId, ReferenceId userId)
     {
-        //TODO
         ConversationId = conversationId;
         UserId = userId;
 
