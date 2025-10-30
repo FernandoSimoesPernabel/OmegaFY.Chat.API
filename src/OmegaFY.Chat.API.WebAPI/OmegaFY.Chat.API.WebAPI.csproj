@@ -25,4 +25,8 @@
     <ProjectReference Include="..\OmegaFY.Chat.API.Infra\OmegaFY.Chat.API.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Chat\" />
+  </ItemGroup>
+
 </Project>
