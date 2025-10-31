@@ -2,10 +2,17 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-bookworm-slim AS base
-USER $APP_UID
+# Create a non-root user with a fixed UID
+RUN adduser --disabled-password --gecos "" --uid 1000 appuser
+USER appuser
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
+
+# Add labels for better container metadata
+LABEL maintainer="OmegaFY.Chat.API Team" \
+      description="OmegaFY Chat API" \
+      version="1.0"
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0-bookworm-slim AS build
@@ -32,4 +39,13 @@ RUN dotnet publish "./OmegaFY.Chat.API.WebAPI.csproj" -c $BUILD_CONFIGURATION -o
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Add environment variables for configuration
+ENV ASPNETCORE_URLS=http://+:8080 \
+    ASPNETCORE_ENVIRONMENT=Production
+
+# Add healthcheck # TODO verify health endpoint
+#HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+    #CMD curl -f http://localhost:8080/health || exit 1
+
 ENTRYPOINT ["dotnet", "OmegaFY.Chat.API.WebAPI.dll"]
