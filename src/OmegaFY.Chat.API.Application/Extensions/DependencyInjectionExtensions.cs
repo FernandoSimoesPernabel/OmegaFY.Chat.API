@@ -4,6 +4,10 @@ using OmegaFY.Chat.API.Application.Commands.Auth.Login;
 using OmegaFY.Chat.API.Application.Commands.Auth.Logoff;
 using OmegaFY.Chat.API.Application.Commands.Auth.RefreshToken;
 using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
+using OmegaFY.Chat.API.Application.Commands.Chat.AddMemberToGroup;
+using OmegaFY.Chat.API.Application.Commands.Chat.ChangeGroupConfig;
+using OmegaFY.Chat.API.Application.Commands.Chat.CreateGroupConversation;
+using OmegaFY.Chat.API.Application.Commands.Chat.RemoveMemberFromGroup;
 using OmegaFY.Chat.API.Application.Commands.Chat.SendMessage;
 using OmegaFY.Chat.API.Application.Commands.Users.AcceptFriendshipRequest;
 using OmegaFY.Chat.API.Application.Commands.Users.RejectFriendshipRequest;
@@ -42,6 +46,10 @@ public static class DependencyInjectionExtensions
         services.AddScoped<RemoveFriendshipCommandHandler>();
         services.AddScoped<SendFriendshipRequestCommandHandler>();
 
+        services.AddScoped<AddMemberToGroupCommandHandler>();
+        services.AddScoped<ChangeGroupConfigCommandHandler>();
+        services.AddScoped<CreateGroupConversationCommandHandler>();
+        services.AddScoped<RemoveMemberFromGroupCommandHandler>();
         services.AddScoped<SendMessageCommandHandler>();
 
         return services;
