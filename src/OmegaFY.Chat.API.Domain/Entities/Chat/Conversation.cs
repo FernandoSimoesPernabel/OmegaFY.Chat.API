@@ -20,25 +20,24 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     internal Conversation() { }
 
-    private Conversation(GroupConfig groupConfig) : this(ConversationType.GroupChat, groupConfig) { }
+    private Conversation(ReferenceId createdByUserId, string groupName, byte maxNumberOfMembers)
+    {
+        GroupConfig = new GroupConfig(Id, createdByUserId, groupName, maxNumberOfMembers);
+        Type = ConversationType.GroupChat;
+        Status = ConversationStatus.Open;
+        CreatedDate = DateTime.UtcNow;
+    }
 
-    private Conversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId) : this(ConversationType.MemberToMember, null)
+    private Conversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId)
     {
         if (memberOneUserId == memberTwoUserId)
             throw new DomainArgumentException("Não é possível criar uma conversa entre o mesmo usuário.");
 
         _members.Add(new Member(Id, memberOneUserId));
         _members.Add(new Member(Id, memberTwoUserId));
-    }
 
-    private Conversation(ConversationType conversationType, GroupConfig groupConfig)
-    {
-        if (conversationType == ConversationType.GroupChat && groupConfig is null)
-            throw new DomainArgumentException("Não é possível criar uma conversa em grupo sem configuração de grupo.");
-
-        Type = conversationType;
-        GroupConfig = conversationType == ConversationType.GroupChat ? groupConfig : null;
-
+        GroupConfig = null;
+        Type = ConversationType.MemberToMember;
         Status = ConversationStatus.Open;
         CreatedDate = DateTime.UtcNow;
     }
@@ -78,7 +77,9 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     public Member GetMemberByUserId(ReferenceId userId) => _members.Find(member => member.UserId == userId);
 
-    public static Conversation StartMemberToMemberConversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId) => new Conversation(memberOneUserId, memberTwoUserId);
+    public static Conversation StartMemberToMemberConversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId)
+        => new Conversation(memberOneUserId, memberTwoUserId);
 
-    public static Conversation CreateGroupChat(GroupConfig groupConfig) => new Conversation(groupConfig);
+    public static Conversation CreateGroupChat(ReferenceId createdByUserId, string groupName, byte maxNumberOfMembers) 
+        => new Conversation(createdByUserId, groupName, maxNumberOfMembers);
 }

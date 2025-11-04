@@ -25,6 +25,8 @@ public abstract record class HandlerResult
 
     public static HandlerResult<TResult> CreateUnauthorized<TResult>() => CreateError<TResult>(new UnauthorizedException());
 
+    public static HandlerResult<TResult> CreateUnauthenticated<TResult>() => CreateError<TResult>(new UnauthenticatedException());
+
     public static HandlerResult<TResult> CreateNotFound<TResult>() => CreateError<TResult>(new NotFoundException());
 
     public static HandlerResult<TResult> CreateError<TResult>(ErrorCodeException ex) => new HandlerResult<TResult>(ex.ErrorCode, ex.Message);

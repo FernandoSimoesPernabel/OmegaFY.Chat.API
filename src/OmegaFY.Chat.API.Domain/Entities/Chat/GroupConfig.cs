@@ -35,5 +35,9 @@ public sealed class GroupConfig : Entity
         GroupName = groupName;
     }
 
-    internal void ChangeMaxNumberOfMembers(byte maxNumberOfMembers) => MaxNumberOfMembers = Math.Min(maxNumberOfMembers, ChatConstants.GROUP_CHAT_MAX_NUMBER_OF_MEMBERS);
+    internal void ChangeMaxNumberOfMembers(byte maxNumberOfMembers)
+    {
+        byte safeMaxNumberOfMembers = Math.Min(Math.Max(maxNumberOfMembers, ChatConstants.GROUP_CHAT_MIN_NUMBER_OF_MEMBERS), ChatConstants.GROUP_CHAT_MAX_NUMBER_OF_MEMBERS);
+        MaxNumberOfMembers = safeMaxNumberOfMembers;
+    }
 }
