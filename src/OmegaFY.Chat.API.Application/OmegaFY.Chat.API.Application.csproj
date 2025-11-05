@@ -19,8 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Events\Chat\MarkMessageAsRead\" />
-    <Folder Include="Events\Chat\MarkMessageAsDeleted\" />
     <Folder Include="Validators\Queries\Chat\" />
   </ItemGroup> 
   
