@@ -1,3 +1,6 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.WebAPI.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -16,7 +19,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHealthChecks("/health");
+app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT, new HealthCheckOptions()
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.UseHealthChecksUI(options => options.UIPath = HealthCheckConstants.UI_ENDPOINT);
 
 app.UseRateLimiter();
 

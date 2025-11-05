@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.OpenApi.Models;
+using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Common.Models;
 
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
@@ -23,7 +24,7 @@ public sealed class SwaggerOpenApiRegistration : IDependencyInjectionRegister
                     Email = "f_pernabel@hotmail.com"
                 },
                 Description = "For more information access https://github.com/FernandoSimoesPernabel/OmegaFY.Chat.API",
-                Title = "OmegaFY Chat WebAPI",
+                Title = ApplicationInfoConstants.APPLICATION_NAME,
                 License = new OpenApiLicense()
                 {
                     Name = "GNU General Public License version 3",
