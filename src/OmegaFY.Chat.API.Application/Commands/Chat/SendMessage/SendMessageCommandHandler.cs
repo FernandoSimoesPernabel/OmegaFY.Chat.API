@@ -43,7 +43,7 @@ public sealed class SendMessageCommandHandler : CommandHandlerBase<SendMessageCo
             return HandlerResult.CreateNotFound<SendMessageCommandResult>();
 
         if (!conversation.IsMemberInConversation(_userInformation.CurrentRequestUserId.Value))
-            return HandlerResult.CreateError<SendMessageCommandResult>(new DomainInvalidOperationException("Usuário não é membro da conversa."));
+            return HandlerResult.CreateUnauthenticated<SendMessageCommandResult>();
 
         Member senderMember = conversation.GetMemberByUserId(_userInformation.CurrentRequestUserId.Value);
 
