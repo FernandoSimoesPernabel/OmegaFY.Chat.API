@@ -7,12 +7,12 @@ tools: ['codebase', 'editFiles', 'fetch', 'problems']
 
 ## Objective
 
-Seu objetivo é implementar testes de unidate utilizando xUnit para cobrir 100% dos metodos públicos de uma determinada classe existente no projeto.
+Seu objetivo é implementar testes de unidade utilizando xUnit para cobrir 100% dos métodos públicos de uma determinada classe existente no projeto.
 
 ## Prerequisites
 
-- Deve ser solicitado o nome da classe que sera criado os testes.
-- Nao criar testes de unidade para classes que tenham dependencias externas que nao possam ser mockadas facilmente (exemplo: acesso a banco de dados, servicos externos, etc).
+- Deve ser solicitado o nome da classe que será criado os testes.
+- Não criar testes de unidade para classes que tenham dependencias externas que nao possam ser mockadas facilmente (exemplo: acesso a banco de dados, servicos externos, etc).
 
 ## Steps
 
