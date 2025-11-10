@@ -19,18 +19,13 @@ internal class ReplicateMessageToMembersEventHandler : EventHandlerHandlerBase<M
 
     protected override async Task HandleAsync(MessageSentEvent @event, CancellationToken cancellationToken)
     {
-        Message message = await _messageRepository.GetByIdAsync(@event.MessageId, cancellationToken);
+        Message message = await _messageRepository.GetMessageByIdAsync(@event.MessageId, cancellationToken);
 
-        Conversation conversation = await _conversationRepository.GetByIdAsync(message.ConversationId, cancellationToken);
+        Conversation conversation = await _conversationRepository.GetConversationByIdAsync(message.ConversationId, cancellationToken);
 
         foreach (Member conversationMember in conversation.Members)
         {
-            MemberMessage memberMessage = new MemberMessage(
-                message.Id, 
-                message.SenderMemberId,
-                conversationMember.Id,
-                MemberMessageStatus.Unread);
-
+            MemberMessage memberMessage = new MemberMessage(message.Id, message.SenderMemberId, conversationMember.Id);
             await _messageRepository.CreateMemberMessageAsync(memberMessage, cancellationToken);
         }
 

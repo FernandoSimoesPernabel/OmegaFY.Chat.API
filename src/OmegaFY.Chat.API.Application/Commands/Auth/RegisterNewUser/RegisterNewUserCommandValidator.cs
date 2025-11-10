@@ -1,10 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Options;
-using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Domain.Constants;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Auth;
+namespace OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 
 public sealed class RegisterNewUserCommandValidator : AbstractValidator<RegisterNewUserCommand>
 {
@@ -28,7 +27,7 @@ public sealed class RegisterNewUserCommandValidator : AbstractValidator<Register
             .WithMessage($"A senha deve ter entre {authenticationSettings.PasswordMinRequiredLength} e {authenticationSettings.PasswordMaxRequiredLength} caracteres.")
             .Custom((password, context) =>
             {
-                char[] passwordAsChars = password?.ToCharArray() ?? [];
+                var passwordAsChars = password?.ToCharArray() ?? [];
 
                 if (authenticationSettings.PasswordRequireDigit && !passwordAsChars.Any(c => char.IsDigit(c)))
                     context.AddFailure(nameof(authenticationSettings.PasswordRequireDigit), "A senha deve conter ao menos um dígito.");
@@ -43,10 +42,8 @@ public sealed class RegisterNewUserCommandValidator : AbstractValidator<Register
                     context.AddFailure(nameof(authenticationSettings.PasswordRequireNonAlphanumeric), "A senha deve conter ao menos um caractere especial.");
 
                 if (authenticationSettings.PasswordRequiredUniqueChars > 0)
-                {
                     if (passwordAsChars.Distinct().Count() < authenticationSettings.PasswordRequiredUniqueChars)
                         context.AddFailure(nameof(authenticationSettings.PasswordRequiredUniqueChars), $"A senha deve conter ao menos {authenticationSettings.PasswordRequiredUniqueChars} caracteres únicos.");
-                }
             });
     }
 }

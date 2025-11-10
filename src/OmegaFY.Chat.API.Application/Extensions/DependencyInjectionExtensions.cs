@@ -7,6 +7,8 @@ using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Application.Commands.Chat.AddMemberToGroup;
 using OmegaFY.Chat.API.Application.Commands.Chat.ChangeGroupConfig;
 using OmegaFY.Chat.API.Application.Commands.Chat.CreateGroupConversation;
+using OmegaFY.Chat.API.Application.Commands.Chat.MarkMessageAsDeleted;
+using OmegaFY.Chat.API.Application.Commands.Chat.MarkMessageAsRead;
 using OmegaFY.Chat.API.Application.Commands.Chat.RemoveMemberFromGroup;
 using OmegaFY.Chat.API.Application.Commands.Chat.SendMessage;
 using OmegaFY.Chat.API.Application.Commands.Users.AcceptFriendshipRequest;
@@ -23,6 +25,7 @@ using OmegaFY.Chat.API.Application.Events.Users.AcceptFriendshipRequest;
 using OmegaFY.Chat.API.Application.Events.Users.RejectFriendshipRequest;
 using OmegaFY.Chat.API.Application.Events.Users.RemoveFriendship;
 using OmegaFY.Chat.API.Application.Events.Users.SendFriendshipRequest;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetConversationById;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
 using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
@@ -40,23 +43,27 @@ public static class DependencyInjectionExtensions
         services.AddScoped<LoginCommandHandler>();
         services.AddScoped<LogoffCommandHandler>();
         services.AddScoped<RefreshTokenCommandHandler>();
-        
-        services.AddScoped<AcceptFriendshipRequestCommandHandler>();
-        services.AddScoped<RejectFriendshipRequestCommandHandler>();
-        services.AddScoped<RemoveFriendshipCommandHandler>();
-        services.AddScoped<SendFriendshipRequestCommandHandler>();
 
         services.AddScoped<AddMemberToGroupCommandHandler>();
         services.AddScoped<ChangeGroupConfigCommandHandler>();
         services.AddScoped<CreateGroupConversationCommandHandler>();
+        services.AddScoped<MarkMessageAsDeletedCommandHandler>();
+        services.AddScoped<MarkMessageAsReadCommandHandler>();
         services.AddScoped<RemoveMemberFromGroupCommandHandler>();
         services.AddScoped<SendMessageCommandHandler>();
+
+        services.AddScoped<AcceptFriendshipRequestCommandHandler>();
+        services.AddScoped<RejectFriendshipRequestCommandHandler>();
+        services.AddScoped<RemoveFriendshipCommandHandler>();
+        services.AddScoped<SendFriendshipRequestCommandHandler>();
 
         return services;
     }
 
     public static IServiceCollection AddQueryHandlers(this IServiceCollection services)
     {
+        services.AddScoped<GetConversationByIdQueryHandler>();
+
         services.AddScoped<GetCurrentUserInfoQueryHandler>();
         services.AddScoped<GetFriendshipByIdQueryHandler>();
         services.AddScoped<GetUserByIdQueryResultHandler>();

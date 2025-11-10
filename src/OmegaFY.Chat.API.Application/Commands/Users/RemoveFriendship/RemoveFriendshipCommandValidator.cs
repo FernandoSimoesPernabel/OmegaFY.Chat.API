@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using OmegaFY.Chat.API.Application.Commands.Users.RemoveFriendship;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Users;
+namespace OmegaFY.Chat.API.Application.Commands.Users.RemoveFriendship;
 
 public sealed class RemoveFriendshipCommandValidator : AbstractValidator<RemoveFriendshipCommand>
 {

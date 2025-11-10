@@ -32,7 +32,7 @@ public sealed class ChangeGroupConfigCommandHandler : CommandHandlerBase<ChangeG
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthorized<ChangeGroupConfigCommandResult>();
 
-        Conversation conversation = await _repository.GetByIdAsync(request.ConversationId, cancellationToken);
+        Conversation conversation = await _repository.GetConversationByIdAsync(request.ConversationId, cancellationToken);
 
         if (conversation.GroupConfig.CreatedByUserId.Value != _userInformation.CurrentRequestUserId.Value)
             return HandlerResult.CreateUnauthenticated<ChangeGroupConfigCommandResult>();

@@ -10,7 +10,5 @@ public interface IUserQueryProvider : IQueryProvider
 
     public Task<FriendshipModel> GetFriendshipByIdAndUserIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken);
 
-    public Task<FriendshipModel> GetFriendshipByIdAsync(Guid friendshipId, CancellationToken cancellationToken);
-
     public Task<GetUserByIdQueryResult> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
 }

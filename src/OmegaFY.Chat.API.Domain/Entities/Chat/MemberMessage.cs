@@ -19,16 +19,21 @@ public sealed class MemberMessage : Entity
 
     internal MemberMessage() { }
 
-    public MemberMessage(ReferenceId messageId, ReferenceId senderMemberId, ReferenceId destinationMemberId, MemberMessageStatus messageStatus)
+    public MemberMessage(ReferenceId messageId, ReferenceId senderMemberId, ReferenceId destinationMemberId)
     {
-        if (!messageStatus.IsDefined())
-            throw new DomainArgumentException($"O status não é válido para a mensagem do membro.");
-
         MessageId = messageId;
         SenderMemberId = senderMemberId;
         DestinationMemberId = destinationMemberId;
-        Status = messageStatus;
+        Status = MemberMessageStatus.Unread;
 
         DeliveryDate = DateTime.UtcNow;
     }
+
+    public void Read()
+    {
+        if (Status == MemberMessageStatus.Unread)
+            Status = MemberMessageStatus.Read;
+    }
+
+    public void Deleted() => Status = MemberMessageStatus.Deleted;
 }

@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using OmegaFY.Chat.API.Application.Commands.Auth.Logoff;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Auth;
+namespace OmegaFY.Chat.API.Application.Commands.Auth.Logoff;
 
 public sealed class LogoffCommandValidator : AbstractValidator<LogoffCommand>
 {

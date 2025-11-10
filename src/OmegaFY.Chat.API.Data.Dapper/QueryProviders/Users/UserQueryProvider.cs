@@ -73,25 +73,6 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         return _dbConnection.QueryFirstOrDefaultAsync<FriendshipModel>(sql, new { FriendshipId = friendshipId, UserId = userId });
     }
 
-    public Task<FriendshipModel> GetFriendshipByIdAsync(Guid friendshipId, CancellationToken cancellationToken)
-    {
-        const string sql = @"
-            SELECT TOP 1
-                Id AS FriendshipId, 
-                RequestingUserId, 
-                InvitedUserId,
-                StartedDate,
-                Status
-            
-            FROM 
-                chat.Friendships
-            
-            WHERE 
-                Id = @FriendshipId";
-
-        return _dbConnection.QueryFirstOrDefaultAsync<FriendshipModel>(sql, new { FriendshipId = friendshipId });
-    }
-
     public Task<GetUserByIdQueryResult> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         const string sql = @"

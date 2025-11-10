@@ -1,7 +1,6 @@
 using FluentValidation;
-using OmegaFY.Chat.API.Application.Commands.Chat.MarkMessageAsDeleted;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Chat;
+namespace OmegaFY.Chat.API.Application.Commands.Chat.MarkMessageAsDeleted;
 
 public sealed class MarkMessageAsDeletedCommandValidator : AbstractValidator<MarkMessageAsDeletedCommand>
 {

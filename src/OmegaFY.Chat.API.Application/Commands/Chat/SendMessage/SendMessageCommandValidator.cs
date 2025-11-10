@@ -1,8 +1,7 @@
 using FluentValidation;
-using OmegaFY.Chat.API.Application.Commands.Chat.SendMessage;
 using OmegaFY.Chat.API.Domain.Constants;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Chat;
+namespace OmegaFY.Chat.API.Application.Commands.Chat.SendMessage;
 
 public sealed class SendMessageCommandValidator : AbstractValidator<SendMessageCommand>
 {

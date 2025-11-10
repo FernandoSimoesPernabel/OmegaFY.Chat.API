@@ -25,6 +25,8 @@ public sealed class User : Entity, IAggregateRoot<User>
         ChangeDisplayName(displayName);
     }
 
+    public Friendship GetFriendshipById(ReferenceId friendshipId) => Friendships.First(friendship => friendship.Id == friendshipId);
+
     public void ChangeDisplayName(string displayName)
     {
         if (string.IsNullOrWhiteSpace(displayName))

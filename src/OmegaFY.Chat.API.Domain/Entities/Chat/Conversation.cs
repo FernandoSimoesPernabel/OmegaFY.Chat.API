@@ -47,18 +47,18 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
         if (Type != ConversationType.GroupChat)
             throw new DomainInvalidOperationException("Não é possível adicionar membros em uma conversa que não é em grupo.");
 
-        if (IsMemberInConversation(userIdToAdd))
+        if (IsUserInConversation(userIdToAdd))
             throw new DomainInvalidOperationException("Usuário já é membro da conversa.");
 
         _members.Add(new Member(Id, userIdToAdd));
     }
 
-    public void RemoveMemberFromGroup(ReferenceId userIdToRemove)
+    public void RemoveMemberFromGroup(ReferenceId memberIdToRemove)
     {
         if (Type != ConversationType.GroupChat)
             throw new DomainInvalidOperationException("Não é possível remover membros em uma conversa que não é em grupo.");
 
-        _members.RemoveAll(member => member.UserId == userIdToRemove);
+        _members.RemoveAll(member => member.Id == memberIdToRemove);
     }
 
     public void ChangeGroupConfig(string newGroupName, byte newMaxNumberOfMembers)
@@ -73,7 +73,7 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
         GroupConfig.ChangeMaxNumberOfMembers(newMaxNumberOfMembers);
     }
 
-    public bool IsMemberInConversation(ReferenceId userId) => _members.Exists(member => member.UserId == userId);
+    public bool IsUserInConversation(ReferenceId userId) => _members.Exists(member => member.UserId == userId);
 
     public Member GetMemberByUserId(ReferenceId userId) => _members.Find(member => member.UserId == userId);
 

@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
-using OmegaFY.Chat.API.Application.Commands.Auth.Login;
 using OmegaFY.Chat.API.Domain.Constants;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Auth;
+namespace OmegaFY.Chat.API.Application.Commands.Auth.Login;
 
 public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 {

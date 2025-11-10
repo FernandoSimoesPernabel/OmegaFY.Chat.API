@@ -1,8 +1,7 @@
 using FluentValidation;
-using OmegaFY.Chat.API.Application.Commands.Chat.CreateGroupConversation;
 using OmegaFY.Chat.API.Domain.Constants;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Chat;
+namespace OmegaFY.Chat.API.Application.Commands.Chat.CreateGroupConversation;
 
 public sealed class CreateGroupConversationCommandValidator : AbstractValidator<CreateGroupConversationCommand>
 {

@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
 
-namespace OmegaFY.Chat.API.Application.Validators.Queries.Users;
+namespace OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
 
 public sealed class GetUserByIdQueryValidator : AbstractValidator<GetUserByIdQuery>
 {

@@ -2,7 +2,6 @@ using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Chat.SendMessage;
 using OmegaFY.Chat.API.Application.Extensions;
-using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
 using OmegaFY.Chat.API.Domain.Repositories.Chat;
 using OmegaFY.Chat.API.Infra.MessageBus;
@@ -37,12 +36,12 @@ public sealed class SendMessageCommandHandler : CommandHandlerBase<SendMessageCo
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthorized<SendMessageCommandResult>();
 
-        Conversation conversation = await _conversationRepository.GetByIdAsync(request.ConversationId, cancellationToken);
+        Conversation conversation = await _conversationRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken);
 
         if (conversation is null)
             return HandlerResult.CreateNotFound<SendMessageCommandResult>();
 
-        if (!conversation.IsMemberInConversation(_userInformation.CurrentRequestUserId.Value))
+        if (!conversation.IsUserInConversation(_userInformation.CurrentRequestUserId.Value))
             return HandlerResult.CreateUnauthenticated<SendMessageCommandResult>();
 
         Member senderMember = conversation.GetMemberByUserId(_userInformation.CurrentRequestUserId.Value);

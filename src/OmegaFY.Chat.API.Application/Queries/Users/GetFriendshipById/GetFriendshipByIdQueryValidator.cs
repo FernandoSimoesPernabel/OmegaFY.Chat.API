@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
 
-namespace OmegaFY.Chat.API.Application.Validators.Queries.Users;
+namespace OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
 
 public sealed class GetFriendshipByIdQueryValidator : AbstractValidator<GetFriendshipByIdQuery>
 {

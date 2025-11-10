@@ -7,5 +7,7 @@ public interface IConversationRepository : IRepository<Conversation>
 {
     public Task CreateConversationAsync(Conversation conversation, CancellationToken cancellationToken);
 
-    public ValueTask<Conversation> GetByIdAsync(ReferenceId id, CancellationToken cancellationToken);
+    public ValueTask<Conversation> GetConversationByIdAsync(ReferenceId conversationId, CancellationToken cancellationToken);
+
+    public Task<Member> GetMemberAsync(ReferenceId conversationId, ReferenceId userId, CancellationToken cancellationToken);
 }

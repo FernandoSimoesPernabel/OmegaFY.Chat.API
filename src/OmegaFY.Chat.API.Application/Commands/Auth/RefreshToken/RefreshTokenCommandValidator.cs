@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using OmegaFY.Chat.API.Application.Commands.Auth.RefreshToken;
 
-namespace OmegaFY.Chat.API.Application.Validators.Commands.Auth;
+namespace OmegaFY.Chat.API.Application.Commands.Auth.RefreshToken;
 
 public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshTokenCommand>
 {

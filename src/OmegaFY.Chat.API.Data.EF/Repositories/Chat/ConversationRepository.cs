@@ -1,4 +1,5 @@
-﻿using OmegaFY.Chat.API.Data.EF.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using OmegaFY.Chat.API.Data.EF.Context;
 using OmegaFY.Chat.API.Data.EF.Repositories.Base;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
 using OmegaFY.Chat.API.Domain.Repositories.Chat;
@@ -16,5 +17,9 @@ internal sealed class ConversationRepository : RepositoryBase<Conversation>, ICo
         return Task.CompletedTask;
     }
 
-    public ValueTask<Conversation> GetByIdAsync(ReferenceId id, CancellationToken cancellationToken) => _dbSet.FindAsync(id, cancellationToken);
+    public ValueTask<Conversation> GetConversationByIdAsync(ReferenceId conversationId, CancellationToken cancellationToken)
+        => _dbSet.FindAsync(conversationId, cancellationToken);
+
+    public Task<Member> GetMemberAsync(ReferenceId conversationId, ReferenceId userId, CancellationToken cancellationToken) 
+        => _context.Set<Member>().FirstOrDefaultAsync(member => member.ConversationId == conversationId && member.UserId == userId, cancellationToken);
 }

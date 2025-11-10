@@ -45,7 +45,6 @@ public sealed class ConversationsController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<MarkMessageAsReadCommandResult>), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> MarkMessageAsRead(MarkMessageAsReadCommandHandler handler, [FromRoute] Guid conversationId, [FromRoute] Guid messageId, CancellationToken cancellationToken)
     {

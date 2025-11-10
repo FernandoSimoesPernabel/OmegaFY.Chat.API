@@ -9,5 +9,7 @@ public interface IMessageRepository : IRepository<Message>
 
     public Task CreateMemberMessageAsync(MemberMessage memberMessage, CancellationToken cancellationToken);
 
-    public ValueTask<Message> GetByIdAsync(ReferenceId messageId, CancellationToken cancellationToken);
+    public ValueTask<Message> GetMessageByIdAsync(ReferenceId messageId, CancellationToken cancellationToken);
+
+    public Task<MemberMessage> GetMemberMessageAsync(ReferenceId messageId, ReferenceId memberId, CancellationToken cancellationToken);
 }
