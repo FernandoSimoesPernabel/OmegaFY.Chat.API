@@ -2,7 +2,6 @@
 mode: agent
 description: Adiciona os arquivos necessarios para implementar um CommandHandler no projeto
 inputs: CommandName, Context
-model: Claude Sonnet 3.5
 tools: ['codebase', 'editFiles', 'fetch', 'problems']
 ---
 
@@ -23,15 +22,13 @@ Seu objetivo é adicionar os arquivos necessários sem codigo para implementar um 
 1.1 - Dentro da pasta com o {CommandName} crie um arquivo chamado {CommandName}Command.cs implementando ICommand.
 1.2 - Dentro da pasta com o {CommandName} crie um arquivo chamado {CommandName}CommandResult.cs implementando ICommandResult.
 1.3 - Dentro da pasta com o {CommandName} crie um arquivo chamado {CommandName}CommandHandler.cs implementando CommandHandlerBase<THandler, TCommand, TCommandResult> criados anteriormente.
-1.3.1 Deixar criado o construtor com injeção de dependências da classe base e tambem o metodo InternalHandleAsync sem implementação.
+1.3.1 -  Deixar criado o construtor com injeção de dependências da classe base e tambem o metodo InternalHandleAsync sem implementação.
+1.4 - Dentro da pasta com o {CommandName} crie um arquivo chamado {CommandName}CommandValidator.cs implementando AbstractValidator<{CommandName}Command>.
 
 2 - Dentro da API.Application -> Events -> {Context} (crie a pasta se ja nao exister o context) -> {CommandName} (crie a pasta se ja nao existir) crie:
 2.1 - Dentro da pasta com o {CommandName} crie um arquivo de evento com um nome correspondente ao Evento (ex: CreateGroupCommand/GroupCreatedEvent) implementando IEvent.
 2.2 - Dentro da pasta com o {CommandName} crie um arquivo de EventHandler com um nome correspondente ao EventHandler (ex: GroupCreatedEvent/GroupCreatedEventHandler) implementando EventHandlerHandlerBase<TEvent> criado anteriormente.
 2.2.1 Deixar o metodo HandleAsync sem implementação.
-
-3 - Dentro da API.Application -> {Context} (crie a pasta se ja nao exister o context) -> Validators crie:
-3.1 - Dentro da pasta Validators crie um arquivo chamado {CommandName}CommandValidator.cs implementando AbstractValidator<{CommandName}Command>.
 
 ### Additional validations
 

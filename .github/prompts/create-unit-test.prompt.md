@@ -2,7 +2,6 @@
 mode: agent
 description: Implementar testes de unidade para uma determinada classe existente.
 inputs: ClassName
-model: Claude Sonnet 3.5
 tools: ['codebase', 'editFiles', 'fetch', 'problems']
 ---
 

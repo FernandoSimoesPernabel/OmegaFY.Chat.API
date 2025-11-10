@@ -2,7 +2,6 @@
 mode: agent
 description: Adiciona os arquivos necessarios para implementar um QueryHandler no projeto
 inputs: QueryName, Context
-model: Claude Sonnet 3.5
 tools: ['codebase', 'editFiles', 'fetch', 'problems']
 ---
 
@@ -24,9 +23,7 @@ Seu objetivo é adicionar os arquivos necessários sem codigo para implementar um 
 1.2 - Dentro da pasta com o {QueryName} crie um arquivo chamado {QueryName}QueryResult.cs implementando IQueryResult.
 1.3 - Dentro da pasta com o {QueryName} crie um arquivo chamado {QueryName}QueryHandler.cs implementando QueryHandlerBase<THandler, TQuery, TQueryResult> criados anteriormente.
 1.3.1 Deixar criado o construtor com injeção de dependências da classe base e tambem o metodo InternalHandleAsync sem implementação.
-
-2 - Dentro da API.Application -> {Context} (crie a pasta se ja nao exister o context) -> Validators crie:
-2.1 - Dentro da pasta Validators crie um arquivo chamado {QueryName}QueryValidator.cs implementando AbstractValidator<{QueryName}Query>.
+1.4 - Dentro da pasta com o {QueryName} crie um arquivo chamado {QueryName}QueryValidator.cs implementando AbstractValidator<{QueryName}Query>.
 
 ### Additional validations
 
