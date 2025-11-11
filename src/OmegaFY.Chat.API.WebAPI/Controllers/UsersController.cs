@@ -23,7 +23,7 @@ public sealed class UsersController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<GetUserByIdQueryResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUserById(GetUserByIdQueryResultHandler handler, [FromRoute] Guid userId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetUserById(GetUserByIdQueryHandler handler, [FromRoute] Guid userId, CancellationToken cancellationToken)
         => Ok(await handler.HandleAsync(new GetUserByIdQuery(userId), cancellationToken));
 
     [HttpGet("me/friendships/{friendshipId:guid}")]

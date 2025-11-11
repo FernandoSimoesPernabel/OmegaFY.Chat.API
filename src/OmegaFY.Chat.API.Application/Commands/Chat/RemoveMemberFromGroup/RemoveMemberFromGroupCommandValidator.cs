@@ -6,5 +6,8 @@ public sealed class RemoveMemberFromGroupCommandValidator : AbstractValidator<Re
 {
     public RemoveMemberFromGroupCommandValidator()
     {
+        RuleFor(x => x.ConversationId).NotEmpty().WithMessage("O ID da conversa é obrigatório.");
+
+        RuleFor(x => x.MemberId).NotEmpty().WithMessage("O ID do membro é obrigatório.");
     }
 }

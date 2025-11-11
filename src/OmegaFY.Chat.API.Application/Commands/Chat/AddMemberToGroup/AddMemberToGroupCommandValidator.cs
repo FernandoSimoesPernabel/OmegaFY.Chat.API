@@ -6,5 +6,8 @@ public sealed class AddMemberToGroupCommandValidator : AbstractValidator<AddMemb
 {
     public AddMemberToGroupCommandValidator()
     {
+        RuleFor(x => x.ConversationId).NotEmpty().WithMessage("O ID da conversa é obrigatório.");
+
+        RuleFor(x => x.UserId).NotEmpty().WithMessage("O ID do usuário é obrigatório.");
     }
 }

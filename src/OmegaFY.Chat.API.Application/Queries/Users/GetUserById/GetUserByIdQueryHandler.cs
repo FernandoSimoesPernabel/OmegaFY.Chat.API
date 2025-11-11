@@ -6,11 +6,11 @@ using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
 
-public sealed class GetUserByIdQueryResultHandler : QueryHandlerBase<GetUserByIdQueryResultHandler, GetUserByIdQuery, GetUserByIdQueryResult>
+public sealed class GetUserByIdQueryHandler : QueryHandlerBase<GetUserByIdQueryHandler, GetUserByIdQuery, GetUserByIdQueryResult>
 {
     private readonly IUserQueryProvider _userQueryProvider;
 
-    public GetUserByIdQueryResultHandler(
+    public GetUserByIdQueryHandler(
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetUserByIdQuery> validator,
