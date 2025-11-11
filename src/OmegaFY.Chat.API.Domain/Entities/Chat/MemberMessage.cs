@@ -1,11 +1,9 @@
-﻿using OmegaFY.Chat.API.Common.Exceptions;
-using OmegaFY.Chat.API.Common.Extensions;
-using OmegaFY.Chat.API.Domain.Enums;
+﻿using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Domain.Entities.Chat;
 
-public sealed class MemberMessage : Entity
+public sealed class MemberMessage : Entity, IAggregateRoot<MemberMessage>
 {
     public ReferenceId MessageId { get; }
 

@@ -15,7 +15,7 @@ public sealed class MarkMessageAsDeletedCommandHandler : CommandHandlerBase<Mark
 
     private readonly IConversationRepository _conversationRepository;
 
-    private readonly IMessageRepository _messageRepository;
+    private readonly IMemberMessageRepository _memberMessageRepository;
 
     public MarkMessageAsDeletedCommandHandler(
         IHostEnvironment hostEnvironment,
@@ -24,11 +24,11 @@ public sealed class MarkMessageAsDeletedCommandHandler : CommandHandlerBase<Mark
         IMessageBus messageBus,
         IUserInformation userInformation,
         IConversationRepository conversationRepository,
-        IMessageRepository messageRepository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IMemberMessageRepository memberMessageRepository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
     {
         _userInformation = userInformation;
         _conversationRepository = conversationRepository;
-        _messageRepository = messageRepository;
+        _memberMessageRepository = memberMessageRepository;
     }
 
     protected async override Task<HandlerResult<MarkMessageAsDeletedCommandResult>> InternalHandleAsync(MarkMessageAsDeletedCommand request, CancellationToken cancellationToken)
@@ -41,14 +41,14 @@ public sealed class MarkMessageAsDeletedCommandHandler : CommandHandlerBase<Mark
         if (userMember is null)
             return HandlerResult.CreateNotFound<MarkMessageAsDeletedCommandResult>();
 
-        MemberMessage memberMessage = await _messageRepository.GetMemberMessageAsync(request.MessageId, userMember.Id, cancellationToken);
+        MemberMessage memberMessage = await _memberMessageRepository.GetMemberMessageAsync(request.MessageId, userMember.Id, cancellationToken);
 
         if (memberMessage is null)
             return HandlerResult.CreateNotFound<MarkMessageAsDeletedCommandResult>();
 
         memberMessage.Deleted();
 
-        await _messageRepository.SaveChangesAsync(cancellationToken);
+        await _memberMessageRepository.SaveChangesAsync(cancellationToken);
 
         await _messageBus.SimplePublishAsync(new MessageDeletedEvent(userMember.ConversationId, memberMessage.MessageId, memberMessage.Id, userMember.UserId), cancellationToken);
 

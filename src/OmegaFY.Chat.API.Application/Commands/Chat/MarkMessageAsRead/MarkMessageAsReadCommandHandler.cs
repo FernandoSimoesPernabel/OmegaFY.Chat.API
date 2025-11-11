@@ -15,7 +15,7 @@ public sealed class MarkMessageAsReadCommandHandler : CommandHandlerBase<MarkMes
 
     private readonly IConversationRepository _conversationRepository;
 
-    private readonly IMessageRepository _messageRepository;
+    private readonly IMemberMessageRepository _memberMessageRepository;
 
     public MarkMessageAsReadCommandHandler(
         IHostEnvironment hostEnvironment,
@@ -24,11 +24,11 @@ public sealed class MarkMessageAsReadCommandHandler : CommandHandlerBase<MarkMes
         IMessageBus messageBus,
         IUserInformation userInformation,
         IConversationRepository conversationRepository,
-        IMessageRepository messageRepository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IMemberMessageRepository memberMessageRepository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
     {
         _userInformation = userInformation;
         _conversationRepository = conversationRepository;
-        _messageRepository = messageRepository;
+        _memberMessageRepository = memberMessageRepository;
     }
 
     protected async override Task<HandlerResult<MarkMessageAsReadCommandResult>> InternalHandleAsync(MarkMessageAsReadCommand request, CancellationToken cancellationToken)
@@ -41,14 +41,14 @@ public sealed class MarkMessageAsReadCommandHandler : CommandHandlerBase<MarkMes
         if (userMember is null)
             return HandlerResult.CreateNotFound<MarkMessageAsReadCommandResult>();
 
-        MemberMessage memberMessage = await _messageRepository.GetMemberMessageAsync(request.MessageId, userMember.Id, cancellationToken);
+        MemberMessage memberMessage = await _memberMessageRepository.GetMemberMessageAsync(request.MessageId, userMember.Id, cancellationToken);
 
         if (memberMessage is null)
             return HandlerResult.CreateNotFound<MarkMessageAsReadCommandResult>();
 
         memberMessage.Read();
 
-        await _messageRepository.SaveChangesAsync(cancellationToken);
+        await _memberMessageRepository.SaveChangesAsync(cancellationToken);
 
         await _messageBus.SimplePublishAsync(new MessageReadEvent(userMember.ConversationId, memberMessage.MessageId, memberMessage.Id, userMember.UserId), cancellationToken);
 

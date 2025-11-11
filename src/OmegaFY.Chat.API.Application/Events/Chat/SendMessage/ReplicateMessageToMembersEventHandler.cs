@@ -1,6 +1,5 @@
 ﻿using OmegaFY.Chat.API.Application.Events.Base;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
-using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Domain.Repositories.Chat;
 
 namespace OmegaFY.Chat.API.Application.Events.Chat.SendMessage;
@@ -10,6 +9,8 @@ internal class ReplicateMessageToMembersEventHandler : EventHandlerHandlerBase<M
     private readonly IConversationRepository _conversationRepository;
 
     private readonly IMessageRepository _messageRepository;
+
+    private readonly IMemberMessageRepository _memberMessageRepository;
 
     public ReplicateMessageToMembersEventHandler(IConversationRepository conversationRepository, IMessageRepository messageRepository)
     {
@@ -26,10 +27,10 @@ internal class ReplicateMessageToMembersEventHandler : EventHandlerHandlerBase<M
         foreach (Member conversationMember in conversation.Members)
         {
             MemberMessage memberMessage = new MemberMessage(message.Id, message.SenderMemberId, conversationMember.Id);
-            await _messageRepository.CreateMemberMessageAsync(memberMessage, cancellationToken);
+            await _memberMessageRepository.CreateMemberMessageAsync(memberMessage, cancellationToken);
         }
 
-        await _messageRepository.SaveChangesAsync(cancellationToken);
+        await _memberMessageRepository.SaveChangesAsync(cancellationToken);
 
         //TODO SignalR de nova mensagem para os membros da conversa
     }
