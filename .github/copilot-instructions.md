@@ -1,6 +1,6 @@
 The goal of these instructions is to make an AI coding agent immediately productive in the OmegaFY.Chat.API repository.
 
-This is a Chat API built with ASP.NET Core, using CQRS-style command/query separation with message bus for decoupled event processing. Core domains: users, authentication, and real-time chat features. The architecture emphasizes maintainability through clear separation of concerns and standardized handler/validation patterns.
+This is a Chat API built with ASP.NET Core, using CQRS-style command/query separation with message bus for decoupled event processing. Core domains: users (with friendships), authentication (JWT), and real-time chat features (conversations, messages, groups). The architecture emphasizes maintainability through clear separation of concerns and standardized handler/validation patterns.
 
 Keep answers concise and code-focused. When changing code, prefer small, well-tested edits that follow existing patterns.
 
@@ -26,9 +26,15 @@ Key patterns and where to find them
   - Queries: read-only data access through EF or Dapper query providers
   - Events: asynchronous side effects triggered via message bus (e.g., `SendWelcomeEmailEvent` after user registration)
   Register handlers in `Application.Extensions.DependencyInjectionExtensions`.
+- Request → Command/Query mapping: WebAPI models (in `WebAPI/Models/`) have `ToCommand()` or `ToQuery()` methods that map HTTP request models to application commands/queries. This keeps HTTP concerns out of the application layer. See `RegisterNewUserRequest.ToCommand()` for example.
+- Controller result patterns: Controllers inject handlers directly as action parameters and pass `HandlerResult<T>` to ASP.NET action results:
+  - For creation: `Created(location, await handler.HandleAsync(...))`
+  - For updates: `Ok(await handler.HandleAsync(...))`
+  - For operations with no content: check `result.Succeeded()` then return `NoContent()` or `BadRequest(result)`
+  See `ConversationsController` and `AuthController` for examples.
 - Message bus: in-memory message buses live under `Infra.MessageBus`. Tests for message buses are in `test/.../Infra/MessageBus`. Use `AddConcurrentBagInMemoryMessageBus()` or `AddChannelInMemoryMessageBus()` from `Infra.Extensions.DependencyInjectionExtensions`.
 - OpenTelemetry: configured in `Infra.Extensions.DependencyInjectionExtensions.AddOpenTelemetry(...)` and registered by `WebAPI.DependencyInjection.Registrations.OpenTelemetryRegistration`. Activities are started by the application `HandlerBase` and `OpenTelemetryActivitySourceProvider` provides the ActivitySource.
-- Authentication: Identity + JWT configured in `Infra.Extensions.DependencyInjectionExtensions.AddIdentityUserConfiguration`. Identity EF stores are wired in `Data.EF.Extensions.DependencyInjectionExtensions`. Jwt settings are read from configuration (`appsettings.json`) and `JwtSettings` model.
+- Authentication: Identity + JWT configured in `Infra.Extensions.DependencyInjectionExtensions.AddIdentityUserConfiguration`. Identity EF stores are wired in `Data.EF.Extensions.DependencyInjectionExtensions`. Jwt settings are read from configuration (`appsettings.json`) and `JwtSettings` model. Controllers are protected by `[Authorize(PoliciesNamesConstants.BEARER_JWT_POLICY)]` by default (inherited from `ApiControllerBase`). Use `[AllowAnonymous]` for public endpoints.
 
 Developer workflows (commands)
 - Restore, build and run the WebAPI (from repository root):
@@ -51,7 +57,9 @@ Integration points and external dependencies
 - Identity: ASP.NET Core Identity with EF stores + JWT. Relevant files:
   - `src/.../Infra/Extensions/DependencyInjectionExtensions.cs` (AddIdentityUserConfiguration)
   - `src/.../Data.EF/Extensions/DependencyInjectionExtensions.cs` (AddEntityFrameworkStores)
-- OpenTelemetry / Honeycomb: configured in `Infra` and wired by registration in `WebAPI`. Package refs in `src/OmegaFY.Chat.API.Infra/OmegaFY.Chat.API.Infra.csproj`.
+- OpenTelemetry / Honeycomb: configured in `Infra` and wired by registration in `WebAPI`. Package refs in `src/OmegaFY.Chat.API.Infra/OmegaFY.Chat.API.Infra.csproj`. Service name and API key configured in `appsettings.json` under `OpenTelemetrySettings`.
+- Health checks: SQL Server health check available at `/health` (JSON) and UI at `/health-ui`. Configured in `HealthCheckRegistration.cs`.
+- Rate limiting: Token bucket rate limiter configured via `IpOrUserTokenBucketPolicySettings` in `appsettings.json`. Applied globally via `app.UseRateLimiter()` in `Program.cs`.
 
 Examples the agent can follow
 - Adding a new command (state-changing operation):
@@ -81,18 +89,30 @@ Examples the agent can follow
 Here's a complete command example (RegisterNewUser):
   1. Command DTO + Validator:
      ```csharp
-     public sealed record RegisterNewUserCommand(string Email, string Password) : ICommand;
+     public sealed record RegisterNewUserCommand(string Email, string DisplayName, string Password) : ICommand;
      
      public sealed class RegisterNewUserCommandValidator : AbstractValidator<RegisterNewUserCommand>
      {
-         public RegisterNewUserCommandValidator()
+         public RegisterNewUserCommandValidator(IOptions<AuthenticationSettings> authSettings)
          {
              RuleFor(x => x.Email).NotEmpty().EmailAddress();
-             RuleFor(x => x.Password).NotEmpty().MinimumLength(8);
+             RuleFor(x => x.Password).NotEmpty().MinimumLength(authSettings.Value.PasswordMinRequiredLength);
+             RuleFor(x => x.DisplayName).NotEmpty().Length(UserConstants.MIN_DISPLAY_NAME_LENGTH, UserConstants.MAX_DISPLAY_NAME_LENGTH);
          }
      }
      ```
-  2. Handler with validation + telemetry:
+  2. Request model with ToCommand() mapper (WebAPI layer):
+     ```csharp
+     public sealed record RegisterNewUserRequest
+     {
+         public string Email { get; init; }
+         public string DisplayName { get; init; }
+         public string Password { internal get; init; }
+         
+         public RegisterNewUserCommand ToCommand() => new(Email, DisplayName, Password);
+     }
+     ```
+  3. Handler with validation + telemetry:
      ```csharp
      // 1. Event definition
      public sealed record SendWelcomeEmailEvent(Guid UserId) : IEvent;
@@ -133,7 +153,7 @@ Here's a complete command example (RegisterNewUser):
              RegisterNewUserCommand command, 
              CancellationToken cancellationToken)
          {
-             var user = await _userManager.CreateUserAsync(command.Email, command.Password);
+             var user = await _userManager.CreateUserAsync(command.Email, command.DisplayName, command.Password);
              // Publish event via message bus for async handling
              await _messageBus.PublishAsync(new SendWelcomeEmailEvent(user.Id), cancellationToken);
              return new HandlerResult<RegisterNewUserCommandResult>(new(user.Id));
@@ -147,7 +167,7 @@ Here's a complete command example (RegisterNewUser):
          return services;
      }
      ```
-  3. Register in DI:
+  4. Register in DI:
      ```csharp
      public static IServiceCollection AddCommandHandlers(this IServiceCollection services)
      {
@@ -155,18 +175,16 @@ Here's a complete command example (RegisterNewUser):
          return services;
      }
      ```
-  4. Controller action:
+  5. Controller action (inject handler as parameter, use request model):
      ```csharp
-     [HttpPost("register")]
-     public async Task<IActionResult> Register(
-         [FromBody] RegisterNewUserCommand command,
-         [FromServices] RegisterNewUserCommandHandler handler,
+     [AllowAnonymous]
+     [HttpPost("register-new-user")]
+     [ProducesResponseType(typeof(ApiResponse<RegisterNewUserCommandResult>), StatusCodes.Status201Created)]
+     public async Task<IActionResult> RegisterNewUser(
+         RegisterNewUserCommandHandler handler,
+         [FromBody] RegisterNewUserRequest request,
          CancellationToken cancellationToken)
-     {
-         HandlerResult<RegisterNewUserCommandResult> result = 
-             await handler.HandleAsync(command, cancellationToken);
-         return result.ToActionResult();
-     }
+         => Created(Url.ActionLink(nameof(GetUser), "Users"), await handler.HandleAsync(request.ToCommand(), cancellationToken));
      ```
 
 Edge cases for the agent to watch for
