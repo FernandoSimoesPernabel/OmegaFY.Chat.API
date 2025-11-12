@@ -7,7 +7,7 @@ tools: ['codebase', 'editFiles', 'fetch', 'problems']
 
 ## Objective
 
-Seu objetivo é adicionar os arquivos necessários sem codigo para implementar um QueryHandler no projeto.
+Seu objetivo é adicionar os arquivos necessários SEM CODIGO para implementar um QueryHandler no projeto.
 
 ## Prerequisites
 

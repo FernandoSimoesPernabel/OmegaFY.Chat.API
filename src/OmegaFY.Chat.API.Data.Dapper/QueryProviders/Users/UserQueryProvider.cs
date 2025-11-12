@@ -3,7 +3,6 @@ using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
-using OmegaFY.Chat.API.Domain.Entities.Users;
 using System.Data;
 
 namespace OmegaFY.Chat.API.Data.Dapper.QueryProviders.Users;

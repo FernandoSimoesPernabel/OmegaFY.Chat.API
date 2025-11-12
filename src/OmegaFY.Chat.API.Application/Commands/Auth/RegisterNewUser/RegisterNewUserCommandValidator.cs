@@ -27,7 +27,7 @@ public sealed class RegisterNewUserCommandValidator : AbstractValidator<Register
             .WithMessage($"A senha deve ter entre {authenticationSettings.PasswordMinRequiredLength} e {authenticationSettings.PasswordMaxRequiredLength} caracteres.")
             .Custom((password, context) =>
             {
-                var passwordAsChars = password?.ToCharArray() ?? [];
+                char[] passwordAsChars = password?.ToCharArray() ?? [];
 
                 if (authenticationSettings.PasswordRequireDigit && !passwordAsChars.Any(c => char.IsDigit(c)))
                     context.AddFailure(nameof(authenticationSettings.PasswordRequireDigit), "A senha deve conter ao menos um dígito.");
