@@ -12,10 +12,14 @@ internal class ReplicateMessageToMembersEventHandler : EventHandlerHandlerBase<M
 
     private readonly IMemberMessageRepository _memberMessageRepository;
 
-    public ReplicateMessageToMembersEventHandler(IConversationRepository conversationRepository, IMessageRepository messageRepository)
+    public ReplicateMessageToMembersEventHandler(
+        IConversationRepository conversationRepository, 
+        IMessageRepository messageRepository, 
+        IMemberMessageRepository memberMessageRepository)
     {
         _conversationRepository = conversationRepository;
         _messageRepository = messageRepository;
+        _memberMessageRepository = memberMessageRepository;
     }
 
     protected override async Task HandleAsync(MessageSentEvent @event, CancellationToken cancellationToken)

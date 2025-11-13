@@ -5,19 +5,46 @@ using OmegaFY.Chat.API.Application.Commands.Chat.MarkMessageAsDeleted;
 using OmegaFY.Chat.API.Application.Commands.Chat.MarkMessageAsRead;
 using OmegaFY.Chat.API.Application.Commands.Chat.RemoveMemberFromGroup;
 using OmegaFY.Chat.API.Application.Commands.Chat.SendMessage;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetConversationById;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetMemberFromConversation;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetMessageFromMember;
 using OmegaFY.Chat.API.Application.Shared;
 using OmegaFY.Chat.API.WebAPI.Models;
 using OmegaFY.Chat.API.WebAPI.Models.Chat;
 
 namespace OmegaFY.Chat.API.WebAPI.Controllers;
 
-public sealed class ConversationsController : ApiControllerBase
+public sealed class ChatController : ApiControllerBase
 {
-    //[HttpGet("{conversationId:guid}")]
+    //[HttpGet("me/get-unread-messages")]
 
-    //[HttpGet("{conversationId:guid}/Members/{memberId:guid}")]
+    //[HttpGet("me/conversations")]
 
-    //[HttpGet("{conversationId:guid}/Messages/{messageId:guid}")]
+    //[HttpGet("me/{conversationId:guid}/messages/{messageId:guid}")]
+
+    [HttpGet("{conversationId:guid}")]
+    [ProducesResponseType(typeof(ApiResponse<GetConversationByIdQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetConversationById(GetConversationByIdQueryHandler handler, [FromRoute] Guid conversationId, CancellationToken cancellationToken)
+        => Ok(await handler.HandleAsync(new GetConversationByIdQuery(conversationId), cancellationToken));
+
+    [HttpGet("{conversationId:guid}/members/{memberId:guid}")]
+    [ProducesResponseType(typeof(ApiResponse<GetMemberFromConversationQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetMemberFromConversation(GetMemberFromConversationQueryHandler handler, [FromRoute] Guid conversationId, [FromRoute] Guid memberId, CancellationToken cancellationToken) 
+        => Ok(await handler.HandleAsync(new GetMemberFromConversationQuery(conversationId, memberId), cancellationToken));
+
+    [HttpGet("{conversationId:guid}/messages/{messageId:guid}")]
+    [ProducesResponseType(typeof(ApiResponse<GetMessageFromMemberQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetMessageFromMember(GetMessageFromMemberQueryHandler handler, [FromRoute] Guid conversationId, [FromRoute] Guid messageId, CancellationToken cancellationToken) 
+        => Ok(await handler.HandleAsync(new GetMessageFromMemberQuery(conversationId, messageId), cancellationToken));
 
     [HttpPost()]
     [ProducesResponseType(typeof(ApiResponse<CreateGroupConversationCommandResult>), StatusCodes.Status201Created)]
@@ -26,10 +53,10 @@ public sealed class ConversationsController : ApiControllerBase
     public async Task<IActionResult> CreateGroupConversation(CreateGroupConversationCommandHandler handler, [FromBody] CreateGroupConversationRequest request, CancellationToken cancellationToken)
     {
         HandlerResult<CreateGroupConversationCommandResult> result = await handler.HandleAsync(request.ToCommand(), cancellationToken);
-        return CreatedAtAction(nameof(CreateGroupConversation), new { result.Data?.ConversationId }, result); //TODO : Change to GetConversationById action when implemented
+        return CreatedAtAction(nameof(GetConversationById), new { result.Data?.ConversationId }, result);
     }
 
-    [HttpPost("{conversationId:guid}/Messages")]
+    [HttpPost("{conversationId:guid}/messages")]
     [ProducesResponseType(typeof(ApiResponse<SendMessageCommandResult>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -38,10 +65,10 @@ public sealed class ConversationsController : ApiControllerBase
     public async Task<IActionResult> SendMessage(SendMessageCommandHandler handler, Guid conversationId, [FromBody] SendMessageRequest request, CancellationToken cancellationToken)
     {
         HandlerResult<SendMessageCommandResult> result = await handler.HandleAsync(request.ToCommand(conversationId), cancellationToken);
-        return CreatedAtAction(nameof(SendMessage), new { result.Data?.MessageId }, result); //TODO : Change to GetMessageById action when implemented
+        return CreatedAtAction(nameof(GetMemberFromConversation), new { result.Data?.MessageId }, result);
     }
 
-    [HttpPost("{conversationId:guid}/Messages/{messageId:guid}/mark-as-read")]
+    [HttpPost("{conversationId:guid}/messages/{messageId:guid}/mark-as-read")]
     [ProducesResponseType(typeof(ApiResponse<MarkMessageAsReadCommandResult>), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -52,7 +79,7 @@ public sealed class ConversationsController : ApiControllerBase
         return result.Succeeded() ? NoContent() : BadRequest(result);
     }
 
-    [HttpPost("{conversationId:guid}/Members")]
+    [HttpPost("{conversationId:guid}/members")]
     [ProducesResponseType(typeof(ApiResponse<AddMemberToGroupCommandResult>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -61,10 +88,10 @@ public sealed class ConversationsController : ApiControllerBase
     public async Task<IActionResult> AddMemberToGroup(AddMemberToGroupCommandHandler handler, Guid conversationId, [FromBody] AddMemberToGroupRequest request, CancellationToken cancellationToken)
     {
         HandlerResult<AddMemberToGroupCommandResult> result = await handler.HandleAsync(request.ToCommand(conversationId), cancellationToken);
-        return CreatedAtAction(nameof(AddMemberToGroup), new { result.Data?.MemberId }, result); //TODO : Change to GetMemberById action when implemented
+        return CreatedAtAction(nameof(GetMessageFromMember), new { result.Data?.MemberId }, result);
     }
 
-    [HttpPut("{conversationId:guid}/GrupoConfig")]
+    [HttpPut("{conversationId:guid}/grupo-config")]
     [ProducesResponseType(typeof(ApiResponse<ChangeGroupConfigCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -73,7 +100,7 @@ public sealed class ConversationsController : ApiControllerBase
     public async Task<IActionResult> ChangeGroupConfig(ChangeGroupConfigCommandHandler handler, [FromRoute] Guid conversationId, [FromBody] ChangeGroupConfigRequest request, CancellationToken cancellationToken)
         => Ok(await handler.HandleAsync(request.ToCommand(conversationId), cancellationToken));
 
-    [HttpDelete("{conversationId:guid}/Members/{memberId:guid}")]
+    [HttpDelete("{conversationId:guid}/members/{memberId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<RemoveMemberFromGroupCommandResult>), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -85,7 +112,7 @@ public sealed class ConversationsController : ApiControllerBase
         return result.Succeeded() ? NoContent() : BadRequest(result);
     }
 
-    [HttpDelete("{conversationId:guid}/Messages/{messageId:guid}")]
+    [HttpDelete("{conversationId:guid}/messages/{messageId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<MarkMessageAsDeletedCommandResult>), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
