@@ -47,6 +47,7 @@ Developer workflows (commands)
   - dotnet run --project test/OmegaFY.Chat.API.Tests.Benchmark
 
 Project-specific conventions
+- Never add comments in code — prefer expressive naming and small methods/classes.
 - Prefer DI registration via the `IDependencyInjectionRegister` pattern in `WebAPI/DependencyInjection/Registrations`. New registrations should be placed there rather than scattering calls across Program.cs.
 - Handlers must validate requests using FluentValidation. Validators are registered by convention (inject `IValidator<TRequest>`). See `HandlerBase` for expected behavior on validation/exception mapping.
 - Use `HandlerResult<TResult>` and `HandlerResult` patterns for handler outputs (found in `Application.Shared`). Do not return raw domain exceptions — let `HandlerBase` map exceptions.
@@ -206,5 +207,3 @@ Where to look for examples and reference files
 - Tests: `test/OmegaFY.Chat.API.Tests.Unit/Infra/MessageBus/*` for message bus behavior
 
 If you change behavior or add features, run the unit tests scoped to affected projects before committing.
-
-If anything in this file is unclear or you'd like more examples (controllers, a sample handler + validator, or a short checklist for PRs), tell me what to expand and I'll update the file.

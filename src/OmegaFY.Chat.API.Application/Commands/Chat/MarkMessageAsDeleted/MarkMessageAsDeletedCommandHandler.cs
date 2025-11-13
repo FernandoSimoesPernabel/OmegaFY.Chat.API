@@ -46,6 +46,9 @@ public sealed class MarkMessageAsDeletedCommandHandler : CommandHandlerBase<Mark
         if (memberMessage is null)
             return HandlerResult.CreateNotFound<MarkMessageAsDeletedCommandResult>();
 
+        if (memberMessage.IsDeleted())
+            return HandlerResult.Create(new MarkMessageAsDeletedCommandResult());
+
         memberMessage.Deleted();
 
         await _memberMessageRepository.SaveChangesAsync(cancellationToken);

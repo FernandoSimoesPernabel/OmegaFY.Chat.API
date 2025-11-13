@@ -46,6 +46,9 @@ public sealed class MarkMessageAsReadCommandHandler : CommandHandlerBase<MarkMes
         if (memberMessage is null)
             return HandlerResult.CreateNotFound<MarkMessageAsReadCommandResult>();
 
+        if (memberMessage.IsRead())
+            return HandlerResult.Create(new MarkMessageAsReadCommandResult());
+
         memberMessage.Read();
 
         await _memberMessageRepository.SaveChangesAsync(cancellationToken);
