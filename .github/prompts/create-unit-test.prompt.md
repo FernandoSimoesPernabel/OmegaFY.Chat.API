@@ -31,7 +31,10 @@ Seu objetivo é implementar testes de unidade utilizando xUnit para cobrir 100% d
 ** Exemplo: Constructor_ModifiedPost_ShouldHaveModificationDetailsDateOfModificationEqualsToUtcNow
 5 - Implemente os testes de unidade utilizando xUnit para cobrir 100% dos metodos públicos da classe especificada.
 6 - Priorizar utilizar [Theory] e [InlineData] ou [MemberData] para criar testes parametrizados quando aplicavel.
+7 - Utilizar o padão AAA (Arrange, Act, Assert) na estrutura dos testes.
 
 ### Additional validations
 
 - Confirmar que foi realizado 100% de cobertura na classe especificada.
+- Garantir que o código dos testes segue as melhores práticas de codificação e padrões do projeto.
+- Confirmar que foi seguido o padrão AAA (Arrange, Act, Assert) na estrutura dos testes.

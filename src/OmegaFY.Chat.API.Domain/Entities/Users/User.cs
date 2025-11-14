@@ -25,6 +25,8 @@ public sealed class User : Entity, IAggregateRoot<User>
         ChangeDisplayName(displayName);
     }
 
+    public Friendship GetFriendshipById(ReferenceId friendshipId) => Friendships.First(friendship => friendship.Id == friendshipId);
+
     public void ChangeDisplayName(string displayName)
     {
         if (string.IsNullOrWhiteSpace(displayName))
@@ -74,7 +76,7 @@ public sealed class User : Entity, IAggregateRoot<User>
         if (friendship is null)
             throw new NotFoundException("Solicitação de amizade não encontrada.");
 
-        if (friendship.RequestingUserId != Id)
+        if (friendship.InvitedUserId != Id)
             throw new DomainInvalidOperationException("A solicitação de amizade não pertence a este usuário.");
 
         if (friendship.Status != Enums.FriendshipStatus.Pending)

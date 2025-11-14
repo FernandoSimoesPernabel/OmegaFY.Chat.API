@@ -19,6 +19,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT, new HealthCheckOptions()
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
@@ -27,10 +33,6 @@ app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT, new HealthCheckOptions()
 app.UseHealthChecksUI(options => options.UIPath = HealthCheckConstants.UI_ENDPOINT);
 
 app.UseRateLimiter();
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

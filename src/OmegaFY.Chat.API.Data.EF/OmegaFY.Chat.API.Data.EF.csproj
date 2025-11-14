@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Migrations\002-Initial_Domain_Tables.sql" />
-    <Content Include="Migrations\001-Initial_Identity_Tables.sql">
+    <Content Include="Scripts\002-Initial_Domain_Tables.sql" />
+    <Content Include="Scripts\001-Initial_Identity_Tables.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

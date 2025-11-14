@@ -17,7 +17,7 @@ internal sealed class UserMapping : IEntityTypeConfiguration<User>
 
         builder.Property(user => user.Email).HasMaxLength(UserConstants.MAX_EMAIL_LENGTH).IsUnicode(false).IsRequired();
 
-        builder.Property(user => user.DisplayName).HasMaxLength(UserConstants.MAX_DISPLAY_NAME_LENGTH).IsUnicode(false).IsUnicode(false).IsRequired();
+        builder.Property(user => user.DisplayName).HasMaxLength(UserConstants.MAX_DISPLAY_NAME_LENGTH).IsUnicode(false).IsRequired();
 
         builder.HasMany<Friendship>("_friendshipRequested").WithOne().HasForeignKey(friendship => friendship.RequestingUserId).OnDelete(DeleteBehavior.Cascade);
 

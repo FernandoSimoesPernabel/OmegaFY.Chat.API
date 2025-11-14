@@ -53,7 +53,7 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         };
     }
 
-    public Task<FriendshipModel> GetFriendshipByIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
+    public Task<FriendshipModel> GetFriendshipByIdAndUserIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
     {
         const string sql = @"
             SELECT TOP 1
