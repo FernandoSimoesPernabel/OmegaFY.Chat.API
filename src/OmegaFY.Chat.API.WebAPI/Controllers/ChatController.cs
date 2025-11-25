@@ -39,7 +39,6 @@ public sealed class ChatController : ApiControllerBase
     [HttpGet("{conversationId:guid}/messages/{messageId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetMessageFromMemberQueryResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMessageFromMember(GetMessageFromMemberQueryHandler handler, [FromRoute] Guid conversationId, [FromRoute] Guid messageId, CancellationToken cancellationToken) 
         => Ok(await handler.HandleAsync(new GetMessageFromMemberQuery(conversationId, messageId), cancellationToken));
@@ -63,7 +62,7 @@ public sealed class ChatController : ApiControllerBase
     public async Task<IActionResult> SendMessage(SendMessageCommandHandler handler, Guid conversationId, [FromBody] SendMessageRequest request, CancellationToken cancellationToken)
     {
         HandlerResult<SendMessageCommandResult> result = await handler.HandleAsync(request.ToCommand(conversationId), cancellationToken);
-        return CreatedAtAction(nameof(GetMemberFromConversation), new { result.Data?.MessageId }, result);
+        return CreatedAtAction(nameof(GetMessageFromMember), new { result.Data?.ConversationId, result.Data?.MessageId }, result);
     }
 
     [HttpPost("{conversationId:guid}/messages/{messageId:guid}/mark-as-read")]

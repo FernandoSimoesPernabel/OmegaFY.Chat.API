@@ -26,6 +26,8 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
         Type = ConversationType.GroupChat;
         Status = ConversationStatus.Open;
         CreatedDate = DateTime.UtcNow;
+
+        _members.Add(new Member(Id, createdByUserId));
     }
 
     private Conversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId)

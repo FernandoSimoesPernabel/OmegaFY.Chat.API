@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
@@ -23,8 +24,16 @@ public sealed class GetMessageFromMemberQueryHandler : QueryHandlerBase<GetMessa
         _chatQueryProvider = chatQueryProvider;
     }
 
-    protected override Task<HandlerResult<GetMessageFromMemberQueryResult>> InternalHandleAsync(GetMessageFromMemberQuery request, CancellationToken cancellationToken)
+    protected override async Task<HandlerResult<GetMessageFromMemberQueryResult>> InternalHandleAsync(GetMessageFromMemberQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (!_userInformation.IsAuthenticated)
+            return HandlerResult.CreateUnauthenticated<GetMessageFromMemberQueryResult>();
+
+        MessageFromMemberModel messageFromMember = await _chatQueryProvider.GetMessageFromMemberAsync(request.MessageId, _userInformation.CurrentRequestUserId.Value, cancellationToken);
+
+        if (messageFromMember is null)
+            return HandlerResult.CreateNotFound<GetMessageFromMemberQueryResult>();
+
+        return HandlerResult.Create(new GetMessageFromMemberQueryResult(messageFromMember));
     }
 }

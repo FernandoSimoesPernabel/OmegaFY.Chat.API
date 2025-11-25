@@ -20,6 +20,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
                 C.Status,
                 C.CreatedDate,
                 GC.Id AS GroupConfigId,
+                GC.ConversationId,
                 GC.CreatedByUserId,
                 GC.GroupName,
                 GC.MaxNumberOfMembers
@@ -45,14 +46,11 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
             WHERE
                 M.ConversationId = @ConversationId";
 
-        //https://github.com/DapperLib/Dapper/issues/452
         await using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { ConversationId = conversationId });
 
-        ConversationAndMembersModel conversation = await gridReader.ReadFirstOrDefaultAsync<ConversationAndMembersModel>();
-
-        //ConversationModel conversation2 = gridReader.Read<ConversationModel, GroupConfigModel, ConversationModel>(
-        //    (conversation, groupConfig) => conversation with { GroupConfig = groupConfig },
-        //    splitOn: nameof(GroupConfigModel.GroupConfigId)).FirstOrDefault();
+        ConversationAndMembersModel conversation = gridReader.Read<ConversationAndMembersModel, GroupConfigModel, ConversationAndMembersModel>(
+            (conversation, groupConfig) => conversation with { GroupConfig = groupConfig },
+            splitOn: nameof(GroupConfigModel.GroupConfigId)).FirstOrDefault();
 
         if (conversation is null)
             return null;
@@ -81,7 +79,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
         return await _dbConnection.QueryFirstOrDefaultAsync<MemberModel>(sql, new { MemberId = memberId });
     }
 
-    public async Task<MemberAndMessageModel> GetMessageFromMemberAsync(Guid messageId, Guid userId, CancellationToken cancellationToken)
+    public async Task<MessageFromMemberModel> GetMessageFromMemberAsync(Guid messageId, Guid userId, CancellationToken cancellationToken)
     {
         const string sql = @"
             SELECT TOP 1
@@ -92,7 +90,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
                 MemberMessage.DeliveryDate,
                 Message.Type,
                 MemberMessage.Status,
-                Message.Body
+                Message.Content
             
             FROM
                 chat.Messages AS Message
@@ -101,11 +99,11 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
                 chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
 
             INNER JOIN
-                chat.Members AS Member ON (Member.Id = MemberMessage.DestinationMemberId OR Member.Id = MemberMessage.SenderMemberId) AND Member.UserId = @UserId
+                chat.Members AS Member ON Member.Id = MemberMessage.DestinationMemberId AND Member.UserId = @UserId
             
             WHERE
                 Message.Id = @MessageId";
 
-        return await _dbConnection.QueryFirstOrDefaultAsync<MemberAndMessageModel>(sql, new { MessageId = messageId, UserId = userId });
+        return await _dbConnection.QueryFirstOrDefaultAsync<MessageFromMemberModel>(sql, new { MessageId = messageId, UserId = userId });
     }
 }

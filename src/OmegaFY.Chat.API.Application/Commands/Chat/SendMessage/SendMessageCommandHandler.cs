@@ -58,6 +58,6 @@ public sealed class SendMessageCommandHandler : CommandHandlerBase<SendMessageCo
 
         await _messageBus.SimplePublishAsync(new MessageSentEvent(message.Id), cancellationToken);
 
-        return HandlerResult.Create(new SendMessageCommandResult(message.Id));
+        return HandlerResult.Create(new SendMessageCommandResult(message.ConversationId, message.Id));
     }
 }

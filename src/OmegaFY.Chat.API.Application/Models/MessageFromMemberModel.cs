@@ -2,7 +2,7 @@
 
 namespace OmegaFY.Chat.API.Application.Models;
 
-public sealed record class MemberAndMessageModel
+public sealed record class MessageFromMemberModel
 {
     public Guid MessageId { get; init; }
 
@@ -18,11 +18,11 @@ public sealed record class MemberAndMessageModel
 
     public MemberMessageStatus Status { get; init; }
 
-    public string Body { get; init; }
+    public string Content { get; init; }
 
-    public MemberAndMessageModel() { }
+    public MessageFromMemberModel() { }
 
-    public MemberAndMessageModel(
+    public MessageFromMemberModel(
         Guid messageId,
         Guid senderMemberId,
         Guid destinationMemberId,
@@ -30,7 +30,7 @@ public sealed record class MemberAndMessageModel
         DateTime deliveryDate,
         MessageType type,
         MemberMessageStatus status,
-        string body)
+        string content)
     {
         MessageId = messageId;
         SenderMemberId = senderMemberId;
@@ -39,6 +39,6 @@ public sealed record class MemberAndMessageModel
         DeliveryDate = deliveryDate;
         Type = type;
         Status = status;
-        Body = body;
+        Content = content;
     }
 }

@@ -6,6 +6,6 @@ public sealed class GetConversationByIdQueryValidator : AbstractValidator<GetCon
 {
     public GetConversationByIdQueryValidator()
     {
-        RuleFor(x => x.ConversationId).NotEmpty().WithMessage("O Id da conversa é obrigatório.");
+        RuleFor(x => x.ConversationId).NotEmpty().WithMessage("O ID da conversa é obrigatório.");
     }
 }
