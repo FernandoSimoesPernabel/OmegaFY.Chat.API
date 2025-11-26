@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
-using OmegaFY.Chat.API.Domain.Entities.Chat;
-using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Enums;
 using System.Data;
 
@@ -159,7 +157,10 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
                 chat.Users AS Sender ON Sender.Id = SenderMember.UserId
 
             WHERE
-                Message.ConversationId = @ConversationId";
+                Message.ConversationId = @ConversationId
+            
+            ORDER BY
+                Message.SendDate DESC";
 
         IEnumerable<MessageFromMemberModel> messages = await _dbConnection.QueryAsync<MessageFromMemberModel>(sql, new { ConversationId = conversationId, UserId = userId });
 
@@ -171,15 +172,17 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
         const string sql = @"
             SELECT
 	            Conversation.Id AS ConversationId,
-	            ISNULL(Config.GroupName, [User].DisplayName) AS DisplayName,
-	            MessageFromUser.MessageId,
-	            MessageFromUser.ConversationId,
-	            MessageFromUser.SenderMemberId,
-	            MessageFromUser.SendDate,
-	            MessageFromUser.Content,
-	            MessageFromUser.SenderDisplayName,
-                MessageFromUser.Type,
-                MessageFromUser.Status
+                Conversation.Type,
+                Conversation.Status,
+	            ISNULL(Config.GroupName, OtherUser.DisplayName) AS DisplayName,
+	            LastConversationMessage.MessageId,
+	            LastConversationMessage.ConversationId,
+	            LastConversationMessage.SenderMemberId,
+	            LastConversationMessage.SendDate,
+	            LastConversationMessage.Content,
+	            LastConversationMessage.SenderDisplayName,
+                LastConversationMessage.Type,
+                LastConversationMessage.Status
 	
             FROM 
 	            chat.Conversations AS Conversation
@@ -187,42 +190,46 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
             INNER JOIN
 	            chat.Members AS Member ON Member.ConversationId = Conversation.Id
 
-            INNER JOIN
-	            chat.Users AS [User] ON [User].Id = Member.UserId
-
             LEFT JOIN
 	            chat.GroupConfigs AS Config ON Config.ConversationId = Conversation.Id
 
             LEFT JOIN
-	            (
-		            SELECT TOP 1 
-			            Message.Id AS MessageId, 
-			            Message.ConversationId,
-			            Message.SenderMemberId,
-			            Message.SendDate,
-			            Message.Content,
-                        Message.Type,
-                        MemberMessage.Status,
-			            [User].DisplayName AS SenderDisplayName
+                chat.Members AS OtherMember ON OtherMember.ConversationId = Conversation.Id AND OtherMember.UserId <> @UserId AND Conversation.Type = 'MemberToMember'
 
-		            FROM 
-			            chat.[Messages] AS Message
+            LEFT JOIN
+                chat.Users AS OtherUser ON OtherUser.Id = OtherMember.UserId
 
-		            INNER JOIN
-			            chat.Members AS Member ON Member.Id = Message.SenderMemberId
-
-		            INNER JOIN
-			            chat.Users AS [User] ON [User].Id = Member.UserId
-
-                    INNER JOIN
-                        chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
-
-		            WHERE
-			            Member.UserId = @UserId
-
-		            ORDER BY 
-			            Message.SendDate DESC
-	            ) AS MessageFromUser ON MessageFromUser.ConversationId = Conversation.Id
+            OUTER APPLY
+            (
+                SELECT TOP 1 
+                    Message.Id AS MessageId, 
+                    Message.ConversationId,
+                    Message.SenderMemberId,
+                    SenderMember.UserId AS SenderUserId,
+                    Message.SendDate,
+                    Message.Content,
+                    Message.Type,
+                    MemberMessage.Status,
+                    SenderUser.DisplayName AS SenderDisplayName
+                
+                FROM 
+                    chat.[Messages] AS Message
+                
+                INNER JOIN
+                    chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id AND MemberMessage.DestinationMemberId = Member.Id
+                
+                INNER JOIN
+                    chat.Members AS SenderMember ON SenderMember.Id = Message.SenderMemberId
+                
+                INNER JOIN
+                    chat.Users AS SenderUser ON SenderUser.Id = SenderMember.UserId
+                
+                WHERE
+                    Message.ConversationId = Conversation.Id
+                
+                ORDER BY 
+                    Message.SendDate DESC
+            ) AS LastConversationMessage
 
             WHERE
 	            Member.UserId = @UserId";
