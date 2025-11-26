@@ -29,7 +29,6 @@ public sealed class ChatController : ApiControllerBase
     [HttpGet("me/conversations")]
     [ProducesResponseType(typeof(ApiResponse<GetUserConversationsQueryResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserConversations(GetUserConversationsQueryHandler handler, CancellationToken cancellationToken) 
         => Ok(await handler.HandleAsync(new GetUserConversationsQuery(), cancellationToken));
 
