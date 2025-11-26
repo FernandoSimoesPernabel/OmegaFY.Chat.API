@@ -7,13 +7,4 @@ public sealed record class UserConversationModel
     public string DisplayName { get; init; }
 
     public LastMessageFromConversationModel LastMessage { get; init; }
-
-    public UserConversationModel() { }
-
-    public UserConversationModel(Guid conversationId, string displayName, LastMessageFromConversationModel lastMessage)
-    {
-        ConversationId = conversationId;
-        DisplayName = displayName;
-        LastMessage = lastMessage;
-    }
 }

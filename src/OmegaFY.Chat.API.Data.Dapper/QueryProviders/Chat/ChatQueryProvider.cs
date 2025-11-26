@@ -3,6 +3,7 @@ using Microsoft.VisualBasic;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
+using OmegaFY.Chat.API.Domain.Enums;
 using System.Data;
 
 namespace OmegaFY.Chat.API.Data.Dapper.QueryProviders.Chat;
@@ -86,6 +87,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
         const string sql = @"
             SELECT TOP 1
                 Message.Id AS MessageId,
+                Message.ConversationId,
                 Message.SenderMemberId,
                 MemberMessage.DestinationMemberId,
                 Message.SendDate,
@@ -112,15 +114,17 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
     public async Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken)
     {
         const string sql = @"
-            SELECT 
+            SELECT
 	            Conversation.Id AS ConversationId,
 	            ISNULL(Config.GroupName, [User].DisplayName) AS DisplayName,
-	            Message.MessageId,
-	            Message.ConversationId,
-	            Message.SenderMemberId,
-	            Message.SendDate,
-	            Message.Content,
-	            Message.SenderDisplayName
+	            MessageFromUser.MessageId,
+	            MessageFromUser.ConversationId,
+	            MessageFromUser.SenderMemberId,
+	            MessageFromUser.SendDate,
+	            MessageFromUser.Content,
+	            MessageFromUser.SenderDisplayName,
+                MessageFromUser.Type,
+                MessageFromUser.Status
 	
             FROM 
 	            chat.Conversations AS Conversation
@@ -142,6 +146,8 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 			            Message.SenderMemberId,
 			            Message.SendDate,
 			            Message.Content,
+                        Message.Type,
+                        MemberMessage.Status,
 			            [User].DisplayName AS SenderDisplayName
 
 		            FROM 
@@ -153,12 +159,15 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 		            INNER JOIN
 			            chat.Users AS [User] ON [User].Id = Member.UserId
 
+                    INNER JOIN
+                        chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
+
 		            WHERE
 			            Member.UserId = @UserId
 
 		            ORDER BY 
 			            Message.SendDate DESC
-	            ) AS Message ON Message.ConversationId = Conversation.Id
+	            ) AS MessageFromUser ON MessageFromUser.ConversationId = Conversation.Id
 
             WHERE
 	            Member.UserId = @UserId";
@@ -169,5 +178,36 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
             splitOn: nameof(LastMessageFromConversationModel.MessageId));
 
         return userConversations.ToArray();
+    }
+
+    public async Task<MessageModel[]> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, CancellationToken cancellationToken)
+    {
+        string sql = @$"
+            SELECT
+                Message.Id AS MessageId,
+                Message.ConversationId,
+                Message.SenderMemberId,
+                Message.SendDate,
+                Message.Type,
+                Message.Content
+            
+            FROM 
+                chat.Messages AS Message
+            
+            INNER JOIN
+                chat.Members AS Member ON Member.Id = Message.SenderMemberId
+
+            INNER JOIN
+                chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id AND MemberMessage.DestinationMemberId = Member.Id
+            
+            WHERE
+                Member.UserId = @UserId {(messageStatus is not null ? "AND MemberMessage.Status = @MessageStatus" : string.Empty)}
+            
+            ORDER BY
+                Message.SendDate DESC";
+
+        IEnumerable<MessageModel> messages = await _dbConnection.QueryAsync<MessageModel>(sql, new { UserId = userId, MessageStatus = messageStatus?.ToString() });
+
+        return messages.ToArray();
     }
 }

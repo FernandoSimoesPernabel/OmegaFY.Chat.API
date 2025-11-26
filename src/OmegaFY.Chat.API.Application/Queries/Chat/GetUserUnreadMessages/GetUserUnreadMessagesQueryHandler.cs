@@ -1,7 +1,9 @@
 using FluentValidation;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
+using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Application.Queries.Chat.GetUserUnreadMessages;
@@ -10,17 +12,27 @@ public sealed class GetUserUnreadMessagesQueryHandler : QueryHandlerBase<GetUser
 {
     private readonly IChatQueryProvider _chatQueryProvider;
 
+    private readonly IUserInformation _userInformation;
+
     public GetUserUnreadMessagesQueryHandler(
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetUserUnreadMessagesQuery> validator,
-        IChatQueryProvider chatQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        IChatQueryProvider chatQueryProvider,
+        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
     {
         _chatQueryProvider = chatQueryProvider;
+        _userInformation = userInformation;
     }
 
-    protected override Task<HandlerResult<GetUserUnreadMessagesQueryResult>> InternalHandleAsync(GetUserUnreadMessagesQuery request, CancellationToken cancellationToken)
+    protected override async Task<HandlerResult<GetUserUnreadMessagesQueryResult>> InternalHandleAsync(GetUserUnreadMessagesQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (!_userInformation.IsAuthenticated)
+            return HandlerResult.CreateUnauthenticated<GetUserUnreadMessagesQueryResult>();
+
+        MessageModel[] unreadMessagesFromUser = 
+            await _chatQueryProvider.GetMessagesFromUserAsync(_userInformation.CurrentRequestUserId.Value, MemberMessageStatus.Unread, cancellationToken);
+
+        return HandlerResult.Create(new GetUserUnreadMessagesQueryResult(unreadMessagesFromUser));
     }
 }
