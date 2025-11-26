@@ -8,9 +8,15 @@ public sealed record class MessageFromMemberModel
 
     public Guid ConversationId { get; init; }
 
+    public Guid MemberId { get; init; }
+
     public Guid SenderMemberId { get; init; }
 
+    public string SenderDisplayName { get; init; }
+
     public Guid DestinationMemberId { get; init; }
+
+    public string DestinationDisplayName { get; init; }
 
     public DateTime SendDate { get; init; }
 
@@ -21,4 +27,6 @@ public sealed record class MessageFromMemberModel
     public MemberMessageStatus Status { get; init; }
 
     public string Content { get; init; }
+
+    public bool IsMessageFromMember => SenderMemberId == MemberId;
 }

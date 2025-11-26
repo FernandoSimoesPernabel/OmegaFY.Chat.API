@@ -1,8 +1,8 @@
 ﻿using Dapper;
-using Microsoft.VisualBasic;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
+using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Enums;
 using System.Data;
 
@@ -88,8 +88,11 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
             SELECT TOP 1
                 Message.Id AS MessageId,
                 Message.ConversationId,
+                DestinationMember.Id AS MemberId,
                 Message.SenderMemberId,
+                Sender.DisplayName AS SenderDisplayName,
                 MemberMessage.DestinationMemberId,
+                Destination.DisplayName AS DestinationDisplayName,
                 Message.SendDate,
                 MemberMessage.DeliveryDate,
                 Message.Type,
@@ -103,12 +106,64 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
                 chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
 
             INNER JOIN
-                chat.Members AS Member ON Member.Id = MemberMessage.DestinationMemberId AND Member.UserId = @UserId
-            
+                chat.Members AS DestinationMember ON DestinationMember.Id = MemberMessage.DestinationMemberId AND DestinationMember.UserId = @UserId
+
+            INNER JOIN
+                chat.Members AS SenderMember ON SenderMember.Id = MemberMessage.SenderMemberId
+
+            INNER JOIN
+                chat.Users AS Destination ON Destination.Id = DestinationMember.UserId
+
+            INNER JOIN
+                chat.Users AS Sender ON Sender.Id = SenderMember.UserId
+
             WHERE
                 Message.Id = @MessageId";
 
         return await _dbConnection.QueryFirstOrDefaultAsync<MessageFromMemberModel>(sql, new { MessageId = messageId, UserId = userId });
+    }
+
+    public async Task<MessageFromMemberModel[]> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken)
+    {
+        const string sql = @"
+            SELECT
+                Message.Id AS MessageId,
+                Message.ConversationId,
+                DestinationMember.Id AS MemberId,
+                Message.SenderMemberId,
+                Sender.DisplayName AS SenderDisplayName,
+                MemberMessage.DestinationMemberId,
+                Destination.DisplayName AS DestinationDisplayName,
+                Message.SendDate,
+                MemberMessage.DeliveryDate,
+                Message.Type,
+                MemberMessage.Status,
+                Message.Content
+            
+            FROM
+                chat.Messages AS Message
+            
+            INNER JOIN
+                chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
+
+            INNER JOIN
+                chat.Members AS DestinationMember ON DestinationMember.Id = MemberMessage.DestinationMemberId AND DestinationMember.UserId = @UserId
+
+            INNER JOIN
+                chat.Members AS SenderMember ON SenderMember.Id = MemberMessage.SenderMemberId
+
+            INNER JOIN
+                chat.Users AS Destination ON Destination.Id = DestinationMember.UserId
+
+            INNER JOIN
+                chat.Users AS Sender ON Sender.Id = SenderMember.UserId
+
+            WHERE
+                Message.ConversationId = @ConversationId";
+
+        IEnumerable<MessageFromMemberModel> messages = await _dbConnection.QueryAsync<MessageFromMemberModel>(sql, new { ConversationId = conversationId, UserId = userId });
+
+        return messages.ToArray();
     }
 
     public async Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken)

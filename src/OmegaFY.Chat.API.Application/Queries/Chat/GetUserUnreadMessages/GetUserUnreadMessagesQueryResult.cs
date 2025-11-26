@@ -8,5 +8,5 @@ public sealed record GetUserUnreadMessagesQueryResult : IQueryResult
 
     public GetUserUnreadMessagesQueryResult() { }
 
-    public GetUserUnreadMessagesQueryResult(MessageModel[] messages) => Messages = messages;
+    public GetUserUnreadMessagesQueryResult(MessageModel[] messages) => Messages = messages ?? [];
 }
