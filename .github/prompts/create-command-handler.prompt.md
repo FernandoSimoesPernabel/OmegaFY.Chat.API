@@ -15,6 +15,7 @@ Seu objetivo é adicionar os arquivos necessários SEM CODIGO para implementar um 
 - Exemplos:
 ** SendMessage pertence ao contexto de Chat.
 ** AddFriendship pertence ao contexto de Users;
+- Os arquivos devem ser criados sem implementação de código, apenas com as declarações das classes e heranças necessárias.
 
 ## Steps
 
@@ -24,11 +25,13 @@ Seu objetivo é adicionar os arquivos necessários SEM CODIGO para implementar um 
 1.3 - Dentro da pasta com o {CommandName} crie um arquivo chamado {CommandName}CommandHandler.cs implementando CommandHandlerBase<THandler, TCommand, TCommandResult> criados anteriormente.
 1.3.1 -  Deixar criado o construtor com injeção de dependências da classe base e tambem o método InternalHandleAsync sem implementação.
 1.4 - Dentro da pasta com o {CommandName} crie um arquivo chamado {CommandName}CommandValidator.cs implementando AbstractValidator<{CommandName}Command>.
+1.5 - Registrar o novo CommandHandler na injeção de dependências em OmegaFY.Chat.API.Application.Extensions.DependencyInjectionExtensions.AddCommandHandlers.
 
 2 - Dentro da API.Application -> Events -> {Context} (crie a pasta se já não exister o context) -> {CommandName} (crie a pasta se já não existir) crie:
 2.1 - Dentro da pasta com o {CommandName} crie um arquivo de evento com um nome correspondente ao Evento (ex: CreateGroupCommand/GroupCreatedEvent) implementando IEvent.
 2.2 - Dentro da pasta com o {CommandName} crie um arquivo de EventHandler com um nome correspondente ao EventHandler (ex: GroupCreatedEvent/GroupCreatedEventHandler) implementando EventHandlerHandlerBase<TEvent> criado anteriormente.
 2.2.1 Deixar o método HandleAsync sem implementação.
+2.3 - Registrar o novo EventHandler na injeção de dependências em OmegaFY.Chat.API.Application.Extensions.DependencyInjectionExtensions.AddEventHandlers.
 
 ### Additional validations
 

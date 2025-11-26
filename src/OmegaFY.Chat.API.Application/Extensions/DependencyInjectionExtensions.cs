@@ -28,6 +28,9 @@ using OmegaFY.Chat.API.Application.Events.Users.SendFriendshipRequest;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetConversationById;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetMemberFromConversation;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetMessageFromMember;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversationMessages;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversations;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetUserUnreadMessages;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
 using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
@@ -67,6 +70,9 @@ public static class DependencyInjectionExtensions
         services.AddScoped<GetConversationByIdQueryHandler>();
         services.AddScoped<GetMemberFromConversationQueryHandler>();
         services.AddScoped<GetMessageFromMemberQueryHandler>();
+        services.AddScoped<GetUserConversationMessagesQueryHandler>();
+        services.AddScoped<GetUserConversationsQueryHandler>();
+        services.AddScoped<GetUserUnreadMessagesQueryHandler>();
 
         services.AddScoped<GetCurrentUserInfoQueryHandler>();
         services.AddScoped<GetFriendshipByIdQueryHandler>();

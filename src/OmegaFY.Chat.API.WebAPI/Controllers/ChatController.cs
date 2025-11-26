@@ -8,6 +8,9 @@ using OmegaFY.Chat.API.Application.Commands.Chat.SendMessage;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetConversationById;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetMemberFromConversation;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetMessageFromMember;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversationMessages;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversations;
+using OmegaFY.Chat.API.Application.Queries.Chat.GetUserUnreadMessages;
 using OmegaFY.Chat.API.Application.Shared;
 using OmegaFY.Chat.API.WebAPI.Models;
 using OmegaFY.Chat.API.WebAPI.Models.Chat;
@@ -16,11 +19,26 @@ namespace OmegaFY.Chat.API.WebAPI.Controllers;
 
 public sealed class ChatController : ApiControllerBase
 {
-    //[HttpGet("me/get-unread-messages")]
+    [HttpGet("me/get-unread-messages")]
+    [ProducesResponseType(typeof(ApiResponse<GetUserUnreadMessagesQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUserUnreadMessages(GetUserUnreadMessagesQueryHandler handler, CancellationToken cancellationToken)
+        => Ok(await handler.HandleAsync(new GetUserUnreadMessagesQuery(), cancellationToken));
 
-    //[HttpGet("me/conversations")]
+    [HttpGet("me/conversations")]
+    [ProducesResponseType(typeof(ApiResponse<GetUserConversationsQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUserConversations(GetUserConversationsQueryHandler handler, CancellationToken cancellationToken) 
+        => Ok(await handler.HandleAsync(new GetUserConversationsQuery(), cancellationToken));
 
-    //[HttpGet("me/{conversationId:guid}/messages/{messageId:guid}")]
+    [HttpGet("me/{conversationId:guid}/messages")]
+    [ProducesResponseType(typeof(ApiResponse<GetUserConversationMessagesQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUserConversationMessages(GetUserConversationMessagesQueryHandler handler, [FromRoute] Guid conversationId, CancellationToken cancellationToken) 
+        => Ok(await handler.HandleAsync(new GetUserConversationMessagesQuery(conversationId), cancellationToken));
 
     [HttpGet("{conversationId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetConversationByIdQueryResult>), StatusCodes.Status200OK)]
