@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
@@ -21,11 +22,11 @@ public sealed class GetUserByIdQueryHandler : QueryHandlerBase<GetUserByIdQueryH
 
     protected override async Task<HandlerResult<GetUserByIdQueryResult>> InternalHandleAsync(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        GetUserByIdQueryResult result = await _userQueryProvider.GetUserByIdAsync(request.UserId, cancellationToken);
+        UserModel user = await _userQueryProvider.GetUserByIdAsync(request.UserId, cancellationToken);
 
-        if (result is null)
+        if (user is null)
             return HandlerResult.CreateNotFound<GetUserByIdQueryResult>();
 
-        return HandlerResult.Create(result);
+        return HandlerResult.Create(new GetUserByIdQueryResult(user));
     }
 }

@@ -22,6 +22,7 @@ public sealed class ChatController : ApiControllerBase
 {
     [HttpGet("me/get-unread-messages")]
     [ProducesResponseType(typeof(ApiResponse<GetUserUnreadMessagesQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserUnreadMessages(GetUserUnreadMessagesQueryHandler handler, [FromQuery] Pagination pagination, CancellationToken cancellationToken)
@@ -29,12 +30,14 @@ public sealed class ChatController : ApiControllerBase
 
     [HttpGet("me/conversations")]
     [ProducesResponseType(typeof(ApiResponse<GetUserConversationsQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetUserConversations(GetUserConversationsQueryHandler handler, CancellationToken cancellationToken) 
         => Ok(await handler.HandleAsync(new GetUserConversationsQuery(), cancellationToken));
 
     [HttpGet("me/{conversationId:guid}/messages")]
     [ProducesResponseType(typeof(ApiResponse<GetUserConversationMessagesQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserConversationMessages(GetUserConversationMessagesQueryHandler handler, [FromRoute] Guid conversationId, [FromQuery] Pagination pagination, CancellationToken cancellationToken) 
@@ -42,6 +45,7 @@ public sealed class ChatController : ApiControllerBase
 
     [HttpGet("{conversationId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetConversationByIdQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetConversationById(GetConversationByIdQueryHandler handler, [FromRoute] Guid conversationId, CancellationToken cancellationToken)
@@ -49,6 +53,7 @@ public sealed class ChatController : ApiControllerBase
 
     [HttpGet("{conversationId:guid}/members/{memberId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetMemberFromConversationQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMemberFromConversation(GetMemberFromConversationQueryHandler handler, [FromRoute] Guid conversationId, [FromRoute] Guid memberId, CancellationToken cancellationToken) 

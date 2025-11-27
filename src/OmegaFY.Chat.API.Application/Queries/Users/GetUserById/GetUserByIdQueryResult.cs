@@ -1,14 +1,12 @@
-﻿using OmegaFY.Chat.API.Domain.Enums;
+﻿using OmegaFY.Chat.API.Application.Models;
 
 namespace OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
 
 public sealed record class GetUserByIdQueryResult : IQueryResult
 {
-    public Guid Id { get; init; }
+    public UserModel User { get; init; }
 
-    public string Email { get; init; }
+    public GetUserByIdQueryResult() { }
 
-    public string DisplayName { get; init; }
-
-    public FriendshipStatus? FriendshipStatus { get; init; }
+    public GetUserByIdQueryResult(UserModel user) => User = user;
 }

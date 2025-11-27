@@ -5,6 +5,7 @@ using OmegaFY.Chat.API.Application.Commands.Users.SendFriendshipRequest;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
 using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
+using OmegaFY.Chat.API.Application.Queries.Users.GetUsers;
 using OmegaFY.Chat.API.Application.Shared;
 using OmegaFY.Chat.API.WebAPI.Models;
 using OmegaFY.Chat.API.WebAPI.Models.Users;
@@ -13,10 +14,16 @@ namespace OmegaFY.Chat.API.WebAPI.Controllers;
 
 public sealed class UsersController : ApiControllerBase
 {
-    //[HttpGet()] // TODO: Get all users with pagination, filtering, etc.
+    [HttpGet()]
+    [ProducesResponseType(typeof(ApiResponse<GetUsersQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetUsers(GetUsersQueryHandler handler, [FromQuery] GetUsersRequest request, CancellationToken cancellationToken)
+        => Ok(await handler.HandleAsync(request.ToQuery(), cancellationToken));
 
     [HttpGet("me")]
     [ProducesResponseType(typeof(ApiResponse<GetCurrentUserInfoQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetCurrentUserInfo(GetCurrentUserInfoQueryHandler handler, CancellationToken cancellationToken)
         => Ok(await handler.HandleAsync(new GetCurrentUserInfoQuery(), cancellationToken));
