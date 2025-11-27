@@ -91,7 +91,7 @@ internal sealed class UserQueryProvider : IUserQueryProvider
                 chat.Users AS U
 
             LEFT JOIN 
-                chat.Friendships AS F ON (F.InvitedUserId = U.Id) OR (F.RequestingUserId = U.Id) AND (F.InvitedUserId = @UserId OR F.RequestingUserId = @UserId)
+                chat.Friendships AS F ON (F.InvitedUserId = U.Id OR F.RequestingUserId = U.Id) AND (F.InvitedUserId = @UserId OR F.RequestingUserId = @UserId)
             
             WHERE 
                 U.Id = @UserId";

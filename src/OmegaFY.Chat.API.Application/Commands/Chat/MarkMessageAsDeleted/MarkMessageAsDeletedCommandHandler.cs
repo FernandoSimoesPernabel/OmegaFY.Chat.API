@@ -49,7 +49,7 @@ public sealed class MarkMessageAsDeletedCommandHandler : CommandHandlerBase<Mark
         if (memberMessage.IsDeleted())
             return HandlerResult.Create(new MarkMessageAsDeletedCommandResult());
 
-        memberMessage.Deleted();
+        memberMessage.Delete();
 
         await _memberMessageRepository.SaveChangesAsync(cancellationToken);
 

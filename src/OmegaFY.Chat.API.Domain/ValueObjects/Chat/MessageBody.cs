@@ -20,7 +20,7 @@ public readonly record struct MessageBody
 
     public override int GetHashCode() => Content.GetHashCode();
 
-    public override string ToString() => Content.ToString();
+    public override string ToString() => Content;
 
     public static implicit operator string(MessageBody body) => body.Content;
 

@@ -33,7 +33,7 @@ public sealed class MemberMessage : Entity, IAggregateRoot<MemberMessage>
             Status = MemberMessageStatus.Read;
     }
 
-    public void Deleted() => Status = MemberMessageStatus.Deleted;
+    public void Delete() => Status = MemberMessageStatus.Deleted;
 
     public bool IsRead() => Status == MemberMessageStatus.Read;
 
