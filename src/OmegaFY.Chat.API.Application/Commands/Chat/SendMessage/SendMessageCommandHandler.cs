@@ -34,7 +34,7 @@ public sealed class SendMessageCommandHandler : CommandHandlerBase<SendMessageCo
     protected override async Task<HandlerResult<SendMessageCommandResult>> InternalHandleAsync(SendMessageCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<SendMessageCommandResult>();
+            return HandlerResult.CreateUnauthenticated<SendMessageCommandResult>();
 
         Conversation conversation = await _conversationRepository.GetConversationByIdAsync(request.ConversationId, cancellationToken);
 
@@ -42,7 +42,7 @@ public sealed class SendMessageCommandHandler : CommandHandlerBase<SendMessageCo
             return HandlerResult.CreateNotFound<SendMessageCommandResult>();
 
         if (!conversation.IsUserInConversation(_userInformation.CurrentRequestUserId.Value))
-            return HandlerResult.CreateUnauthenticated<SendMessageCommandResult>();
+            return HandlerResult.CreateUnauthorized<SendMessageCommandResult>();
 
         Member senderMember = conversation.GetMemberByUserId(_userInformation.CurrentRequestUserId.Value);
 

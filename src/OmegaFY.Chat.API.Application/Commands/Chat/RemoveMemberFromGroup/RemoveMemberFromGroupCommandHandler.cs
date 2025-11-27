@@ -30,7 +30,7 @@ public sealed class RemoveMemberFromGroupCommandHandler : CommandHandlerBase<Rem
     protected override async Task<HandlerResult<RemoveMemberFromGroupCommandResult>> InternalHandleAsync(RemoveMemberFromGroupCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<RemoveMemberFromGroupCommandResult>();
+            return HandlerResult.CreateUnauthenticated<RemoveMemberFromGroupCommandResult>();
 
         Conversation conversation = await _repository.GetConversationByIdAsync(request.ConversationId, cancellationToken);
 
@@ -38,7 +38,7 @@ public sealed class RemoveMemberFromGroupCommandHandler : CommandHandlerBase<Rem
             return HandlerResult.CreateNotFound<RemoveMemberFromGroupCommandResult>();
 
         if (!conversation.IsUserInConversation(_userInformation.CurrentRequestUserId.Value))
-            return HandlerResult.CreateUnauthenticated<RemoveMemberFromGroupCommandResult>();
+            return HandlerResult.CreateUnauthorized<RemoveMemberFromGroupCommandResult>();
 
         Member memberRemoved = conversation.GetMemberByMemberId(request.MemberId);
 

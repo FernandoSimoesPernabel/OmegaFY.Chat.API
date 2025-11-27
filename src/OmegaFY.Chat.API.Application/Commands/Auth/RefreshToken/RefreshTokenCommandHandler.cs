@@ -45,7 +45,7 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
     protected async override Task<HandlerResult<RefreshTokenCommandResult>> InternalHandleAsync(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
+            return HandlerResult.CreateUnauthenticated<RefreshTokenCommandResult>();
 
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 

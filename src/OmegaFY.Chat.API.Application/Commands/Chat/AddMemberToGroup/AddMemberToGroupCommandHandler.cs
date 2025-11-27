@@ -30,7 +30,7 @@ public sealed class AddMemberToGroupCommandHandler : CommandHandlerBase<AddMembe
     protected override async Task<HandlerResult<AddMemberToGroupCommandResult>> InternalHandleAsync(AddMemberToGroupCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<AddMemberToGroupCommandResult>();
+            return HandlerResult.CreateUnauthenticated<AddMemberToGroupCommandResult>();
 
         Conversation conversation = await _repository.GetConversationByIdAsync(request.ConversationId, cancellationToken);
 
@@ -38,7 +38,7 @@ public sealed class AddMemberToGroupCommandHandler : CommandHandlerBase<AddMembe
             return HandlerResult.CreateNotFound<AddMemberToGroupCommandResult>();
 
         if (!conversation.IsUserInConversation(_userInformation.CurrentRequestUserId.Value))
-            return HandlerResult.CreateUnauthenticated<AddMemberToGroupCommandResult>();
+            return HandlerResult.CreateUnauthorized<AddMemberToGroupCommandResult>();
 
         conversation.AddMemberToGroup(request.UserId);
 

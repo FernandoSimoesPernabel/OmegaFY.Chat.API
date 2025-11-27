@@ -26,7 +26,7 @@ public sealed class GetCurrentUserInfoQueryHandler : QueryHandlerBase<GetCurrent
     protected override async Task<HandlerResult<GetCurrentUserInfoQueryResult>> InternalHandleAsync(GetCurrentUserInfoQuery query, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<GetCurrentUserInfoQueryResult>();
+            return HandlerResult.CreateUnauthenticated<GetCurrentUserInfoQueryResult>();
 
         GetCurrentUserInfoQueryResult result =
             await _userQueryProvider.GetCurrentUserInfoAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);

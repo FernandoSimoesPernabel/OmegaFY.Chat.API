@@ -34,7 +34,7 @@ public sealed class MarkMessageAsDeletedCommandHandler : CommandHandlerBase<Mark
     protected async override Task<HandlerResult<MarkMessageAsDeletedCommandResult>> InternalHandleAsync(MarkMessageAsDeletedCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<MarkMessageAsDeletedCommandResult>();
+            return HandlerResult.CreateUnauthenticated<MarkMessageAsDeletedCommandResult>();
 
         Member userMember = await _conversationRepository.GetMemberAsync(request.ConversationId, _userInformation.CurrentRequestUserId.Value, cancellationToken);
 

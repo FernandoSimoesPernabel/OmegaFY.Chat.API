@@ -82,7 +82,7 @@ public sealed class ChatController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> SendMessage(SendMessageCommandHandler handler, Guid conversationId, [FromBody] SendMessageRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> SendMessage(SendMessageCommandHandler handler, [FromRoute] Guid conversationId, [FromBody] SendMessageRequest request, CancellationToken cancellationToken)
     {
         HandlerResult<SendMessageCommandResult> result = await handler.HandleAsync(request.ToCommand(conversationId), cancellationToken);
         return CreatedAtAction(nameof(GetMessageFromMember), new { result.Data?.ConversationId, result.Data?.MessageId }, result);
@@ -105,13 +105,13 @@ public sealed class ChatController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AddMemberToGroup(AddMemberToGroupCommandHandler handler, Guid conversationId, [FromBody] AddMemberToGroupRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddMemberToGroup(AddMemberToGroupCommandHandler handler, [FromRoute] Guid conversationId, [FromBody] AddMemberToGroupRequest request, CancellationToken cancellationToken)
     {
         HandlerResult<AddMemberToGroupCommandResult> result = await handler.HandleAsync(request.ToCommand(conversationId), cancellationToken);
         return CreatedAtAction(nameof(GetMemberFromConversation), new { result.Data?.ConversationId, result.Data?.MemberId }, result);
     }
 
-    [HttpPut("{conversationId:guid}/grup-config")]
+    [HttpPut("{conversationId:guid}/group-config")]
     [ProducesResponseType(typeof(ApiResponse<ChangeGroupConfigCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]

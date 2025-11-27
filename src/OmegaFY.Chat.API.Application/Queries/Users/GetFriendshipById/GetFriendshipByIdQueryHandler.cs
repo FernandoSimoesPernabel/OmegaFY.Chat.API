@@ -27,7 +27,7 @@ public sealed class GetFriendshipByIdQueryHandler : QueryHandlerBase<GetFriendsh
     protected async override Task<HandlerResult<GetFriendshipByIdQueryResult>> InternalHandleAsync(GetFriendshipByIdQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<GetFriendshipByIdQueryResult>();
+            return HandlerResult.CreateUnauthenticated<GetFriendshipByIdQueryResult>();
 
         FriendshipModel friendshipModel = 
             await _userQueryProvider.GetFriendshipByIdAndUserIdAsync(_userInformation.CurrentRequestUserId.Value, request.FriendshipId, cancellationToken);
