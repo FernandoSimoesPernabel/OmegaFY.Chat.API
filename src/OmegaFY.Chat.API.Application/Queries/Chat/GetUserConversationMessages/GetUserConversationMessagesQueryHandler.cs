@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
+using OmegaFY.Chat.API.Common.Models;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversationMessages;
@@ -29,9 +30,9 @@ public sealed class GetUserConversationMessagesQueryHandler : QueryHandlerBase<G
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<GetUserConversationMessagesQueryResult>();
 
-        MessageFromMemberModel[] messageFromMembers =
-            await _chatQueryProvider.GetMessagesFromMemberAsync(request.ConversationId, _userInformation.CurrentRequestUserId.Value, cancellationToken);
+        (MessageFromMemberModel[] messageFromMembers, PaginationResultInfo paginationInfo) =
+            await _chatQueryProvider.GetMessagesFromMemberAsync(request.ConversationId, _userInformation.CurrentRequestUserId.Value, request.Pagination, cancellationToken);
 
-        return HandlerResult.Create(new GetUserConversationMessagesQueryResult(messageFromMembers));
+        return HandlerResult.Create(new GetUserConversationMessagesQueryResult(messageFromMembers, paginationInfo));
     }
 }

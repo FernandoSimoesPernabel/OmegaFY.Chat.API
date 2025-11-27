@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
+using OmegaFY.Chat.API.Common.Models;
 using OmegaFY.Chat.API.Domain.Enums;
 using System.Data;
 
@@ -14,6 +15,8 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
     public async Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 C.Id AS ConversationId,
@@ -64,6 +67,8 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
     public async Task<MemberModel> GetMemberByIdAsync(Guid memberId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 M.Id AS MemberId,
@@ -82,6 +87,8 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
     public async Task<MessageFromMemberModel> GetMessageFromMemberAsync(Guid messageId, Guid userId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 Message.Id AS MessageId,
@@ -121,23 +128,11 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
         return await _dbConnection.QueryFirstOrDefaultAsync<MessageFromMemberModel>(sql, new { MessageId = messageId, UserId = userId });
     }
 
-    public async Task<MessageFromMemberModel[]> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken)
+    public async Task<(MessageFromMemberModel[], PaginationResultInfo paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, Pagination pagination, CancellationToken cancellationToken)
     {
-        const string sql = @"
-            SELECT
-                Message.Id AS MessageId,
-                Message.ConversationId,
-                DestinationMember.Id AS MemberId,
-                Message.SenderMemberId,
-                Sender.DisplayName AS SenderDisplayName,
-                MemberMessage.DestinationMemberId,
-                Destination.DisplayName AS DestinationDisplayName,
-                Message.SendDate,
-                MemberMessage.DeliveryDate,
-                Message.Type,
-                MemberMessage.Status,
-                Message.Content
-            
+        cancellationToken.ThrowIfCancellationRequested();
+
+        const string baseSqlQuery = @"
             FROM
                 chat.Messages AS Message
             
@@ -157,18 +152,46 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
                 chat.Users AS Sender ON Sender.Id = SenderMember.UserId
 
             WHERE
-                Message.ConversationId = @ConversationId
+                Message.ConversationId = @ConversationId";
+
+        long totalOfItems = await _dbConnection.ExecuteScalarAsync<long>($"SELECT COUNT(*) {baseSqlQuery}", new { ConversationId = conversationId, UserId = userId });
+
+        const string sql = @$"
+            SELECT
+                Message.Id AS MessageId,
+                Message.ConversationId,
+                DestinationMember.Id AS MemberId,
+                Message.SenderMemberId,
+                Sender.DisplayName AS SenderDisplayName,
+                MemberMessage.DestinationMemberId,
+                Destination.DisplayName AS DestinationDisplayName,
+                Message.SendDate,
+                MemberMessage.DeliveryDate,
+                Message.Type,
+                MemberMessage.Status,
+                Message.Content
+            
+            {baseSqlQuery}
             
             ORDER BY
-                Message.SendDate DESC";
+                Message.SendDate DESC
 
-        IEnumerable<MessageFromMemberModel> messages = await _dbConnection.QueryAsync<MessageFromMemberModel>(sql, new { ConversationId = conversationId, UserId = userId });
+            OFFSET @Skip ROWS 
+            FETCH NEXT @Take ROWS ONLY";
 
-        return messages.ToArray();
+        PaginationResultInfo paginationInfo = new PaginationResultInfo(pagination.PageNumber, pagination.PageSize, totalOfItems);
+
+        IEnumerable<MessageFromMemberModel> messages = await _dbConnection.QueryAsync<MessageFromMemberModel>(
+            sql, 
+            new { ConversationId = conversationId, UserId = userId, Skip = paginationInfo.ItemsToSkip(), Take = paginationInfo.PageSize });
+
+        return (messages.ToArray(), paginationInfo);
     }
 
     public async Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT
 	            Conversation.Id AS ConversationId,
@@ -232,7 +255,11 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
             ) AS LastConversationMessage
 
             WHERE
-	            Member.UserId = @UserId";
+	            Member.UserId = @UserId
+
+            ORDER BY
+                LastConversationMessage.SendDate DESC,
+                Conversation.CreatedDate DESC";
 
         IEnumerable<UserConversationModel> userConversations = await _dbConnection.QueryAsync<UserConversationModel, LastMessageFromConversationModel, UserConversationModel>(
             sql, (userConversation, lastMessage) => userConversation with { LastMessage = lastMessage },
@@ -242,17 +269,11 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
         return userConversations.ToArray();
     }
 
-    public async Task<MessageModel[]> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, CancellationToken cancellationToken)
+    public async Task<(MessageModel[], PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken)
     {
-        string sql = @$"
-            SELECT
-                Message.Id AS MessageId,
-                Message.ConversationId,
-                Message.SenderMemberId,
-                Message.SendDate,
-                Message.Type,
-                Message.Content
-            
+        cancellationToken.ThrowIfCancellationRequested();
+
+        string baseSqlQuery = @$"
             FROM 
                 chat.Messages AS Message
             
@@ -263,13 +284,33 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
                 chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id AND MemberMessage.DestinationMemberId = Member.Id
             
             WHERE
-                Member.UserId = @UserId {(messageStatus is not null ? "AND MemberMessage.Status = @MessageStatus" : string.Empty)}
+                Member.UserId = @UserId {(messageStatus is not null ? "AND MemberMessage.Status = @MessageStatus" : string.Empty)}";
+
+        long totalOfItems = await _dbConnection.ExecuteScalarAsync<long>($"SELECT COUNT(*) {baseSqlQuery}", new { UserId = userId, MessageStatus = messageStatus?.ToString() });
+
+        string sql = @$"
+            SELECT
+                Message.Id AS MessageId,
+                Message.ConversationId,
+                Message.SenderMemberId,
+                Message.SendDate,
+                Message.Type,
+                Message.Content
+            
+            {baseSqlQuery}
             
             ORDER BY
-                Message.SendDate DESC";
+                Message.SendDate DESC
 
-        IEnumerable<MessageModel> messages = await _dbConnection.QueryAsync<MessageModel>(sql, new { UserId = userId, MessageStatus = messageStatus?.ToString() });
+            OFFSET @Skip ROWS 
+            FETCH NEXT @Take ROWS ONLY";
 
-        return messages.ToArray();
+        PaginationResultInfo paginationInfo = new PaginationResultInfo(pagination.PageNumber, pagination.PageSize, totalOfItems);
+
+        IEnumerable<MessageModel> messages = await _dbConnection.QueryAsync<MessageModel>(
+            sql, 
+            new { UserId = userId, MessageStatus = messageStatus?.ToString(), Skip = paginationInfo.ItemsToSkip(), Take = paginationInfo.PageSize });
+
+        return (messages.ToArray(), paginationInfo);
     }
 }

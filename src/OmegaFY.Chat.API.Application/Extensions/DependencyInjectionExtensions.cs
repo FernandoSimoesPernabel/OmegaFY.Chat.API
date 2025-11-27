@@ -34,6 +34,7 @@ using OmegaFY.Chat.API.Application.Queries.Chat.GetUserUnreadMessages;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
 using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
+using OmegaFY.Chat.API.Application.Queries.Users.GetUsers;
 
 namespace OmegaFY.Chat.API.Application.Extensions;
 
@@ -77,6 +78,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<GetCurrentUserInfoQueryHandler>();
         services.AddScoped<GetFriendshipByIdQueryHandler>();
         services.AddScoped<GetUserByIdQueryHandler>();
+        services.AddScoped<GetUsersQueryHandler>();
 
         return services;
     }

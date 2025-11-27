@@ -15,6 +15,8 @@ internal sealed class UserQueryProvider : IUserQueryProvider
 
     public async Task<GetCurrentUserInfoQueryResult> GetCurrentUserInfoAsync(Guid userId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 U.Id, 
@@ -55,6 +57,8 @@ internal sealed class UserQueryProvider : IUserQueryProvider
 
     public Task<FriendshipModel> GetFriendshipByIdAndUserIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 Id AS FriendshipId, 
@@ -74,6 +78,8 @@ internal sealed class UserQueryProvider : IUserQueryProvider
 
     public Task<GetUserByIdQueryResult> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 U.Id, 

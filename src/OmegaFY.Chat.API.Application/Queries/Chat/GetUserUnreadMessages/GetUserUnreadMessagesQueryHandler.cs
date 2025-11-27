@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
+using OmegaFY.Chat.API.Common.Models;
 using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
@@ -30,9 +31,9 @@ public sealed class GetUserUnreadMessagesQueryHandler : QueryHandlerBase<GetUser
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<GetUserUnreadMessagesQueryResult>();
 
-        MessageModel[] unreadMessagesFromUser = 
-            await _chatQueryProvider.GetMessagesFromUserAsync(_userInformation.CurrentRequestUserId.Value, MemberMessageStatus.Unread, cancellationToken);
+        (MessageModel[] unreadMessagesFromUser, PaginationResultInfo paginationInfo) = 
+            await _chatQueryProvider.GetMessagesFromUserAsync(_userInformation.CurrentRequestUserId.Value, MemberMessageStatus.Unread, request.Pagination, cancellationToken);
 
-        return HandlerResult.Create(new GetUserUnreadMessagesQueryResult(unreadMessagesFromUser));
+        return HandlerResult.Create(new GetUserUnreadMessagesQueryResult(unreadMessagesFromUser, paginationInfo));
     }
 }

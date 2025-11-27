@@ -12,6 +12,7 @@ using OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversationMessages;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversations;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetUserUnreadMessages;
 using OmegaFY.Chat.API.Application.Shared;
+using OmegaFY.Chat.API.Common.Models;
 using OmegaFY.Chat.API.WebAPI.Models;
 using OmegaFY.Chat.API.WebAPI.Models.Chat;
 
@@ -23,8 +24,8 @@ public sealed class ChatController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<GetUserUnreadMessagesQueryResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUserUnreadMessages(GetUserUnreadMessagesQueryHandler handler, CancellationToken cancellationToken)
-        => Ok(await handler.HandleAsync(new GetUserUnreadMessagesQuery(), cancellationToken));
+    public async Task<IActionResult> GetUserUnreadMessages(GetUserUnreadMessagesQueryHandler handler, [FromQuery] Pagination pagination, CancellationToken cancellationToken)
+        => Ok(await handler.HandleAsync(new GetUserUnreadMessagesQuery(pagination), cancellationToken));
 
     [HttpGet("me/conversations")]
     [ProducesResponseType(typeof(ApiResponse<GetUserConversationsQueryResult>), StatusCodes.Status200OK)]
@@ -36,8 +37,8 @@ public sealed class ChatController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<GetUserConversationMessagesQueryResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUserConversationMessages(GetUserConversationMessagesQueryHandler handler, [FromRoute] Guid conversationId, CancellationToken cancellationToken) 
-        => Ok(await handler.HandleAsync(new GetUserConversationMessagesQuery(conversationId), cancellationToken));
+    public async Task<IActionResult> GetUserConversationMessages(GetUserConversationMessagesQueryHandler handler, [FromRoute] Guid conversationId, [FromQuery] Pagination pagination, CancellationToken cancellationToken) 
+        => Ok(await handler.HandleAsync(new GetUserConversationMessagesQuery(conversationId, pagination), cancellationToken));
 
     [HttpGet("{conversationId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetConversationByIdQueryResult>), StatusCodes.Status200OK)]

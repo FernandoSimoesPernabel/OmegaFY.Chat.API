@@ -13,6 +13,8 @@ namespace OmegaFY.Chat.API.WebAPI.Controllers;
 
 public sealed class UsersController : ApiControllerBase
 {
+    //[HttpGet()] // TODO: Get all users with pagination, filtering, etc.
+
     [HttpGet("me")]
     [ProducesResponseType(typeof(ApiResponse<GetCurrentUserInfoQueryResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
