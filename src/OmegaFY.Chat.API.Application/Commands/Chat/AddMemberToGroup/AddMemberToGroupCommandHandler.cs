@@ -48,6 +48,6 @@ public sealed class AddMemberToGroupCommandHandler : CommandHandlerBase<AddMembe
 
         await _messageBus.SimplePublishAsync(new MemberAddedToGroupEvent(conversation.Id, newMember.Id, request.UserId), cancellationToken);
 
-        return HandlerResult.Create(new AddMemberToGroupCommandResult(newMember.Id));
+        return HandlerResult.Create(new AddMemberToGroupCommandResult(newMember.Id, newMember.ConversationId));
     }
 }

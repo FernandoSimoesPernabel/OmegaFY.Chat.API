@@ -40,7 +40,7 @@ public sealed class RemoveMemberFromGroupCommandHandler : CommandHandlerBase<Rem
         if (!conversation.IsUserInConversation(_userInformation.CurrentRequestUserId.Value))
             return HandlerResult.CreateUnauthenticated<RemoveMemberFromGroupCommandResult>();
 
-        Member memberRemoved = conversation.GetMemberByUserId(request.MemberId);
+        Member memberRemoved = conversation.GetMemberByMemberId(request.MemberId);
 
         conversation.RemoveMemberFromGroup(request.MemberId);
 

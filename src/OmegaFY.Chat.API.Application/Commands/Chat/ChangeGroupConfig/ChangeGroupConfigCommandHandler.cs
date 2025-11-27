@@ -34,6 +34,9 @@ public sealed class ChangeGroupConfigCommandHandler : CommandHandlerBase<ChangeG
 
         Conversation conversation = await _repository.GetConversationByIdAsync(request.ConversationId, cancellationToken);
 
+        if (conversation is null)
+            return HandlerResult.CreateNotFound<ChangeGroupConfigCommandResult>();
+
         if (conversation.GroupConfig.CreatedByUserId.Value != _userInformation.CurrentRequestUserId.Value)
             return HandlerResult.CreateUnauthenticated<ChangeGroupConfigCommandResult>();
 

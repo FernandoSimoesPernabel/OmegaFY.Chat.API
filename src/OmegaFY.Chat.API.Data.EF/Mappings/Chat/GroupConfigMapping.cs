@@ -15,7 +15,7 @@ internal sealed class GroupConfigMapping : IEntityTypeConfiguration<GroupConfig>
 
         builder.Property(group => group.CreatedByUserId).IsRequired();
         
-        builder.Property(group => group.GroupName).HasMaxLength(ChatConstants.MESSAGE_BODY_MAX_LENGTH).IsUnicode().IsRequired();
+        builder.Property(group => group.GroupName).HasMaxLength(ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH).IsUnicode().IsRequired();
 
         builder.Property(group => group.MaxNumberOfMembers).IsRequired();
 

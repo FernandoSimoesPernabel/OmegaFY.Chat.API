@@ -29,13 +29,15 @@ public sealed class MemberMessage : Entity, IAggregateRoot<MemberMessage>
 
     public void Read()
     {
-        if (IsRead())
+        if (IsUnread())
             Status = MemberMessageStatus.Read;
     }
 
     public void Deleted() => Status = MemberMessageStatus.Deleted;
 
     public bool IsRead() => Status == MemberMessageStatus.Read;
+
+    public bool IsUnread() => Status == MemberMessageStatus.Unread;
 
     public bool IsDeleted() => Status == MemberMessageStatus.Deleted;
 }

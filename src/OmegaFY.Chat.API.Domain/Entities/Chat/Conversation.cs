@@ -79,6 +79,8 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     public Member GetMemberByUserId(ReferenceId userId) => _members.Find(member => member.UserId == userId);
 
+    public Member GetMemberByMemberId(ReferenceId memberId) => _members.Find(member => member.Id == memberId);
+
     public static Conversation StartMemberToMemberConversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId)
         => new Conversation(memberOneUserId, memberTwoUserId);
 
