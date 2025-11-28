@@ -6,7 +6,9 @@ using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Data.EF.Authentication.Services;
 using OmegaFY.Chat.API.Data.EF.Context;
 using OmegaFY.Chat.API.Data.EF.Interceptors;
+using OmegaFY.Chat.API.Data.EF.Repositories.Chat;
 using OmegaFY.Chat.API.Data.EF.Repositories.Users;
+using OmegaFY.Chat.API.Domain.Repositories.Chat;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
 
@@ -27,7 +29,7 @@ public static class DependencyInjectionExtensions
         return services.AddDbContextPool<ApplicationContext>(options =>
         {
             options.UseSqlServer(connectionString);
-            
+
             if (environment.IsDevelopment())
             {
                 options.EnableDetailedErrors();
@@ -45,6 +47,9 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddEntityFrameworkRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IConversationRepository, ConversationRepository>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IMemberMessageRepository, MemberMessageRepository>();
 
         return services;
     }

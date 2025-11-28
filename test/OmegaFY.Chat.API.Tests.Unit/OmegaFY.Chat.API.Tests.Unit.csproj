@@ -30,4 +30,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\ValueObjects\" />
+    <Folder Include="Domain\Entities\" />
+  </ItemGroup>
+
 </Project>

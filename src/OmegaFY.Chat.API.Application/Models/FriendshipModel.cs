@@ -13,15 +13,4 @@ public sealed record class FriendshipModel
     public DateTime StartedDate { get; init; }
 
     public FriendshipStatus Status { get; init; }
-
-    public FriendshipModel() { }
-
-    public FriendshipModel(Guid friendshipId, Guid requestingUserId, Guid invitedUserId, DateTime startedDate, FriendshipStatus status)
-    {
-        FriendshipId = friendshipId;
-        RequestingUserId = requestingUserId;
-        InvitedUserId = invitedUserId;
-        StartedDate = startedDate;
-        Status = status;
-    }
 }

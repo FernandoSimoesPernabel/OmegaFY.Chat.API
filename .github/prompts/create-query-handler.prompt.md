@@ -7,7 +7,7 @@ tools: ['codebase', 'editFiles', 'fetch', 'problems']
 
 ## Objective
 
-Seu objetivo é adicionar os arquivos necessários sem codigo para implementar um QueryHandler no projeto.
+Seu objetivo é adicionar os arquivos necessários SEM CODIGO para implementar um QueryHandler no projeto.
 
 ## Prerequisites
 
@@ -15,6 +15,7 @@ Seu objetivo é adicionar os arquivos necessários sem codigo para implementar um 
 - Exemplos:
 ** GetMessages pertence ao contexto de Chat.
 ** GetUserFriendships pertence ao contexto de Users;
+- Os arquivos devem ser criados sem implementação de código, apenas com as declarações das classes e heranças necessárias.
 
 ## Steps
 
@@ -24,6 +25,7 @@ Seu objetivo é adicionar os arquivos necessários sem codigo para implementar um 
 1.3 - Dentro da pasta com o {QueryName} crie um arquivo chamado {QueryName}QueryHandler.cs implementando QueryHandlerBase<THandler, TQuery, TQueryResult> criados anteriormente.
 1.3.1 Deixar criado o construtor com injeção de dependências da classe base e tambem o método InternalHandleAsync sem implementação.
 1.4 - Dentro da pasta com o {QueryName} crie um arquivo chamado {QueryName}QueryValidator.cs implementando AbstractValidator<{QueryName}Query>.
+1.5 - Registrar o novo QueryHandler na injeção de dependências em OmegaFY.Chat.API.Application.Extensions.DependencyInjectionExtensions.AddQueryHandlers.
 
 ### Additional validations
 

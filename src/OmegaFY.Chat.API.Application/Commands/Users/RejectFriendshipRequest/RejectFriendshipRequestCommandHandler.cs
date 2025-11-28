@@ -30,7 +30,7 @@ public sealed class RejectFriendshipRequestCommandHandler : CommandHandlerBase<R
     protected async override Task<HandlerResult<RejectFriendshipRequestCommandResult>> InternalHandleAsync(RejectFriendshipRequestCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<RejectFriendshipRequestCommandResult>();
+            return HandlerResult.CreateUnauthenticated<RejectFriendshipRequestCommandResult>();
 
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 

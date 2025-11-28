@@ -4,13 +4,16 @@ public sealed record class FriendshipAcceptedEvent : IEvent
 {
     public Guid FriendshipId { get; init; }
 
-    public DateTime AcceptedDate { get; init; }
+    public Guid RequestingUserId { get; init; }
+
+    public Guid InvitedUserId { get; init; }
 
     public FriendshipAcceptedEvent() { }
 
-    public FriendshipAcceptedEvent(Guid friendshipId)
+    public FriendshipAcceptedEvent(Guid friendshipId, Guid requestingUserId, Guid invitedUserId)
     {
         FriendshipId = friendshipId;
-        AcceptedDate = DateTime.UtcNow;
+        RequestingUserId = requestingUserId;
+        InvitedUserId = invitedUserId;
     }
 }

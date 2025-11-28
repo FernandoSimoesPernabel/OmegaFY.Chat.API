@@ -11,10 +11,10 @@ internal abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEn
 
     protected readonly DbSet<TEntity> _dbSet;
 
-    public RepositoryBase(DbContext dbContext)
+    public RepositoryBase(ApplicationContext applicationContext)
     {
-        _context = (ApplicationContext)dbContext;
-        _dbSet = dbContext.Set<TEntity>();
+        _context = applicationContext;
+        _dbSet = applicationContext.Set<TEntity>();
     }
 
     public Task SaveChangesAsync(CancellationToken cancellationToken) => _context.SaveChangesAsync(cancellationToken);
