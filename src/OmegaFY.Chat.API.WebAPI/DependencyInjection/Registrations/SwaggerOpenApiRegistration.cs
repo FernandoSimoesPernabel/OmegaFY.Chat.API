@@ -1,5 +1,6 @@
 ﻿
-using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi;
 using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Common.Models;
 
@@ -33,34 +34,19 @@ public sealed class SwaggerOpenApiRegistration : IDependencyInjectionRegister
                 Version = ProjectVersion.Instance.ToString()
             });
 
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme()
             {
                 In = ParameterLocation.Header,
                 Description = "JWT Authorization header using the Bearer scheme. Example: Authorization: Bearer {token}",
                 Name = "Authorization",
                 Type = SecuritySchemeType.Http,
                 BearerFormat = "JWT",
-                Scheme = "Bearer",
-                Reference = new OpenApiReference()
-                {
-                    Id = "Bearer",
-                    Type = ReferenceType.SecurityScheme
-                }
+                Scheme = JwtBearerDefaults.AuthenticationScheme
             });
 
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement()
             {
-                {
-                    new OpenApiSecurityScheme()
-                    {
-                        Reference = new OpenApiReference()
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
+                [new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme, document)] = []
             });
         });
     }
