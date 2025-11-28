@@ -6,6 +6,5 @@ public sealed class GetUserConversationsQueryValidator : AbstractValidator<GetUs
 {
     public GetUserConversationsQueryValidator()
     {
-        RuleFor(x => x).NotNull().WithMessage("A consulta não foi informada.");
     }
 }

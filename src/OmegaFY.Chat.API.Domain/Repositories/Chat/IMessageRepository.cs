@@ -8,6 +8,4 @@ public interface IMessageRepository : IRepository<Message>
     public Task CreateMessageAsync(Message message, CancellationToken cancellationToken);
 
     public ValueTask<Message> GetMessageByIdAsync(ReferenceId messageId, CancellationToken cancellationToken);
-
-
 }
