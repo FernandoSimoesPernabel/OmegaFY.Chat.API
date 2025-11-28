@@ -2,7 +2,7 @@
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
-using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
+using OmegaFY.Chat.API.Domain.Enums;
 using System.Data;
 
 namespace OmegaFY.Chat.API.Data.Dapper.QueryProviders.Users;
@@ -15,6 +15,8 @@ internal sealed class UserQueryProvider : IUserQueryProvider
 
     public async Task<GetCurrentUserInfoQueryResult> GetCurrentUserInfoAsync(Guid userId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 U.Id, 
@@ -53,8 +55,10 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         };
     }
 
-    public Task<FriendshipModel> GetFriendshipByIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
+    public Task<FriendshipModel> GetFriendshipByIdAndUserIdAsync(Guid userId, Guid friendshipId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 Id AS FriendshipId, 
@@ -72,8 +76,10 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         return _dbConnection.QueryFirstOrDefaultAsync<FriendshipModel>(sql, new { FriendshipId = friendshipId, UserId = userId });
     }
 
-    public Task<GetUserByIdQueryResult> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+    public Task<UserModel> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         const string sql = @"
             SELECT TOP 1
                 U.Id, 
@@ -85,11 +91,40 @@ internal sealed class UserQueryProvider : IUserQueryProvider
                 chat.Users AS U
 
             LEFT JOIN 
-                chat.Friendships AS F ON (F.InvitedUserId = U.Id) OR (F.RequestingUserId = U.Id)
+                chat.Friendships AS F ON (F.InvitedUserId = U.Id OR F.RequestingUserId = U.Id) AND (F.InvitedUserId = @UserId OR F.RequestingUserId = @UserId)
             
             WHERE 
-                U.Id = @UserId;";
+                U.Id = @UserId";
 
-        return _dbConnection.QueryFirstOrDefaultAsync<GetUserByIdQueryResult>(sql, new { UserId = userId });
+        return _dbConnection.QueryFirstOrDefaultAsync<UserModel>(sql, new { UserId = userId });
+    }
+
+    public async Task<UserModel[]> GetUsersAsync(Guid userId, string displayName, FriendshipStatus? status, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        const string sql = @"
+            SELECT 
+                U.Id, 
+                U.DisplayName, 
+                U.Email,
+                F.Status AS FriendshipStatus
+            
+            FROM 
+                chat.Users AS U
+
+            LEFT JOIN 
+                chat.Friendships AS F ON (F.InvitedUserId = U.Id OR F.RequestingUserId = U.Id) AND (F.InvitedUserId = @UserId OR F.RequestingUserId = @UserId)
+
+            WHERE
+                (@DisplayName IS NULL OR U.DisplayName LIKE '%' + @DisplayName + '%')
+                AND (@FriendshipStatus IS NULL OR F.Status = @FriendshipStatus)
+
+            ORDER BY
+                U.DisplayName";
+
+        IEnumerable<UserModel> users = await _dbConnection.QueryAsync<UserModel>(sql, new { UserId = userId, DisplayName = displayName, FriendshipStatus = status?.ToString() });
+
+        return users.ToArray();
     }
 }

@@ -30,7 +30,7 @@ public sealed class AcceptFriendshipRequestCommandHandler : CommandHandlerBase<A
     protected async override Task<HandlerResult<AcceptFriendshipRequestCommandResult>> InternalHandleAsync(AcceptFriendshipRequestCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<AcceptFriendshipRequestCommandResult>();
+            return HandlerResult.CreateUnauthenticated<AcceptFriendshipRequestCommandResult>();
 
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 
@@ -41,7 +41,9 @@ public sealed class AcceptFriendshipRequestCommandHandler : CommandHandlerBase<A
 
         await _repository.SaveChangesAsync(cancellationToken);
 
-        await _messageBus.SimplePublishAsync(new FriendshipAcceptedEvent(request.FriendshipId), cancellationToken);
+        Friendship friendship = user.GetFriendshipById(request.FriendshipId);
+
+        await _messageBus.SimplePublishAsync(new FriendshipAcceptedEvent(friendship.Id, friendship.RequestingUserId, friendship.InvitedUserId), cancellationToken);
 
         return HandlerResult.Create(new AcceptFriendshipRequestCommandResult());
     }

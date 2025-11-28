@@ -30,7 +30,7 @@ public sealed class RemoveFriendshipCommandHandler : CommandHandlerBase<RemoveFr
     protected async override Task<HandlerResult<RemoveFriendshipCommandResult>> InternalHandleAsync(RemoveFriendshipCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<RemoveFriendshipCommandResult>();
+            return HandlerResult.CreateUnauthenticated<RemoveFriendshipCommandResult>();
 
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 

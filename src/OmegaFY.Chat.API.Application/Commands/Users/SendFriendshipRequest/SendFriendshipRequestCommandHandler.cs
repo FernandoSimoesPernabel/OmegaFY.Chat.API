@@ -30,7 +30,7 @@ public sealed class SendFriendshipRequestCommandHandler : CommandHandlerBase<Sen
     protected async override Task<HandlerResult<SendFriendshipRequestCommandResult>> InternalHandleAsync(SendFriendshipRequestCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<SendFriendshipRequestCommandResult>();
+            return HandlerResult.CreateUnauthenticated<SendFriendshipRequestCommandResult>();
 
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 

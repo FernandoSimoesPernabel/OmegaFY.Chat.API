@@ -105,13 +105,14 @@ public static class DependencyInjectionExtensions
 
         JwtSettings jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
 
-        var tokenValidationParameters = new TokenValidationParameters()
+        TokenValidationParameters tokenValidationParameters = new TokenValidationParameters()
         {
             ClockSkew = TimeSpan.Zero,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
             RequireAudience = true,
             RequireExpirationTime = true,
             RequireSignedTokens = true,
+            ValidAlgorithms = [SecurityAlgorithms.HmacSha256Signature],
             ValidateLifetime = true,
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -191,21 +192,19 @@ public static class DependencyInjectionExtensions
 
             limiterOptions.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
             {
+                string userEmail = context.User.IsAuthenticated() ? context.User.TryGetEmailFromClaims() : null;
+
                 TokenBucketRateLimiterOptions tokenBucketOptions = new TokenBucketRateLimiterOptions()
                 {
                     AutoReplenishment = true,
                     QueueLimit = 0,
                     QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                     ReplenishmentPeriod = ipOrUserTokenPolicySettings.ReplenishmentPeriod,
-                    TokenLimit = ipOrUserTokenPolicySettings.TokenLimit,
-                    TokensPerPeriod = ipOrUserTokenPolicySettings.TokensPerPeriod
+                    TokenLimit = userEmail is not null ? ipOrUserTokenPolicySettings.UserTokenLimit : ipOrUserTokenPolicySettings.IpTokenLimit,
+                    TokensPerPeriod = userEmail is not null ? ipOrUserTokenPolicySettings.UserTokensPerPeriod : ipOrUserTokenPolicySettings.IpTokensPerPeriod
                 };
 
-                string userEmail = context.User.IsAuthenticated() ? context.User.TryGetEmailFromClaims() : null;
-
-                return userEmail is not null
-                    ? RateLimitPartition.GetTokenBucketLimiter(userEmail, _ => tokenBucketOptions)
-                    : RateLimitPartition.GetTokenBucketLimiter(context.Connection.RemoteIpAddress.ToString(), _ => tokenBucketOptions);
+                return RateLimitPartition.GetTokenBucketLimiter(userEmail ?? context.Connection.RemoteIpAddress.ToString(), _ => tokenBucketOptions);
             });
 
             limiterOptions.OnRejected = async (context, cancellationToken) =>
