@@ -11,5 +11,6 @@ public abstract class QueryHandlerBase<TQueryHandler, TQuery, TQueryResult> : Ha
     protected QueryHandlerBase(
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
-        IValidator<TQuery> validator) : base(hostEnvironment, openTelemetryRegisterProvider, validator) { }
+        IValidator<TQuery> validator,
+        ILogger<TQueryHandler> logger) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger) { }
 }

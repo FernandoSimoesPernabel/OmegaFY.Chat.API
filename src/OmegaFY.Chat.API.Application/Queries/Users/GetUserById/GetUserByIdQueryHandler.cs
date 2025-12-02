@@ -15,7 +15,8 @@ public sealed class GetUserByIdQueryHandler : QueryHandlerBase<GetUserByIdQueryH
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetUserByIdQuery> validator,
-        IUserQueryProvider userQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        ILogger<GetUserByIdQueryHandler> logger,
+        IUserQueryProvider userQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _userQueryProvider = userQueryProvider;
     }

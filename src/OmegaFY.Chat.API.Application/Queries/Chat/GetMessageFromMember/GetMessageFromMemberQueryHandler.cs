@@ -17,8 +17,9 @@ public sealed class GetMessageFromMemberQueryHandler : QueryHandlerBase<GetMessa
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetMessageFromMemberQuery> validator,
+        ILogger<GetMessageFromMemberQueryHandler> logger,
         IUserInformation userInformation,
-        IChatQueryProvider chatQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        IChatQueryProvider chatQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _userInformation = userInformation;
         _chatQueryProvider = chatQueryProvider;

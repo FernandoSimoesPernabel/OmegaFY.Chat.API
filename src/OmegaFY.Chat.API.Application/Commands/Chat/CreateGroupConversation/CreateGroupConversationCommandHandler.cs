@@ -20,8 +20,9 @@ public sealed class CreateGroupConversationCommandHandler : CommandHandlerBase<C
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<CreateGroupConversationCommand> validator,
         IMessageBus messageBus,
+        ILogger<CreateGroupConversationCommandHandler> logger,
         IConversationRepository repository,
-        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _repository = repository;
         _userInformation = userInformation;

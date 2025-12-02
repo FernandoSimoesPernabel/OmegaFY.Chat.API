@@ -20,8 +20,9 @@ public sealed class RejectFriendshipRequestCommandHandler : CommandHandlerBase<R
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<RejectFriendshipRequestCommand> validator,
         IMessageBus messageBus,
+        ILogger<RejectFriendshipRequestCommandHandler> logger,
         IUserInformation userInformation,
-        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _userInformation = userInformation;
         _repository = repository;

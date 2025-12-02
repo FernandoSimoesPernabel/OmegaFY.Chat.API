@@ -19,42 +19,59 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
 
     protected readonly IValidator<TRequest> _validator;
 
+    protected readonly ILogger<THandler> _logger;
+
     protected HandlerBase(
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
-        IValidator<TRequest> validator)
+        IValidator<TRequest> validator,
+        ILogger<THandler> logger)
     {
         _hostEnvironment = hostEnvironment;
         _openTelemetryRegisterProvider = openTelemetryRegisterProvider;
         _validator = validator;
+        _logger = logger;
     }
 
     public async Task<HandlerResult<TResult>> HandleAsync(TRequest request, CancellationToken cancellationToken)
     {
         using Activity activity = _openTelemetryRegisterProvider.StartActivity(OpenTelemetryConstants.ACTIVITY_APPLICATION_HANDLER_NAME);
-        activity.SetHandlerName(GetType().Name);
+        activity.SetHandlerName(typeof(THandler).Name);
 
         try
         {
+            _logger.LogInformation("Handling request {Handler} with correlation {CorrelationId}", typeof(THandler).Name, activity?.Id);
+
             activity.SetRequest(request);
 
             ValidationResult validationResult = _validator.Validate(request);
 
-            HandlerResult<TResult> result = 
+            HandlerResult<TResult> result =
                 validationResult.IsValid ? await InternalHandleAsync(request, cancellationToken) : validationResult.ToHandlerResult<TResult>();
 
             activity.SetResult(result);
+
+            if (!result.Succeeded())
+                _logger.LogWarning("Handling completed with errors in {Handler}: {Errors}", typeof(THandler).Name, result.GetErrorsAsStringSeparatedByNewLine());
+
+            _logger.LogInformation("Handling finished in {Handler}", typeof(THandler).Name);
 
             return result;
         }
         catch (ErrorCodeException ex)
         {
             activity.SetResult(ex);
+            
+            _logger.LogWarning(ex, "Domain error in {Handler}: {Code} - {Message}", typeof(THandler).Name, ex.ErrorCode, ex.Message);
+            
             return new HandlerResult<TResult>(ex.ErrorCode, ex.Message);
         }
         catch (Exception ex)
         {
             activity.SetResult(ex);
+            
+            _logger.LogError(ex, "Unexpected error in {Handler}", typeof(THandler).Name);
+            
             return new HandlerResult<TResult>(ApplicationErrorCodesConstants.NOT_DOMAIN_ERROR, ex.GetSafeErrorMessageWhenInProd(_hostEnvironment.IsDevelopment()));
         }
     }

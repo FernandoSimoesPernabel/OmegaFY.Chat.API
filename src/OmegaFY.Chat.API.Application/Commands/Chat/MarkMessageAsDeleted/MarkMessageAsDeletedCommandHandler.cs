@@ -22,9 +22,10 @@ public sealed class MarkMessageAsDeletedCommandHandler : CommandHandlerBase<Mark
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<MarkMessageAsDeletedCommand> validator,
         IMessageBus messageBus,
+        ILogger<MarkMessageAsDeletedCommandHandler> logger,
         IUserInformation userInformation,
         IConversationRepository conversationRepository,
-        IMemberMessageRepository memberMessageRepository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IMemberMessageRepository memberMessageRepository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _userInformation = userInformation;
         _conversationRepository = conversationRepository;

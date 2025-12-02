@@ -15,5 +15,6 @@ public abstract class CommandHandlerBase<TCommandHandler, TCommand, TCommandResu
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<TCommand> validator,
-        IMessageBus messageBus) : base(hostEnvironment, openTelemetryRegisterProvider, validator) => _messageBus = messageBus;
+        IMessageBus messageBus,
+        ILogger<TCommandHandler> logger) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger) => _messageBus = messageBus;
 }

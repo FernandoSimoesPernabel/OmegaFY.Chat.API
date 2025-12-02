@@ -22,9 +22,10 @@ public sealed class SendMessageCommandHandler : CommandHandlerBase<SendMessageCo
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<SendMessageCommand> validator,
         IMessageBus messageBus,
+        ILogger<SendMessageCommandHandler> logger,
         IConversationRepository conversationRepository,
         IMessageRepository messageRepository,
-        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _conversationRepository = conversationRepository;
         _messageRepository = messageRepository;

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OmegaFY.Chat.API.Common.Models;
 using OmegaFY.Chat.API.Infra.Authentication.JwtEvents;
@@ -27,10 +26,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using System.Diagnostics;
-using System.Globalization;
 using System.Text;
-using System.Threading;
 using System.Threading.RateLimiting;
 
 namespace OmegaFY.Chat.API.Infra.Extensions;

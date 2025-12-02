@@ -20,8 +20,9 @@ public sealed class AddMemberToGroupCommandHandler : CommandHandlerBase<AddMembe
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<AddMemberToGroupCommand> validator,
         IMessageBus messageBus,
+        ILogger<AddMemberToGroupCommandHandler> logger,
         IUserInformation userInformation,
-        IConversationRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IConversationRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _userInformation = userInformation;
         _repository = repository;
