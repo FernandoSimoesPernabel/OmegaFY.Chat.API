@@ -28,9 +28,10 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<RegisterNewUserCommand> validator,
         IMessageBus messageBus,
+        ILogger<RegisterNewUserCommandHandler> logger,
         IAuthenticationService authenticationService,
         HybridCache hybridCache,
-        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _authenticationService = authenticationService;
         _hybridCache = hybridCache;

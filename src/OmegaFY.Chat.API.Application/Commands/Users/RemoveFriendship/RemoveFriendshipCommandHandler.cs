@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using OmegaFY.Chat.API.Application.Events.Users.RemoveFriendship;
 using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Domain.Entities.Users;
@@ -20,8 +21,9 @@ public sealed class RemoveFriendshipCommandHandler : CommandHandlerBase<RemoveFr
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<RemoveFriendshipCommand> validator,
         IMessageBus messageBus,
+        ILogger<RemoveFriendshipCommandHandler> logger,
         IUserInformation userInformation,
-        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _userInformation = userInformation;
         _repository = repository;

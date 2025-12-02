@@ -15,7 +15,8 @@ public sealed class GetConversationByIdQueryHandler : QueryHandlerBase<GetConver
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetConversationByIdQuery> validator,
-        IChatQueryProvider chatQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        ILogger<GetConversationByIdQueryHandler> logger,
+        IChatQueryProvider chatQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _chatQueryProvider = chatQueryProvider;
     }

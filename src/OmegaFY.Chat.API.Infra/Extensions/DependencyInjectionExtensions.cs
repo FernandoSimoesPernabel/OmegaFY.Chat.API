@@ -26,9 +26,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using System.Globalization;
 using System.Text;
-using System.Threading;
 using System.Threading.RateLimiting;
 
 namespace OmegaFY.Chat.API.Infra.Extensions;
@@ -55,7 +53,8 @@ public static class DependencyInjectionExtensions
                         httpClientOptions.FilterHttpWebRequest = (context) => context.RequestUri.AbsolutePath.ShouldMonitorRoute();
                         httpClientOptions.FilterHttpRequestMessage = (context) => context.RequestUri.AbsolutePath.ShouldMonitorRoute();
                     })
-                    .AddEntityFrameworkCoreInstrumentation(efOptions => efOptions.SetDbStatementForText = true)
+                    .AddEntityFrameworkCoreInstrumentation()
+                    .AddSqlClientInstrumentation()
                     .AddHoneycomb(honeycombOptions =>
                     {
                         honeycombOptions.ServiceName = openTelemetrySettings.ServiceName;
@@ -64,8 +63,10 @@ public static class DependencyInjectionExtensions
                     });
             }).WithMetrics(builder =>
             {
-                builder.AddHttpClientInstrumentation().SetResourceBuilder(resourceBuilder)
+                builder.SetResourceBuilder(resourceBuilder)
+                    .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
+                    .AddSqlClientInstrumentation()
                     .AddHoneycomb(honeycombOptions =>
                     {
                         honeycombOptions.ServiceName = openTelemetrySettings.ServiceName;

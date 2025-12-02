@@ -20,8 +20,9 @@ public sealed class AcceptFriendshipRequestCommandHandler : CommandHandlerBase<A
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<AcceptFriendshipRequestCommand> validator,
         IMessageBus messageBus,
+        ILogger<AcceptFriendshipRequestCommandHandler> logger,
         IUserInformation userInformation,
-        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _userInformation = userInformation;
         _repository = repository;

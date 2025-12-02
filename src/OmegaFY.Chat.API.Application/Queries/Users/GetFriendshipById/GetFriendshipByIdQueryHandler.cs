@@ -17,8 +17,9 @@ public sealed class GetFriendshipByIdQueryHandler : QueryHandlerBase<GetFriendsh
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetFriendshipByIdQuery> validator,
+        ILogger<GetFriendshipByIdQueryHandler> logger,
         IUserInformation userInformation,
-        IUserQueryProvider userQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        IUserQueryProvider userQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _userInformation = userInformation;
         _userQueryProvider = userQueryProvider;

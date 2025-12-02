@@ -4,7 +4,6 @@ using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.RefreshToken;
 using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Application.Models;
-using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
@@ -31,10 +30,11 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<RefreshTokenCommand> validator,
         IMessageBus messageBus,
+        ILogger<RefreshTokenCommandHandler> logger,
         HybridCache hybridCache,
         IUserRepository repository,
         IAuthenticationService authenticationService,
-        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _hybridCache = hybridCache;
         _repository = repository;

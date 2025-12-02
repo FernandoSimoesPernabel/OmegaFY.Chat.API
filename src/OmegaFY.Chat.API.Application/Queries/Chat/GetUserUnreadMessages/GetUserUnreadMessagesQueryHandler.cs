@@ -19,8 +19,9 @@ public sealed class GetUserUnreadMessagesQueryHandler : QueryHandlerBase<GetUser
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetUserUnreadMessagesQuery> validator,
+        ILogger<GetUserUnreadMessagesQueryHandler> logger,
         IChatQueryProvider chatQueryProvider,
-        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _chatQueryProvider = chatQueryProvider;
         _userInformation = userInformation;

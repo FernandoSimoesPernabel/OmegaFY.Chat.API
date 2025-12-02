@@ -17,8 +17,9 @@ public sealed class GetUserConversationsQueryHandler : QueryHandlerBase<GetUserC
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetUserConversationsQuery> validator,
+        ILogger<GetUserConversationsQueryHandler> logger,
         IChatQueryProvider chatQueryProvider,
-        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _chatQueryProvider = chatQueryProvider;
         _userInformation = userInformation;

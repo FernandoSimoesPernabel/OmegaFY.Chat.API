@@ -27,9 +27,10 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<LoginCommand> validator,
         IMessageBus messageBus,
+        ILogger<LoginCommandHandler> logger,
         IAuthenticationService authenticationService,
         HybridCache hybridCache,
-        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _authenticationService = authenticationService;
         _hybridCache = hybridCache;

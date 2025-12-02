@@ -20,8 +20,9 @@ public sealed class RemoveMemberFromGroupCommandHandler : CommandHandlerBase<Rem
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<RemoveMemberFromGroupCommand> validator,
         IMessageBus messageBus,
+        ILogger<RemoveMemberFromGroupCommandHandler> logger,
         IUserInformation userInformation,
-        IConversationRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IConversationRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _userInformation = userInformation;
         _repository = repository;

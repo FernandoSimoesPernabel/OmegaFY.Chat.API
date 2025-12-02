@@ -16,8 +16,9 @@ public sealed class GetCurrentUserInfoQueryHandler : QueryHandlerBase<GetCurrent
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetCurrentUserInfoQuery> validator,
+        ILogger<GetCurrentUserInfoQueryHandler> logger,
         IUserInformation userInformation,
-        IUserQueryProvider userQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        IUserQueryProvider userQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _userInformation = userInformation;
         _userQueryProvider = userQueryProvider;

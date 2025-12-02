@@ -17,9 +17,10 @@ public sealed class GetUsersQueryHandler : QueryHandlerBase<GetUsersQueryHandler
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetUsersQuery> validator,
+        ILogger<GetUsersQueryHandler> logger,
         IUserQueryProvider userQueryProvider,
         IUserInformation userInformation)
-        : base(hostEnvironment, openTelemetryRegisterProvider, validator)
+        : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _userQueryProvider = userQueryProvider;
         _userInformation = userInformation;

@@ -22,9 +22,10 @@ public sealed class MarkMessageAsReadCommandHandler : CommandHandlerBase<MarkMes
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<MarkMessageAsReadCommand> validator,
         IMessageBus messageBus,
+        ILogger<MarkMessageAsReadCommandHandler> logger,
         IUserInformation userInformation,
         IConversationRepository conversationRepository,
-        IMemberMessageRepository memberMessageRepository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus)
+        IMemberMessageRepository memberMessageRepository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _userInformation = userInformation;
         _conversationRepository = conversationRepository;
