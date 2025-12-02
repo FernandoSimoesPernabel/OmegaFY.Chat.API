@@ -63,10 +63,10 @@ public static class DependencyInjectionExtensions
                     });
             }).WithMetrics(builder =>
             {
-                builder.AddHttpClientInstrumentation().SetResourceBuilder(resourceBuilder)
+                builder.SetResourceBuilder(resourceBuilder)
+                    .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
                     .AddSqlClientInstrumentation()
-                    .AddHttpClientInstrumentation()
                     .AddHoneycomb(honeycombOptions =>
                     {
                         honeycombOptions.ServiceName = openTelemetrySettings.ServiceName;
