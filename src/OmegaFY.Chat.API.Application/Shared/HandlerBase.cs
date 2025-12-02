@@ -40,7 +40,7 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
 
         try
         {
-            _logger.LogInformation("Handling request {Handler} with correlation {CorrelationId}", typeof(THandler).Name, activity?.Id);
+            _logger.LogInformation("Handling request {Handler} with correlation {CorrelationId}", typeof(THandler).Name, activity.Id);
 
             activity.SetRequest(request);
 
