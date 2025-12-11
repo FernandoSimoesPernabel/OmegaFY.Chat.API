@@ -33,9 +33,10 @@ public sealed class ConversationFacts
         // Arrange
         ReferenceId userId = Guid.NewGuid();
 
-        // Act & Assert
-        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => 
-            Conversation.StartMemberToMemberConversation(userId, userId));
+        // Act
+        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => Conversation.StartMemberToMemberConversation(userId, userId));
+
+        // Assert
         Assert.Equal("Não é possível criar uma conversa entre o mesmo usuário.", exception.Message);
     }
 
@@ -71,9 +72,10 @@ public sealed class ConversationFacts
         ReferenceId createdByUserId = Guid.NewGuid();
         byte maxNumberOfMembers = 10;
 
-        // Act & Assert
-        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() =>
-            Conversation.CreateGroupChat(createdByUserId, invalidGroupName, maxNumberOfMembers));
+        // Act
+        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => Conversation.CreateGroupChat(createdByUserId, invalidGroupName, maxNumberOfMembers));
+
+        // Assert
         Assert.Equal("O nome do grupo não foi informado.", exception.Message);
     }
 
@@ -134,8 +136,9 @@ public sealed class ConversationFacts
         ReferenceId newMemberUserId = Guid.NewGuid();
 
         // Act & Assert
-        DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() =>
-            sut.AddMemberToGroup(newMemberUserId));
+        DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.AddMemberToGroup(newMemberUserId));
+
+        // Assert
         Assert.Equal("Não é possível adicionar membros em uma conversa que não é em grupo.", exception.Message);
     }
 
@@ -146,9 +149,10 @@ public sealed class ConversationFacts
         ReferenceId createdByUserId = Guid.NewGuid();
         Conversation sut = Conversation.CreateGroupChat(createdByUserId, "Test Group", 10);
 
-        // Act & Assert
-        DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() =>
-            sut.AddMemberToGroup(createdByUserId));
+        // Act
+        DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.AddMemberToGroup(createdByUserId));
+
+        // Assert
         Assert.Equal("Usuário já é membro da conversa.", exception.Message);
     }
 
@@ -179,9 +183,10 @@ public sealed class ConversationFacts
         Conversation sut = Conversation.StartMemberToMemberConversation(memberOneUserId, memberTwoUserId);
         Member memberToRemove = sut.GetMemberByUserId(memberOneUserId);
 
-        // Act & Assert
-        DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() =>
-            sut.RemoveMemberFromGroup(memberToRemove.Id));
+        // Act
+        DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.RemoveMemberFromGroup(memberToRemove.Id));
+
+        // Assert
         Assert.Equal("Não é possível remover membros em uma conversa que não é em grupo.", exception.Message);
     }
 
@@ -225,9 +230,10 @@ public sealed class ConversationFacts
         ReferenceId memberTwoUserId = Guid.NewGuid();
         Conversation sut = Conversation.StartMemberToMemberConversation(memberOneUserId, memberTwoUserId);
 
-        // Act & Assert
-        DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() =>
-            sut.ChangeGroupConfig("New Name", 10));
+        // Act
+        DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.ChangeGroupConfig("New Name", 10));
+
+        // Assert
         Assert.Equal("Não é possível alterar a configuração de uma conversa que não é em grupo.", exception.Message);
     }
 
@@ -240,9 +246,10 @@ public sealed class ConversationFacts
         sut.AddMemberToGroup(Guid.NewGuid());
         sut.AddMemberToGroup(Guid.NewGuid());
 
-        // Act & Assert
-        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() =>
-            sut.ChangeGroupConfig("Test Group", 2));
+        // Act
+        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.ChangeGroupConfig("Test Group", 2));
+
+        // Assert
         Assert.Equal("O número máximo de membros não pode ser menor que o número atual de membros.", exception.Message);
     }
 

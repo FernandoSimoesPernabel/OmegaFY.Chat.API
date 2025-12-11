@@ -38,9 +38,10 @@ public sealed class GroupConfigFacts
         ReferenceId createdByUserId = Guid.NewGuid();
         byte maxNumberOfMembers = 10;
 
-        // Act & Assert
-        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() =>
-            new GroupConfig(conversationId, createdByUserId, invalidGroupName, maxNumberOfMembers));
+        // Act
+        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new GroupConfig(conversationId, createdByUserId, invalidGroupName, maxNumberOfMembers));
+
+        // Assert
         Assert.Equal("O nome do grupo não foi informado.", exception.Message);
     }
 
@@ -53,9 +54,10 @@ public sealed class GroupConfigFacts
         string groupName = new string('a', ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH + 1);
         byte maxNumberOfMembers = 10;
 
-        // Act & Assert
-        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() =>
-            new GroupConfig(conversationId, createdByUserId, groupName, maxNumberOfMembers));
+        // Act
+        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new GroupConfig(conversationId, createdByUserId, groupName, maxNumberOfMembers));
+
+        // Assert
         Assert.Equal($"O nome do grupo não pode exceder {ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH} caracteres.", exception.Message);
     }
 

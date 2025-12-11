@@ -31,7 +31,7 @@ public sealed class MessageFacts
     }
 
     [Fact]
-    public void Constructor_ShouldSetSendDateToCurrentUtcTime()
+    public void Constructor_PassingValidParameters_ShouldSetSendDateToCurrentUtcTime()
     {
         // Arrange
         DateTime beforeCreation = DateTime.UtcNow;
@@ -58,9 +58,10 @@ public sealed class MessageFacts
         MessageType invalidMessageType = (MessageType)999;
         MessageBody body = new MessageBody("Test message content");
 
-        // Act & Assert
-        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() =>
-            new Message(conversationId, senderMemberId, invalidMessageType, body));
+        // Act
+        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new Message(conversationId, senderMemberId, invalidMessageType, body));
+
+        // Assert
         Assert.Equal("Tipo de mensagem inválido.", exception.Message);
     }
 
@@ -89,9 +90,10 @@ public sealed class MessageFacts
     [InlineData("   ")]
     public void Constructor_PassingInvalidMessageBody_ShouldThrowDomainArgumentException(string invalidContent)
     {
-        // Arrange & Act & Assert
-        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() =>
-            new MessageBody(invalidContent));
+        // Arrange & Act
+        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new MessageBody(invalidContent));
+
+        // Assert
         Assert.Equal("Não foi informado nenhum conteudo para o corpo.", exception.Message);
     }
 
@@ -101,9 +103,10 @@ public sealed class MessageFacts
         // Arrange
         string longContent = new string('a', ChatConstants.MESSAGE_BODY_MAX_LENGTH + 1);
 
-        // Act & Assert
-        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() =>
-            new MessageBody(longContent));
+        // Act 
+        DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new MessageBody(longContent));
+
+        // Assert
         Assert.Equal($"A mensagem não pode exceder o limite de {ChatConstants.MESSAGE_BODY_MAX_LENGTH} caracteres.", exception.Message);
     }
 

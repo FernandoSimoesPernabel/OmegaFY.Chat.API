@@ -257,7 +257,8 @@ public sealed class MemberMessageFacts
 
         if (initialStatus == MemberMessageStatus.Read)
             sut.Read();
-        else if (initialStatus == MemberMessageStatus.Deleted)
+        
+        if (initialStatus == MemberMessageStatus.Deleted)
             sut.Delete();
 
         // Act
