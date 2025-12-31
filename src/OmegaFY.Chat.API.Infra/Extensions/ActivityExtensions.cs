@@ -1,6 +1,7 @@
 ﻿using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using System.Diagnostics;
+using System.Linq;
 
 namespace OmegaFY.Chat.API.Infra.Extensions;
 
@@ -20,6 +21,8 @@ public static class ActivityExtensions
     public static Activity SetCacheKey(this Activity activity, string cacheKey) => activity.SetTag(OpenTelemetryConstants.CACHE_KEY, cacheKey);
 
     public static Activity SetCacheHit(this Activity activity, bool cacheHit) => activity.SetTag(OpenTelemetryConstants.CACHE_HIT, cacheHit);
+
+    public static Activity SetCacheTags(this Activity activity, string[] tags) => activity.SetTag(OpenTelemetryConstants.CACHE_TAGS, string.Join(';', tags));
 
     public static Activity SetOkStatus(this Activity activity) => activity.SetStatus(ActivityStatusCode.Ok);
 

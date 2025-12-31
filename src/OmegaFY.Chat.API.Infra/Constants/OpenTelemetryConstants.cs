@@ -28,5 +28,7 @@ public static class OpenTelemetryConstants
 
     public const string CACHE_KEY = $"{CACHE_PROVIDER_BASE_NAME}.cache_key";
 
+    public const string CACHE_TAGS = $"{CACHE_PROVIDER_BASE_NAME}.cache_tags";
+
     public const string API_ROUTE = "api/";
 }
