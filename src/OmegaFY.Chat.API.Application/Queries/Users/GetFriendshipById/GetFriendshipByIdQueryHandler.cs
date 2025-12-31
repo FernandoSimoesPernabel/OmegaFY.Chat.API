@@ -3,6 +3,10 @@ using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
+using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Infra.Cache;
+using OmegaFY.Chat.API.Infra.Cache.Helpers;
+using OmegaFY.Chat.API.Infra.Cache.Models;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
@@ -13,16 +17,20 @@ public sealed class GetFriendshipByIdQueryHandler : QueryHandlerBase<GetFriendsh
 
     private readonly IUserQueryProvider _userQueryProvider;
 
+    private readonly IHybridCacheProvider _hybridCacheProvider;
+
     public GetFriendshipByIdQueryHandler(
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetFriendshipByIdQuery> validator,
         ILogger<GetFriendshipByIdQueryHandler> logger,
         IUserInformation userInformation,
-        IUserQueryProvider userQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
+        IUserQueryProvider userQueryProvider,
+        IHybridCacheProvider hybridCacheProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _userInformation = userInformation;
         _userQueryProvider = userQueryProvider;
+        _hybridCacheProvider = hybridCacheProvider;
     }
 
     protected async override Task<HandlerResult<GetFriendshipByIdQueryResult>> InternalHandleAsync(GetFriendshipByIdQuery request, CancellationToken cancellationToken)
@@ -30,8 +38,18 @@ public sealed class GetFriendshipByIdQueryHandler : QueryHandlerBase<GetFriendsh
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<GetFriendshipByIdQueryResult>();
 
-        FriendshipModel friendshipModel = 
-            await _userQueryProvider.GetFriendshipByIdAndUserIdAsync(_userInformation.CurrentRequestUserId.Value, request.FriendshipId, cancellationToken);
+        Guid userId = _userInformation.CurrentRequestUserId.Value;
+
+        (_, FriendshipModel friendshipModel) = await _hybridCacheProvider.GetOrCreateAsync(
+            CacheKeyGenerator.FriendshipByIdKey(userId, request.FriendshipId),
+            async (cancellationToken) => await _userQueryProvider.GetFriendshipByIdAndUserIdAsync(userId, request.FriendshipId, cancellationToken),
+            new CacheOptions()
+            {
+                Expiration = TimeSpanConstants.THIRTY_DAYS,
+                LocalCacheExpiration = TimeSpanConstants.THIRTY_DAYS,
+                Tags = ["users", "users:friendships", $"users:user:{userId}", $"user:{userId}", $"friendship:{request.FriendshipId}"]
+            },
+            cancellationToken);
 
         if (friendshipModel is null)
             return HandlerResult.CreateNotFound<GetFriendshipByIdQueryResult>();
