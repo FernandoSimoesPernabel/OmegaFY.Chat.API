@@ -1,4 +1,4 @@
-﻿    using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;

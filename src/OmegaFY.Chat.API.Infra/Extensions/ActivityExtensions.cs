@@ -1,7 +1,6 @@
 ﻿using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using System.Diagnostics;
-using System.Linq;
 
 namespace OmegaFY.Chat.API.Infra.Extensions;
 
