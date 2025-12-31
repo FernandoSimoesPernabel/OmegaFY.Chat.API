@@ -38,6 +38,7 @@ internal abstract class HybridCacheProviderBase : IHybridCacheProvider
         _logger.LogInformation("Getting or creating cache entry for key: {CacheKey}", key);
 
         bool cacheHit = true;
+        Activity parentActivity = Activity.Current;
 
         T result = await InternalGetOrCreateAsync(
             key,
@@ -45,6 +46,8 @@ internal abstract class HybridCacheProviderBase : IHybridCacheProvider
             {
                 try
                 {
+                    Activity.Current ??= parentActivity;
+
                     cacheHit = false;
                     return await factory(ct);
                 }
