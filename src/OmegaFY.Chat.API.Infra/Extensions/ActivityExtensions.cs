@@ -22,7 +22,7 @@ public static class ActivityExtensions
 
     public static Activity SetCacheHit(this Activity activity, bool cacheHit) => activity.SetTag(OpenTelemetryConstants.CACHE_HIT, cacheHit);
 
-    public static Activity SetCacheTags(this Activity activity, string[] tags) => activity.SetTag(OpenTelemetryConstants.CACHE_TAGS, string.Join(';', tags));
+    public static Activity SetCacheTags(this Activity activity, string[] tags) => activity.SetTag(OpenTelemetryConstants.CACHE_TAGS, string.Join(';', tags ?? []));
 
     public static Activity SetOkStatus(this Activity activity) => activity.SetStatus(ActivityStatusCode.Ok);
 

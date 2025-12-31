@@ -19,8 +19,16 @@ internal abstract class HybridCacheProviderBase : IHybridCacheProvider
         _openTelemetryRegisterProvider = openTelemetryRegisterProvider;
     }
 
+    public async ValueTask<(bool cacheHit, T result)> GetOrDefaultAsync<T>(string key, CancellationToken cancellationToken)
+        => await GetOrCreateAsync(key, (cancellationToken) => ValueTask.FromResult(default(T)), null, cancellationToken);
+
     public async ValueTask<(bool cacheHit, T result)> GetOrCreateAsync<T>(string key, Func<CancellationToken, ValueTask<T>> factory, CacheOptions options, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(key))
+            throw new ArgumentNullException(nameof(key));
+
+        ArgumentNullException.ThrowIfNull(factory);
+
         using Activity activity = _openTelemetryRegisterProvider.StartActivity(OpenTelemetryConstants.ACTIVITY_HYBRID_CACHE_PROVIDER_NAME);
 
         activity.SetCacheKey(key);
