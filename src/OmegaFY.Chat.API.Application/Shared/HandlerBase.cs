@@ -6,6 +6,7 @@ using OmegaFY.Chat.API.Common.Exceptions.Base;
 using OmegaFY.Chat.API.Common.Exceptions.Constants;
 using OmegaFY.Chat.API.Common.Extensions;
 using OmegaFY.Chat.API.Infra.Constants;
+using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 using System.Diagnostics;
 
@@ -60,7 +61,7 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
         }
         catch (ErrorCodeException ex)
         {
-            activity.SetResult(ex);
+            activity.SetErrorStatus(ex);
             
             _logger.LogWarning(ex, "Domain error in {HandlerType}: {Code} - {Message}", typeof(THandler).Name, ex.ErrorCode, ex.Message);
             
@@ -68,7 +69,7 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
         }
         catch (Exception ex)
         {
-            activity.SetResult(ex);
+            activity.SetErrorStatus(ex);
             
             _logger.LogError(ex, "Unexpected error in {HandlerType}", typeof(THandler).Name);
             

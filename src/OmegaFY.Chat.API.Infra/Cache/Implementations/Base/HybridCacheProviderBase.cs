@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using OmegaFY.Chat.API.Infra.Cache.Models;
+using OmegaFY.Chat.API.Infra.Constants;
+using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
+using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace OmegaFY.Chat.API.Infra.Cache.Implementations.Base;
 
@@ -18,11 +22,16 @@ internal abstract class HybridCacheProviderBase : IHybridCacheProvider
 
     public async ValueTask<(bool cacheHit, T result)> GetOrCreateAsync<T>(string key, Func<CancellationToken, ValueTask<T>> factory, CacheOptions options, CancellationToken cancellationToken)
     {
+        Activity activity = _openTelemetryRegisterProvider.StartActivity(OpenTelemetryConstants.ACTIVITY_HYBRID_CACHE_PROVIDER_NAME);
+
+        activity.SetCacheKey(key);
+
         _logger.LogInformation("Getting or creating cache entry for key: {CacheKey}", key);
 
         bool cacheHit = true;
 
-        T result = await InternalGetOrCreateAsync(key,
+        T result = await InternalGetOrCreateAsync(
+            key,
             async (ct) =>
             {
                 try
@@ -33,6 +42,9 @@ internal abstract class HybridCacheProviderBase : IHybridCacheProvider
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error occurred while creating cache entry for key: {CacheKey}", key);
+                    
+                    activity.SetErrorStatus(ex);
+
                     throw;
                 }
             },
@@ -40,6 +52,9 @@ internal abstract class HybridCacheProviderBase : IHybridCacheProvider
             cancellationToken);
 
         _logger.LogInformation("Cache entry for key: {CacheKey} retrieved. Cache hit: {CacheHit}", key, cacheHit);
+
+        activity.SetCacheHit(cacheHit);
+        activity.SetOkStatus();
 
         return (cacheHit, result);
     }

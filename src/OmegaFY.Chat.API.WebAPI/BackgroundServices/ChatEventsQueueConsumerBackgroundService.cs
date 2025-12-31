@@ -1,6 +1,7 @@
 ﻿using OmegaFY.Chat.API.Application.Events;
 using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Infra.Constants;
+using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
