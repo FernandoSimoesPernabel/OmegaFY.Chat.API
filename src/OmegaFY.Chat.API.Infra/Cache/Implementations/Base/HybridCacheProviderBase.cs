@@ -16,10 +16,32 @@ internal abstract class HybridCacheProviderBase : IHybridCacheProvider
         _openTelemetryRegisterProvider = openTelemetryRegisterProvider;
     }
 
-    public async ValueTask<T> GetOrCreateAsync<T>(string key, Func<CancellationToken, ValueTask<T>> factory, CacheOptions options, CancellationToken cancellationToken)
+    public async ValueTask<(bool cacheHit, T result)> GetOrCreateAsync<T>(string key, Func<CancellationToken, ValueTask<T>> factory, CacheOptions options, CancellationToken cancellationToken)
     {
-        //TODO telemetria
-        return await InternalGetOrCreateAsync(key, factory, options, cancellationToken);
+        _logger.LogInformation("Getting or creating cache entry for key: {CacheKey}", key);
+
+        bool cacheHit = true;
+
+        T result = await InternalGetOrCreateAsync(key,
+            async (ct) =>
+            {
+                try
+                {
+                    cacheHit = false;
+                    return await factory(ct);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occurred while creating cache entry for key: {CacheKey}", key);
+                    throw;
+                }
+            },
+            options,
+            cancellationToken);
+
+        _logger.LogInformation("Cache entry for key: {CacheKey} retrieved. Cache hit: {CacheHit}", key, cacheHit);
+
+        return (cacheHit, result);
     }
 
     public abstract ValueTask RemoveAsync(string key, CancellationToken cancellationToken);

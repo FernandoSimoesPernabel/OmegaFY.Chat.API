@@ -52,9 +52,9 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
             activity.SetResult(result);
 
             if (!result.Succeeded())
-                _logger.LogWarning("Handling completed with errors in {Handler}: {Errors}", typeof(THandler).Name, result.GetErrorsAsStringSeparatedByNewLine());
+                _logger.LogWarning("Handling completed with errors in {HandlerType}: {Errors}", typeof(THandler).Name, result.GetErrorsAsStringSeparatedByNewLine());
 
-            _logger.LogInformation("Handling finished in {Handler}", typeof(THandler).Name);
+            _logger.LogInformation("Handling finished in {HandlerType}", typeof(THandler).Name);
 
             return result;
         }
@@ -62,7 +62,7 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
         {
             activity.SetResult(ex);
             
-            _logger.LogWarning(ex, "Domain error in {Handler}: {Code} - {Message}", typeof(THandler).Name, ex.ErrorCode, ex.Message);
+            _logger.LogWarning(ex, "Domain error in {HandlerType}: {Code} - {Message}", typeof(THandler).Name, ex.ErrorCode, ex.Message);
             
             return new HandlerResult<TResult>(ex.ErrorCode, ex.Message);
         }
@@ -70,7 +70,7 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
         {
             activity.SetResult(ex);
             
-            _logger.LogError(ex, "Unexpected error in {Handler}", typeof(THandler).Name);
+            _logger.LogError(ex, "Unexpected error in {HandlerType}", typeof(THandler).Name);
             
             return new HandlerResult<TResult>(ApplicationErrorCodesConstants.NOT_DOMAIN_ERROR, ex.GetSafeErrorMessageWhenInProd(_hostEnvironment.IsDevelopment()));
         }
