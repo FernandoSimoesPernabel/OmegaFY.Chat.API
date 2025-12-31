@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Application.Extensions;
@@ -9,6 +8,7 @@ using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
+using OmegaFY.Chat.API.Infra.Cache;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
@@ -19,7 +19,7 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
 {
     private readonly IAuthenticationService _authenticationService;
 
-    private readonly HybridCache _hybridCache;
+    private readonly IHybridCacheProvider _hybridCacheProvider;
 
     private readonly IUserRepository _repository;
 
@@ -30,11 +30,11 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
         IMessageBus messageBus,
         ILogger<RegisterNewUserCommandHandler> logger,
         IAuthenticationService authenticationService,
-        HybridCache hybridCache,
+        IHybridCacheProvider hybridCacheProvider,
         IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _authenticationService = authenticationService;
-        _hybridCache = hybridCache;
+        _hybridCacheProvider = hybridCacheProvider;
         _repository = repository;
     }
 
@@ -51,7 +51,7 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
             new LoginInput(newUser.Id, newUser.Email, command.Password, newUser.DisplayName),
             cancellationToken);
 
-        await _hybridCache.SetAuthenticationTokenCacheAsync(newUser.Id, authToken, cancellationToken);
+        await _hybridCacheProvider.SetAuthenticationTokenCacheAsync(newUser.Id, authToken, cancellationToken);
         
         await _messageBus.SimplePublishAsync(new UserRegisteredEvent(newUser.Id, newUser.Email, newUser.DisplayName), cancellationToken);
 

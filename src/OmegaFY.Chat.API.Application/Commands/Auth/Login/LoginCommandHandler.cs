@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.Login;
 using OmegaFY.Chat.API.Application.Extensions;
@@ -8,6 +7,7 @@ using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
+using OmegaFY.Chat.API.Infra.Cache;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
@@ -18,7 +18,7 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
 {
     private readonly IAuthenticationService _authenticationService;
 
-    private readonly HybridCache _hybridCache;
+    private readonly IHybridCacheProvider _hybridCacheProvider;
 
     private readonly IUserRepository _repository;
 
@@ -29,11 +29,11 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
         IMessageBus messageBus,
         ILogger<LoginCommandHandler> logger,
         IAuthenticationService authenticationService,
-        HybridCache hybridCache,
+        IHybridCacheProvider hybridCacheProvider,
         IUserRepository repository) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _authenticationService = authenticationService;
-        _hybridCache = hybridCache;
+        _hybridCacheProvider = hybridCacheProvider;
         _repository = repository;
     }
 
@@ -48,7 +48,7 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
             await _authenticationService.LoginAsync(new LoginInput(user.Id, user.Email, request.Password, user.DisplayName), cancellationToken);
 
         if (request.RememberMe)
-            await _hybridCache.SetAuthenticationTokenCacheAsync(user.Id, authToken, cancellationToken);
+            await _hybridCacheProvider.SetAuthenticationTokenCacheAsync(user.Id, authToken, cancellationToken);
 
         await _messageBus.SimplePublishAsync(new UserLoggedInEvent(user.Id), cancellationToken);
 
