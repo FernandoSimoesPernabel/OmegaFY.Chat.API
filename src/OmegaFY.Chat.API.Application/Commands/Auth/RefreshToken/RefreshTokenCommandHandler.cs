@@ -8,7 +8,7 @@ using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
-using OmegaFY.Chat.API.Infra.Cache;
+using OmegaFY.Chat.API.Infra.Cache.Helpers;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;

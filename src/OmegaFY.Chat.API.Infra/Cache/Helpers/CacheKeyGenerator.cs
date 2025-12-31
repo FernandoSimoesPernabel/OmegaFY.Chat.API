@@ -1,6 +1,6 @@
 ﻿using OmegaFY.Chat.API.Infra.Constants;
 
-namespace OmegaFY.Chat.API.Infra.Cache;
+namespace OmegaFY.Chat.API.Infra.Cache.Helpers;
 
 public static class CacheKeyGenerator
 {

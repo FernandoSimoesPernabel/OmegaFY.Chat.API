@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Hybrid;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
-using OmegaFY.Chat.API.Infra.Cache;
+using OmegaFY.Chat.API.Infra.Cache.Helpers;
 
 namespace OmegaFY.Chat.API.Infra.Extensions;
 

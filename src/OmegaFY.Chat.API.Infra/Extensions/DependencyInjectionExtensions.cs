@@ -14,6 +14,8 @@ using OmegaFY.Chat.API.Infra.Authentication.Services;
 using OmegaFY.Chat.API.Infra.Authentication.Services.Implementations;
 using OmegaFY.Chat.API.Infra.Authentication.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Users.Implementations;
+using OmegaFY.Chat.API.Infra.Cache;
+using OmegaFY.Chat.API.Infra.Cache.Implementations;
 using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
@@ -176,9 +178,10 @@ public static class DependencyInjectionExtensions
 
     public static IdentityBuilder AddIdentity(this IServiceCollection services) => services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>();
 
-    public static IServiceCollection AddCache(this IServiceCollection services)
+    public static IServiceCollection AddHybridCacheProvider(this IServiceCollection services)
     {
         services.AddHybridCache();
+        services.AddScoped<IHybridCacheProvider, HybridCacheProvider>();
 
         return services;
     }
