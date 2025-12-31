@@ -2,9 +2,9 @@
 
 public sealed class CacheOptions
 {
-    public string[] Tags { get; set; } = [];
+    public string[] Tags { get; init; } = [];
 
     public TimeSpan? Expiration { get; init; }
 
-    public TimeSpan? LocalCacheExpiration { get; set; }
+    public TimeSpan? LocalCacheExpiration { get; init; }
 }
