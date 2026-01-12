@@ -8,12 +8,15 @@ public sealed record class GroupConfigChangedEvent : IEvent
 
     public byte NewMaxNumberOfMembers { get; init; }
 
+    public Guid[] MemberUserIds { get; init; } = [];
+
     public GroupConfigChangedEvent() { }
 
-    public GroupConfigChangedEvent(Guid conversationId, string newGroupName, byte newMaxNumberOfMembers)
+    public GroupConfigChangedEvent(Guid conversationId, string newGroupName, byte newMaxNumberOfMembers, Guid[] memberUserIds)
     {
         ConversationId = conversationId;
         NewGroupName = newGroupName;
         NewMaxNumberOfMembers = newMaxNumberOfMembers;
+        MemberUserIds = memberUserIds ?? [];
     }
 }

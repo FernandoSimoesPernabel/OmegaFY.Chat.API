@@ -39,7 +39,7 @@ public sealed class CreateGroupConversationCommandHandler : CommandHandlerBase<C
 
         await _repository.SaveChangesAsync(cancellationToken);
 
-        await _messageBus.SimplePublishAsync(new GroupConversationCreatedEvent(newGroupConversation.Id), cancellationToken);
+        await _messageBus.SimplePublishAsync(new GroupConversationCreatedEvent(newGroupConversation.Id, _userInformation.CurrentRequestUserId.Value), cancellationToken);
 
         return HandlerResult.Create(new CreateGroupConversationCommandResult(newGroupConversation.Id));
     }

@@ -38,11 +38,13 @@ public sealed class RejectFriendshipRequestCommandHandler : CommandHandlerBase<R
         if (user is null)
             return HandlerResult.CreateNotFound<RejectFriendshipRequestCommandResult>();
 
+        Friendship friendship = user.GetFriendshipById(request.FriendshipId);
+
         user.RejectFriendshipRequest(request.FriendshipId);
 
         await _repository.SaveChangesAsync(cancellationToken);
 
-        await _messageBus.SimplePublishAsync(new FriendshipRejectedEvent(request.FriendshipId), cancellationToken);
+        await _messageBus.SimplePublishAsync(new FriendshipRejectedEvent(friendship.Id, friendship.RequestingUserId, friendship.InvitedUserId), cancellationToken);
 
         return HandlerResult.Create(new RejectFriendshipRequestCommandResult());
     }

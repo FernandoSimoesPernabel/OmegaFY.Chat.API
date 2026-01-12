@@ -20,6 +20,12 @@ using OmegaFY.Chat.API.Application.Events.Auth.Login;
 using OmegaFY.Chat.API.Application.Events.Auth.Logoff;
 using OmegaFY.Chat.API.Application.Events.Auth.RefreshToken;
 using OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
+using OmegaFY.Chat.API.Application.Events.Chat.AddMemberToGroup;
+using OmegaFY.Chat.API.Application.Events.Chat.ChangeGroupConfig;
+using OmegaFY.Chat.API.Application.Events.Chat.CreateGroupConversation;
+using OmegaFY.Chat.API.Application.Events.Chat.MarkMessageAsDeleted;
+using OmegaFY.Chat.API.Application.Events.Chat.MarkMessageAsRead;
+using OmegaFY.Chat.API.Application.Events.Chat.RemoveMemberFromGroup;
 using OmegaFY.Chat.API.Application.Events.Chat.SendMessage;
 using OmegaFY.Chat.API.Application.Events.Users.AcceptFriendshipRequest;
 using OmegaFY.Chat.API.Application.Events.Users.RejectFriendshipRequest;
@@ -95,14 +101,31 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IEventHandler<UserTokenRefreshedEvent>, ExpireUsedRefreshTokenEventHandler>();
         
         services.AddScoped<IEventHandler<FriendshipAcceptedEvent>, InitiateConversationEventHandler>();
+        services.AddScoped<IEventHandler<FriendshipAcceptedEvent>, ExpireFriendshipCacheFromFriendshipAcceptedEventHandler>();
 
         services.AddScoped<IEventHandler<FriendshipRejectedEvent>, FriendshipRejectedEventHandler>();
+        services.AddScoped<IEventHandler<FriendshipRejectedEvent>, ExpireFriendshipCacheFromFriendshipRejectedEventHandler>();
 
         services.AddScoped<IEventHandler<FriendshipRequestedEvent>, FriendshipRequestedEventHandler>();
+        services.AddScoped<IEventHandler<FriendshipRequestedEvent>, ExpireFriendshipCacheFromFriendshipRequestedEventHandler>();
 
         services.AddScoped<IEventHandler<FriendshipRemovedEvent>, CloseConversationEventHandler>();
+        services.AddScoped<IEventHandler<FriendshipRemovedEvent>, ExpireFriendshipCacheFromFriendshipRemovedEventHandler>();
 
         services.AddScoped<IEventHandler<MessageSentEvent>, ReplicateMessageToMembersEventHandler>();
+        services.AddScoped<IEventHandler<MessageSentEvent>, ExpireMessageCacheFromMessageSentEventHandler>();
+
+        services.AddScoped<IEventHandler<GroupConversationCreatedEvent>, ExpireConversationCacheFromGroupConversationCreatedEventHandler>();
+
+        services.AddScoped<IEventHandler<GroupConfigChangedEvent>, ExpireConversationCacheFromGroupConfigChangedEventHandler>();
+
+        services.AddScoped<IEventHandler<MemberAddedToGroupEvent>, ExpireConversationCacheFromMemberAddedToGroupEventHandler>();
+
+        services.AddScoped<IEventHandler<MemberRemovedFromGroupEvent>, ExpireConversationCacheFromMemberRemovedFromGroupEventHandler>();
+
+        services.AddScoped<IEventHandler<MessageReadEvent>, ExpireMessageCacheFromMessageReadEventHandler>();
+
+        services.AddScoped<IEventHandler<MessageDeletedEvent>, ExpireMessageCacheFromMessageDeletedEventHandler>();
 
         return services;
     }
