@@ -38,11 +38,13 @@ public sealed class RemoveFriendshipCommandHandler : CommandHandlerBase<RemoveFr
 
         if (user is not null)
         {
+            Friendship friendship = user.GetFriendshipById(request.FriendshipId);
+
             user.RemoveFriendship(request.FriendshipId);
 
             await _repository.SaveChangesAsync(cancellationToken);
 
-            await _messageBus.SimplePublishAsync(new FriendshipRemovedEvent(request.FriendshipId), cancellationToken);
+            await _messageBus.SimplePublishAsync(new FriendshipRemovedEvent(friendship.Id, friendship.RequestingUserId, friendship.InvitedUserId), cancellationToken);
         }
 
         return HandlerResult.Create(new RemoveFriendshipCommandResult());

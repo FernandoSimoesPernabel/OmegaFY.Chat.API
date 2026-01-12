@@ -6,6 +6,7 @@ using OmegaFY.Chat.API.Common.Exceptions.Base;
 using OmegaFY.Chat.API.Common.Exceptions.Constants;
 using OmegaFY.Chat.API.Common.Extensions;
 using OmegaFY.Chat.API.Infra.Constants;
+using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 using System.Diagnostics;
 
@@ -40,7 +41,7 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
 
         try
         {
-            _logger.LogInformation("Handling request {Handler} with correlation {CorrelationId}", typeof(THandler).Name, activity.Id);
+            _logger.LogInformation("Handling request {HandlerType} with correlation {CorrelationId}", typeof(THandler).Name, activity.Id);
 
             activity.SetRequest(request);
 
@@ -52,25 +53,25 @@ public abstract class HandlerBase<THandler, TRequest, TResult> where TRequest : 
             activity.SetResult(result);
 
             if (!result.Succeeded())
-                _logger.LogWarning("Handling completed with errors in {Handler}: {Errors}", typeof(THandler).Name, result.GetErrorsAsStringSeparatedByNewLine());
+                _logger.LogWarning("Handling completed with errors in {HandlerType}: {Errors}", typeof(THandler).Name, result.GetErrorsAsStringSeparatedByNewLine());
 
-            _logger.LogInformation("Handling finished in {Handler}", typeof(THandler).Name);
+            _logger.LogInformation("Handling finished in {HandlerType}", typeof(THandler).Name);
 
             return result;
         }
         catch (ErrorCodeException ex)
         {
-            activity.SetResult(ex);
+            activity.SetErrorStatus(ex);
             
-            _logger.LogWarning(ex, "Domain error in {Handler}: {Code} - {Message}", typeof(THandler).Name, ex.ErrorCode, ex.Message);
+            _logger.LogWarning(ex, "Domain error in {HandlerType}: {Code} - {Message}", typeof(THandler).Name, ex.ErrorCode, ex.Message);
             
             return new HandlerResult<TResult>(ex.ErrorCode, ex.Message);
         }
         catch (Exception ex)
         {
-            activity.SetResult(ex);
+            activity.SetErrorStatus(ex);
             
-            _logger.LogError(ex, "Unexpected error in {Handler}", typeof(THandler).Name);
+            _logger.LogError(ex, "Unexpected error in {HandlerType}", typeof(THandler).Name);
             
             return new HandlerResult<TResult>(ApplicationErrorCodesConstants.NOT_DOMAIN_ERROR, ex.GetSafeErrorMessageWhenInProd(_hostEnvironment.IsDevelopment()));
         }

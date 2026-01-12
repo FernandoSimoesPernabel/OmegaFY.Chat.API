@@ -26,7 +26,7 @@ internal class ReplicateMessageToMembersEventHandler : EventHandlerHandlerBase<M
     {
         Message message = await _messageRepository.GetMessageByIdAsync(@event.MessageId, cancellationToken);
 
-        Conversation conversation = await _conversationRepository.GetConversationByIdAsync(message.ConversationId, cancellationToken);
+        Conversation conversation = await _conversationRepository.GetConversationByIdAsync(@event.ConversationId, cancellationToken);
 
         foreach (Member conversationMember in conversation.Members)
         {

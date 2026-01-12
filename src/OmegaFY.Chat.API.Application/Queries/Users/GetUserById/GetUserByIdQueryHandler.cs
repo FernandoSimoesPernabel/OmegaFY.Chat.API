@@ -3,6 +3,10 @@ using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
+using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Infra.Cache;
+using OmegaFY.Chat.API.Infra.Cache.Helpers;
+using OmegaFY.Chat.API.Infra.Cache.Models;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
@@ -11,19 +15,32 @@ public sealed class GetUserByIdQueryHandler : QueryHandlerBase<GetUserByIdQueryH
 {
     private readonly IUserQueryProvider _userQueryProvider;
 
+    private readonly IHybridCacheProvider _hybridCacheProvider;
+
     public GetUserByIdQueryHandler(
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetUserByIdQuery> validator,
         ILogger<GetUserByIdQueryHandler> logger,
-        IUserQueryProvider userQueryProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
+        IUserQueryProvider userQueryProvider,
+        IHybridCacheProvider hybridCacheProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _userQueryProvider = userQueryProvider;
+        _hybridCacheProvider = hybridCacheProvider;
     }
 
     protected override async Task<HandlerResult<GetUserByIdQueryResult>> InternalHandleAsync(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        UserModel user = await _userQueryProvider.GetUserByIdAsync(request.UserId, cancellationToken);
+        (_, UserModel user) = await _hybridCacheProvider.GetOrCreateAsync(
+            CacheKeyGenerator.UserByIdKey(request.UserId),
+            async (cancellationToken) => await _userQueryProvider.GetUserByIdAsync(request.UserId, cancellationToken),
+            new CacheOptions()
+            {
+                Expiration = TimeSpanConstants.THIRTY_DAYS,
+                LocalCacheExpiration = TimeSpanConstants.THIRTY_DAYS,
+                Tags = [CacheTagsGenerator.UsersTag(), CacheTagsGenerator.UsersByIdTag(), CacheTagsGenerator.UsersUserIdTag(request.UserId), CacheTagsGenerator.UserIdTag(request.UserId)]
+            },
+            cancellationToken);
 
         if (user is null)
             return HandlerResult.CreateNotFound<GetUserByIdQueryResult>();

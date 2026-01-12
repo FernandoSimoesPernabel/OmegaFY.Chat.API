@@ -25,12 +25,12 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT, new HealthCheckOptions()
-{
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
+//app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT, new HealthCheckOptions()
+//{
+//    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+//});
 
-app.UseHealthChecksUI(options => options.UIPath = HealthCheckConstants.UI_ENDPOINT);
+//app.UseHealthChecksUI(options => options.UIPath = HealthCheckConstants.UI_ENDPOINT);
 
 app.UseRateLimiter();
 

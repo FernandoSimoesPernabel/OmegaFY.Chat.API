@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.RefreshToken;
 using OmegaFY.Chat.API.Application.Extensions;
@@ -9,6 +8,7 @@ using OmegaFY.Chat.API.Domain.Repositories.Users;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Authentication.Services;
 using OmegaFY.Chat.API.Infra.Cache;
+using OmegaFY.Chat.API.Infra.Cache.Helpers;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
@@ -17,7 +17,7 @@ namespace OmegaFY.Chat.API.Application.Commands.Auth.RefreshToken;
 
 public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshTokenCommandHandler, RefreshTokenCommand, RefreshTokenCommandResult>
 {
-    private readonly HybridCache _hybridCache;
+    private readonly IHybridCacheProvider _hybridCacheProvider;
 
     private readonly IUserRepository _repository;
 
@@ -31,12 +31,12 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
         IValidator<RefreshTokenCommand> validator,
         IMessageBus messageBus,
         ILogger<RefreshTokenCommandHandler> logger,
-        HybridCache hybridCache,
+        IHybridCacheProvider hybridCacheProvider,
         IUserRepository repository,
         IAuthenticationService authenticationService,
         IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
-        _hybridCache = hybridCache;
+        _hybridCacheProvider = hybridCacheProvider;
         _repository = repository;
         _authenticationService = authenticationService;
         _userInformation = userInformation;
@@ -51,8 +51,8 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
 
         if (user is null)
             return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
-
-        AuthenticationToken? currentToken = await _hybridCache.GetOrDefaultAsync<AuthenticationToken?>(
+        
+        (_, AuthenticationToken? currentToken) = await _hybridCacheProvider.GetOrDefaultAsync<AuthenticationToken?>(
             CacheKeyGenerator.RefreshTokenKey(_userInformation.CurrentRequestUserId.Value, request.RefreshToken), 
             cancellationToken);
 
@@ -64,7 +64,7 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
             new RefreshTokenInput(user.Id, user.Email, user.DisplayName),
             cancellationToken);
 
-        await _hybridCache.SetAuthenticationTokenCacheAsync(user.Id, newAuthToken, cancellationToken);
+        await _hybridCacheProvider.SetAuthenticationTokenCacheAsync(user.Id, newAuthToken, cancellationToken);
 
         await _messageBus.SimplePublishAsync(new UserTokenRefreshedEvent(user.Id, request.RefreshToken, newAuthToken.RefreshToken), cancellationToken);
 
