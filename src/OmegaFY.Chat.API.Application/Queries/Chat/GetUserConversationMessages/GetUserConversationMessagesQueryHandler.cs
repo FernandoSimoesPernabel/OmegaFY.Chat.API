@@ -49,7 +49,7 @@ public sealed class GetUserConversationMessagesQueryHandler : QueryHandlerBase<G
                 {
                     Expiration = TimeSpanConstants.TEN_MINUTES,
                     LocalCacheExpiration = TimeSpanConstants.TEN_MINUTES,
-                    Tags = ["chat", "chat:messages", $"chat:conversation:{request.ConversationId}", $"chat:user:{userId}", $"user:{userId}"]
+                    Tags = [CacheTagsGenerator.ChatTag(), CacheTagsGenerator.ChatMessagesTag(), CacheTagsGenerator.ChatConversationIdTag(request.ConversationId), CacheTagsGenerator.ChatUserIdTag(userId), CacheTagsGenerator.UserIdTag(userId)]
                 },
                 cancellationToken);
 

@@ -47,7 +47,7 @@ public sealed class GetFriendshipByIdQueryHandler : QueryHandlerBase<GetFriendsh
             {
                 Expiration = TimeSpanConstants.THIRTY_DAYS,
                 LocalCacheExpiration = TimeSpanConstants.THIRTY_DAYS,
-                Tags = ["users", "users:friendships", $"users:user:{userId}", $"user:{userId}", $"friendship:{request.FriendshipId}"]
+                Tags = [CacheTagsGenerator.UsersTag(), CacheTagsGenerator.UsersFriendshipsTag(), CacheTagsGenerator.UsersUserIdTag(userId), CacheTagsGenerator.UserIdTag(userId), CacheTagsGenerator.FriendshipIdTag(request.FriendshipId)]
             },
             cancellationToken);
 

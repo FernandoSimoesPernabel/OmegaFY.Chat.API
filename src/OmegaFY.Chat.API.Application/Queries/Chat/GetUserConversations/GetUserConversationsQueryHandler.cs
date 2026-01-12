@@ -47,7 +47,7 @@ public sealed class GetUserConversationsQueryHandler : QueryHandlerBase<GetUserC
             {
                 Expiration = TimeSpanConstants.ONE_HOUR,
                 LocalCacheExpiration = TimeSpanConstants.ONE_HOUR,
-                Tags = ["chat", "chat:conversations", $"chat:user:{userId}", $"user:{userId}"]
+                Tags = [CacheTagsGenerator.ChatTag(), CacheTagsGenerator.ChatConversationsTag(), CacheTagsGenerator.ChatUserIdTag(userId), CacheTagsGenerator.UserIdTag(userId)]
             },
             cancellationToken);
 

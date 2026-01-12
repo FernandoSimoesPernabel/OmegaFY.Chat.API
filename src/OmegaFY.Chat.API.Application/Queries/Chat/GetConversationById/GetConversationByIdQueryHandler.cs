@@ -38,7 +38,7 @@ public sealed class GetConversationByIdQueryHandler : QueryHandlerBase<GetConver
             {
                 Expiration = TimeSpanConstants.TWELVE_HOURS,
                 LocalCacheExpiration = TimeSpanConstants.TWELVE_HOURS,
-                Tags = ["chat", "chat:conversations", $"chat:conversation:{request.ConversationId}"]
+                Tags = [CacheTagsGenerator.ChatTag(), CacheTagsGenerator.ChatConversationsTag(), CacheTagsGenerator.ChatConversationIdTag(request.ConversationId)]
             },
             cancellationToken);
 

@@ -46,7 +46,7 @@ public sealed class GetCurrentUserInfoQueryHandler : QueryHandlerBase<GetCurrent
             {
                 Expiration = TimeSpanConstants.SEVEN_DAYS,
                 LocalCacheExpiration = TimeSpanConstants.SEVEN_DAYS,
-                Tags = ["users", "users:current", $"users:user:{userId}", $"user:{userId}"]
+                Tags = [CacheTagsGenerator.UsersTag(), CacheTagsGenerator.UsersCurrentTag(), CacheTagsGenerator.UsersUserIdTag(userId), CacheTagsGenerator.UserIdTag(userId)]
             },
             cancellationToken);
 

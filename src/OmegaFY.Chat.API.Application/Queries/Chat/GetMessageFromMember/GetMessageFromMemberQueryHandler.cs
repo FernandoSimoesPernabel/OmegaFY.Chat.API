@@ -47,7 +47,7 @@ public sealed class GetMessageFromMemberQueryHandler : QueryHandlerBase<GetMessa
             {
                 Expiration = TimeSpanConstants.SEVEN_DAYS,
                 LocalCacheExpiration = TimeSpanConstants.SEVEN_DAYS,
-                Tags = ["chat", "chat:messages", $"chat:conversation:{request.ConversationId}", $"chat:message:{request.MessageId}", $"chat:user:{userId}"]
+                Tags = [CacheTagsGenerator.ChatTag(), CacheTagsGenerator.ChatMessagesTag(), CacheTagsGenerator.ChatConversationIdTag(request.ConversationId), CacheTagsGenerator.ChatMessageIdTag(request.MessageId), CacheTagsGenerator.ChatUserIdTag(userId)]
             },
             cancellationToken);
 

@@ -38,7 +38,7 @@ public sealed class GetUserByIdQueryHandler : QueryHandlerBase<GetUserByIdQueryH
             {
                 Expiration = TimeSpanConstants.THIRTY_DAYS,
                 LocalCacheExpiration = TimeSpanConstants.THIRTY_DAYS,
-                Tags = ["users", "users:by-id", $"users:user:{request.UserId}", $"user:{request.UserId}"]
+                Tags = [CacheTagsGenerator.UsersTag(), CacheTagsGenerator.UsersByIdTag(), CacheTagsGenerator.UsersUserIdTag(request.UserId), CacheTagsGenerator.UserIdTag(request.UserId)]
             },
             cancellationToken);
 
