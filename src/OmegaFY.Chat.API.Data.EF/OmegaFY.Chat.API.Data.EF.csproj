@@ -7,8 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Scripts\002-Initial_Domain_Tables.sql" />
-    <Content Include="Scripts\001-Initial_Identity_Tables.sql">
+    <Content Include="Scripts\002 - Initial_Domain_Tables.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\001 - Initial_Identity_Tables.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\000 - Reset_Database_Tables.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

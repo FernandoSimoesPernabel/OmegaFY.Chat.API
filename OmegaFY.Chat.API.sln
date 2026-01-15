@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11408.102 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.WebAPI", "src\OmegaFY.Chat.API.WebAPI\OmegaFY.Chat.API.WebAPI.csproj", "{43C497EB-91B2-4127-965A-659B6289EAC5}"
 EndProject
@@ -42,6 +42,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\prompts\create-query-handler.prompt.md = .github\prompts\create-query-handler.prompt.md
 		.github\prompts\create-unit-test.prompt.md = .github\prompts\create-unit-test.prompt.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.Tests.Integration", "test\OmegaFY.Chat.API.Tests.Integration\OmegaFY.Chat.API.Tests.Integration.csproj", "{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +87,10 @@ Global
 		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +105,7 @@ Global
 		{C7AD18AD-B9E3-479A-8B28-B377AB51EF48} = {643747C7-0307-8931-84D8-A7D1915E22E5}
 		{8000E866-F587-4BBF-B0A5-E3374A0F06F4} = {ACEDD0B1-2763-4CC0-9A77-5CB7597D2805}
 		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9} = {643747C7-0307-8931-84D8-A7D1915E22E5}
+		{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D} = {ACEDD0B1-2763-4CC0-9A77-5CB7597D2805}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F5E0E93-9783-4F31-A9B0-63967A0E72BD}
