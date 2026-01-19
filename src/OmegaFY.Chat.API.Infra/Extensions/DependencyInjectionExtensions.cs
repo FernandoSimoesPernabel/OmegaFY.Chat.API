@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OmegaFY.Chat.API.Common.Models;
@@ -208,7 +210,9 @@ public static class DependencyInjectionExtensions
                     TokensPerPeriod = userEmail is not null ? ipOrUserTokenPolicySettings.UserTokensPerPeriod : ipOrUserTokenPolicySettings.IpTokensPerPeriod
                 };
 
-                return RateLimitPartition.GetTokenBucketLimiter(userEmail ?? context.Connection.RemoteIpAddress.ToString(), _ => tokenBucketOptions);
+                string partitionKey = userEmail ?? context?.Connection?.RemoteIpAddress?.ToString() ?? "Unknown";
+
+                return RateLimitPartition.GetTokenBucketLimiter(partitionKey, _ => tokenBucketOptions);
             });
 
             limiterOptions.OnRejected = async (context, cancellationToken) =>

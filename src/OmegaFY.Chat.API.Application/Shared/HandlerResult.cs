@@ -11,13 +11,15 @@ public abstract record class HandlerResult
 
     public HandlerResult(string code, string message) : this() => AddError(code, message);
 
+    public abstract object GetData();
+
     public void AddError(string code, string message) => _errors.Add(new ValidationError(code, message));
 
     public bool Succeeded() => _errors?.Count == 0;
 
     public bool Failed() => !Succeeded();
 
-    public IReadOnlyCollection<ValidationError> Errors() => _errors.AsReadOnly();
+    public ValidationError[] Errors() => _errors.ToArray();
 
     public string GetErrorsAsStringSeparatedByNewLine() => string.Join(Environment.NewLine, _errors.Select(error => error.Message));
 

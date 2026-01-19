@@ -9,4 +9,6 @@ public record class HandlerResult<TResult> : HandlerResult
     public HandlerResult(string code, string message) : base(code, message) { }
 
     public HandlerResult(TResult data) => Data = data;
+
+    public override object GetData() => Data;
 }

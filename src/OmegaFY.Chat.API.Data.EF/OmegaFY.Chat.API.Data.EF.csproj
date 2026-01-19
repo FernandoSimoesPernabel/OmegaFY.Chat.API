@@ -13,7 +13,7 @@
     <Content Include="Scripts\001 - Initial_Identity_Tables.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\000 - Reset_Database_Tables.sql">
+    <Content Include="Scripts\000 - Initial_Stored_Procedures.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
