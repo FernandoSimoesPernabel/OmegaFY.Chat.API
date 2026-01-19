@@ -32,8 +32,4 @@
     <Using Include="System.Net.Http.Json" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>
