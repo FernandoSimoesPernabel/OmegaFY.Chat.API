@@ -6,17 +6,12 @@ using System.Net.Http.Headers;
 
 namespace OmegaFY.Chat.API.Tests.Integration.Base;
 
-public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFactory>
+[Collection(nameof(IntegrationTestCollection))]
+public abstract class IntegrationTestBase
 {
-    private readonly HttpClient _httpClient;
-
     protected readonly CustomWebApplicationFactory _webApplicationFactory;
 
-    protected IntegrationTestBase(CustomWebApplicationFactory webApplicationFactory)
-    {
-        _webApplicationFactory = webApplicationFactory;
-        _httpClient = webApplicationFactory.CreateClient();
-    }
+    protected IntegrationTestBase(CustomWebApplicationFactory webApplicationFactory) => _webApplicationFactory = webApplicationFactory;
 
     protected async Task<RegisterNewUserCommandResult> RegisterUserAsync(string email, string displayName, string password)
     {
@@ -64,25 +59,48 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
 
     protected async Task<HttpResponseMessage> PostAsync(string url, object payload, string bearerToken)
     {
-        if (bearerToken is not null)
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+        using HttpClient httpClient = CreateHttpClient(bearerToken);
+        return await httpClient.PostAsJsonAsync(url, payload);
+    }
 
-        return await _httpClient.PostAsJsonAsync(url, payload);
+    protected async Task<HttpResponseMessage> GetAsync(string url) => await GetAsync(url, null);
+
+    protected async Task<HttpResponseMessage> GetAsync(string url, string bearerToken)
+    {
+        using HttpClient httpClient = CreateHttpClient(bearerToken);
+        return await httpClient.GetAsync(url);
     }
 
     protected async Task<HttpResponseMessage> DeleteAsync(string url) => await DeleteAsync(url, null, null);
 
     protected async Task<HttpResponseMessage> DeleteAsync(string url, object payload, string bearerToken)
     {
-        if (bearerToken is not null)
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+        using HttpClient httpClient = CreateHttpClient(bearerToken);
 
         if (payload is null)
-            return await _httpClient.DeleteAsync(url);
+            return await httpClient.DeleteAsync(url);
 
-        return await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, url)
+        return await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, url)
         {
             Content = JsonContent.Create(payload)
         });
+    }
+
+    protected async Task<HttpResponseMessage> DeleteAsync(string url, string bearerToken)
+    {
+        using HttpClient httpClient = CreateHttpClient(bearerToken);
+        return await httpClient.DeleteAsync(url);
+    }
+
+    private HttpClient CreateHttpClient(string bearerToken)
+    {
+        HttpClient httpClient = _webApplicationFactory.CreateClient();
+
+        if (bearerToken is not null)
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+        httpClient.Timeout = TimeSpan.FromSeconds(10);
+
+        return httpClient;
     }
 }
