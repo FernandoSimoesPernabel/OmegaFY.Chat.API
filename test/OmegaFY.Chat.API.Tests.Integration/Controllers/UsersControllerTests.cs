@@ -1,3 +1,4 @@
+using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Application.Commands.Users.AcceptFriendshipRequest;
 using OmegaFY.Chat.API.Application.Commands.Users.RejectFriendshipRequest;
 using OmegaFY.Chat.API.Application.Commands.Users.RemoveFriendship;
@@ -129,7 +130,7 @@ public class UsersControllerTests : IntegrationTestBase
         // Arrange
         string email = $"getuserbyid-{Guid.NewGuid():N}@omega.com";
         string displayName = "Get User By Id Test";
-        var registeredUser = await RegisterUserAsync(email, displayName, TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult registeredUser = await RegisterUserAsync(email, displayName, TestConstants.DEFAULT_PASSWORD);
         string token = await AuthenticateAsync(email, TestConstants.DEFAULT_PASSWORD);
 
         // Act
@@ -204,7 +205,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"invited-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Requester User", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Invited User", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Invited User", TestConstants.DEFAULT_PASSWORD);
         string token = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
 
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -227,7 +228,7 @@ public class UsersControllerTests : IntegrationTestBase
     {
         // Arrange
         string email = $"selfadd-{Guid.NewGuid():N}@omega.com";
-        var user = await RegisterUserAsync(email, "Self Add User", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult user = await RegisterUserAsync(email, "Self Add User", TestConstants.DEFAULT_PASSWORD);
         string token = await AuthenticateAsync(email, TestConstants.DEFAULT_PASSWORD);
 
         object request = new { InvitedUserId = user.UserId };
@@ -293,7 +294,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"duplicate-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Duplicate Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Duplicate Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Duplicate Invited", TestConstants.DEFAULT_PASSWORD);
         string token = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
 
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -333,7 +334,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"getfriendship-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Get Friendship Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Get Friendship Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Get Friendship Invited", TestConstants.DEFAULT_PASSWORD);
         string token = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
 
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -396,7 +397,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"accept-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Accept Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Accept Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Accept Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -420,7 +421,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"accept-verify-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Accept Verify Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Accept Verify Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Accept Verify Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -469,7 +470,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"accept-self-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Accept Self Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Accept Self Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Accept Self Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -508,7 +509,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"reject-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Reject Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Reject Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Reject Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -532,7 +533,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"reject-verify-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Reject Verify Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Reject Verify Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Reject Verify Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -581,7 +582,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"reject-self-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Reject Self Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Reject Self Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Reject Self Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -620,7 +621,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"remove-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Remove Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Remove Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Remove Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -645,7 +646,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"remove-by-inv-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Remove By Inv Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Remove By Inv Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Remove By Inv Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
@@ -690,7 +691,7 @@ public class UsersControllerTests : IntegrationTestBase
         string invitedEmail = $"remove-pending-inv-{Guid.NewGuid():N}@omega.com";
 
         await RegisterUserAsync(requestingEmail, "Remove Pending Requester", TestConstants.DEFAULT_PASSWORD);
-        var invitedUser = await RegisterUserAsync(invitedEmail, "Remove Pending Invited", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult invitedUser = await RegisterUserAsync(invitedEmail, "Remove Pending Invited", TestConstants.DEFAULT_PASSWORD);
 
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };

@@ -28,7 +28,7 @@ public abstract class IntegrationTestBase
 
     protected async Task<string> AuthenticateAsync(string email, string password)
     {
-        object loginRequest = new { Email = email, Password = password };
+        object loginRequest = new { Email = email, Password = password, RememberMe = true };
 
         HttpResponseMessage response = await PostAsync("/api/auth/login", loginRequest);
 
@@ -55,13 +55,13 @@ public abstract class IntegrationTestBase
         );
     }
 
-    protected async Task<HttpResponseMessage> PostAsync(string url, object payload) => await PostAsync(url, payload, null);
-
-    protected async Task<HttpResponseMessage> PostAsync(string url, object payload, string bearerToken) => await CreateHttpClient(bearerToken).PostAsJsonAsync(url, payload);
-
     protected async Task<HttpResponseMessage> GetAsync(string url) => await GetAsync(url, null);
 
     protected async Task<HttpResponseMessage> GetAsync(string url, string bearerToken) => await CreateHttpClient(bearerToken).GetAsync(url);
+
+    protected async Task<HttpResponseMessage> PostAsync(string url, object payload) => await PostAsync(url, payload, null);
+
+    protected async Task<HttpResponseMessage> PostAsync(string url, object payload, string bearerToken) => await CreateHttpClient(bearerToken).PostAsJsonAsync(url, payload);
 
     protected async Task<HttpResponseMessage> DeleteAsync(string url) => await DeleteAsync(url, null, null);
 
@@ -79,6 +79,10 @@ public abstract class IntegrationTestBase
     }
 
     protected async Task<HttpResponseMessage> DeleteAsync(string url, string bearerToken) => await CreateHttpClient(bearerToken).DeleteAsync(url);
+
+    protected async Task<HttpResponseMessage> PutAsync(string url, object payload) => await PutAsync(url, payload, null);
+
+    protected async Task<HttpResponseMessage> PutAsync(string url, object payload, string bearerToken) => await CreateHttpClient(bearerToken).PutAsJsonAsync(url, payload);
 
     private HttpClient CreateHttpClient(string bearerToken)
     {
