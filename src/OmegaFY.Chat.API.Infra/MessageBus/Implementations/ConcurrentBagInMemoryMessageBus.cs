@@ -19,5 +19,5 @@ internal sealed class ConcurrentBagInMemoryMessageBus : IMessageBus
         return ValueTask.FromResult(message);
     }
 
-    internal int GetMessageCount() => _storage.Count;
+    public int GetMessageCount() => _storage.Count;
 }

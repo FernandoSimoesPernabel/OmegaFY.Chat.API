@@ -7,4 +7,6 @@ public interface IMessageBus
     public ValueTask<MessageEnvelope> ReadMessageAsync(CancellationToken cancellationToken);
 
     public ValueTask PublishAsync(MessageEnvelope message, CancellationToken cancellationToken);
+    
+    public int GetMessageCount();
 }

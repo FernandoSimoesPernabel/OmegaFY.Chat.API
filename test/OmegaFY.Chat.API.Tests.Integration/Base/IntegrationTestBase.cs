@@ -1,6 +1,8 @@
+using Microsoft.Extensions.DependencyInjection;
 using OmegaFY.Chat.API.Application.Commands.Auth.Login;
 using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.WebAPI.Models;
 using System.Net.Http.Headers;
 
@@ -10,8 +12,22 @@ namespace OmegaFY.Chat.API.Tests.Integration.Base;
 public abstract class IntegrationTestBase
 {
     protected readonly CustomWebApplicationFactory _webApplicationFactory;
+    
+    protected readonly IMessageBus _messageBus;
 
-    protected IntegrationTestBase(CustomWebApplicationFactory webApplicationFactory) => _webApplicationFactory = webApplicationFactory;
+    protected IntegrationTestBase(CustomWebApplicationFactory webApplicationFactory)
+    {
+        _webApplicationFactory = webApplicationFactory;
+        _messageBus = webApplicationFactory.Services.GetRequiredService<IMessageBus>();
+    }
+
+    protected async Task WaitQueueToProcessAsync()
+    {
+        while (_messageBus.GetMessageCount() > 0)
+            await Task.Delay(100);
+
+        await Task.Delay(5000);
+    } 
 
     protected async Task<RegisterNewUserCommandResult> RegisterUserAsync(string email, string displayName, string password)
     {

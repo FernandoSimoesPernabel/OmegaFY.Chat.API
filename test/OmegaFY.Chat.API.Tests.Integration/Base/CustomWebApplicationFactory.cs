@@ -26,10 +26,7 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureHostConfiguration(config =>
         {
-            // Carrega User Secrets do WebAPI (JwtSettings, AuthenticationSettings, etc.)
             config.AddUserSecrets(Assembly.GetAssembly(typeof(Program)), true);
-
-            // Carrega User Secrets dos testes (sobrescreve connection string)
             config.AddUserSecrets<CustomWebApplicationFactory>(true);
         });
 
@@ -42,8 +39,11 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
         
         await connection.OpenAsync();
 
-        await using SqlCommand command = new SqlCommand("EXEC [dbo].[sp_ResetDatabaseTables]", connection);
-        
+        await using SqlCommand command = new("[dbo].[sp_ResetDatabaseTables]", connection)
+        {
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
+
         await command.ExecuteNonQueryAsync();
     }
 }
