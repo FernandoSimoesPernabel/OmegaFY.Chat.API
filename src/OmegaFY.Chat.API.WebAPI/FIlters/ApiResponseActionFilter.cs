@@ -27,7 +27,7 @@ public sealed class ApiResponseActionFilter : IActionFilter
                     return;
                 }
 
-                result.Value = new ApiResponse(result.Value);
+                result.Value = new ApiResponse(handlerResult.GetData());
             }
         }
         catch (Exception ex)

@@ -21,5 +21,5 @@ internal sealed class ChannelInMemoryMessageBus : IMessageBus
         return ValueTask.FromResult(message);
     }
 
-    internal int GetMessageCount() => _storage.Reader.CanCount ? _storage.Reader.Count : 0;
+    public int GetMessageCount() => _storage.Reader.CanCount ? _storage.Reader.Count : 0;
 }

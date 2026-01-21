@@ -2,9 +2,11 @@
 
 public readonly record struct Token
 {
-    public string Value { get; }
+    public string Value { get; init; }
 
-    public DateTime ExpirationDate { get; }
+    public DateTime ExpirationDate { get; init; }
+
+    public Token() { }
 
     public Token(string value, DateTime expirationDate)
     {

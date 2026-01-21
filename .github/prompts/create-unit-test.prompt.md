@@ -38,3 +38,5 @@ Seu objetivo é implementar testes de unidade utilizando xUnit para cobrir 100% d
 - Confirmar que foi realizado 100% de cobertura na classe especificada.
 - Garantir que o código dos testes segue as melhores práticas de codificação e padrões do projeto.
 - Confirmar que foi seguido o padrão AAA (Arrange, Act, Assert) na estrutura dos testes.
+- Executar os testes ao final para garantir que todos passem com sucesso.
+- Não usar regiões para organizar o código dos testes.

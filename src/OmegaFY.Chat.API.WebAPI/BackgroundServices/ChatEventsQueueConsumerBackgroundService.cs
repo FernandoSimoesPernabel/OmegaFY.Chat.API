@@ -1,5 +1,4 @@
 ﻿using OmegaFY.Chat.API.Application.Events;
-using OmegaFY.Chat.API.Application.Extensions;
 using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
@@ -11,7 +10,7 @@ namespace OmegaFY.Chat.API.WebAPI.BackgroundServices;
 
 public sealed class ChatEventsQueueConsumerBackgroundService : BackgroundService
 {
-    private static readonly TimeSpan INTERVAL_PERIOD = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan INTERVAL_PERIOD = TimeSpan.FromMilliseconds(500);
 
     private readonly IServiceProvider _serviceProvider;
 
