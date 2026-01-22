@@ -1,0 +1,32 @@
+<Solution>
+  <Folder Name="/0 - API/">
+    <Project Path="src/OmegaFY.Chat.API.WebAPI/OmegaFY.Chat.API.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/1 - Application/">
+    <Project Path="src/OmegaFY.Chat.API.Application/OmegaFY.Chat.API.Application.csproj" />
+  </Folder>
+  <Folder Name="/2 - Infra/">
+    <Project Path="src/OmegaFY.Chat.API.Infra/OmegaFY.Chat.API.Infra.csproj" />
+  </Folder>
+  <Folder Name="/3 - Data/">
+    <Project Path="src/OmegaFY.Chat.API.Data.Dapper/OmegaFY.Chat.API.Data.Dapper.csproj" />
+    <Project Path="src/OmegaFY.Chat.API.Data.EF/OmegaFY.Chat.API.Data.EF.csproj" />
+  </Folder>
+  <Folder Name="/4 - Domain/">
+    <Project Path="src/OmegaFY.Chat.API.Domain/OmegaFY.Chat.API.Domain.csproj" />
+  </Folder>
+  <Folder Name="/7 - Tests/">
+    <Project Path="test/OmegaFY.Chat.API.Tests.Benchmark/OmegaFY.Chat.API.Tests.Benchmark.csproj" />
+    <Project Path="test/OmegaFY.Chat.API.Tests.Integration/OmegaFY.Chat.API.Tests.Integration.csproj" />
+    <Project Path="test/OmegaFY.Chat.API.Tests.Unit/OmegaFY.Chat.API.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/9 - Shared/">
+    <Project Path="src/OmegaFY.Chat.API.Common/OmegaFY.Chat.API.Common.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path=".github/prompts/create-command-handler.prompt.md" />
+    <File Path=".github/prompts/create-query-handler.prompt.md" />
+    <File Path=".github/prompts/create-unit-test.prompt.md" />
+  </Folder>
+</Solution>
