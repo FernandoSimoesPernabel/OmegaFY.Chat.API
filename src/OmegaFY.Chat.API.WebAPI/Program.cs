@@ -1,6 +1,7 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.WebAPI.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -35,5 +36,7 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapControllers();
+
+app.MapSignalHub();
 
 app.Run();
