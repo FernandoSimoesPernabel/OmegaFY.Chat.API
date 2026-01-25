@@ -2,6 +2,8 @@
 
 public static class TimeSpanConstants
 {
+    public static readonly TimeSpan ONE_MINUTE = TimeSpan.FromMinutes(1);
+
     public static readonly TimeSpan TEN_MINUTES = TimeSpan.FromMinutes(10);
    
     public static readonly TimeSpan ONE_HOUR = TimeSpan.FromHours(1);

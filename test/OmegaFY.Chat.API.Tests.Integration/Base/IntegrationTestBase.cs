@@ -73,11 +73,13 @@ public abstract class IntegrationTestBase
 
     protected async Task<HttpResponseMessage> GetAsync(string url) => await GetAsync(url, null);
 
-    protected async Task<HttpResponseMessage> GetAsync(string url, string bearerToken) => await CreateHttpClient(bearerToken).GetAsync(url);
+    protected async Task<HttpResponseMessage> GetAsync(string url, string bearerToken, bool addIdempotencyKey = true) 
+        => await CreateHttpClient(bearerToken, addIdempotencyKey ? Guid.NewGuid().ToString() : null).GetAsync(url);
 
     protected async Task<HttpResponseMessage> PostAsync(string url, object payload) => await PostAsync(url, payload, null);
 
-    protected async Task<HttpResponseMessage> PostAsync(string url, object payload, string bearerToken) => await CreateHttpClient(bearerToken).PostAsJsonAsync(url, payload);
+    protected async Task<HttpResponseMessage> PostAsync(string url, object payload, string bearerToken = null, bool addIdempotencyKey = true, string idempotencyKey = null) 
+        => await CreateHttpClient(bearerToken, addIdempotencyKey ? (idempotencyKey ?? Guid.NewGuid().ToString()) : null).PostAsJsonAsync(url, payload);
 
     protected async Task<HttpResponseMessage> DeleteAsync(string url) => await DeleteAsync(url, null, null);
 
@@ -94,18 +96,23 @@ public abstract class IntegrationTestBase
         });
     }
 
-    protected async Task<HttpResponseMessage> DeleteAsync(string url, string bearerToken) => await CreateHttpClient(bearerToken).DeleteAsync(url);
+    protected async Task<HttpResponseMessage> DeleteAsync(string url, string bearerToken, bool addIdempotencyKey = true) 
+        => await CreateHttpClient(bearerToken, addIdempotencyKey ? Guid.NewGuid().ToString() : null).DeleteAsync(url);
 
     protected async Task<HttpResponseMessage> PutAsync(string url, object payload) => await PutAsync(url, payload, null);
 
-    protected async Task<HttpResponseMessage> PutAsync(string url, object payload, string bearerToken) => await CreateHttpClient(bearerToken).PutAsJsonAsync(url, payload);
+    protected async Task<HttpResponseMessage> PutAsync(string url, object payload, string bearerToken, bool addIdempotencyKey = true) 
+        => await CreateHttpClient(bearerToken, addIdempotencyKey ? Guid.NewGuid().ToString() : null).PutAsJsonAsync(url, payload);
 
-    private HttpClient CreateHttpClient(string bearerToken)
+    private HttpClient CreateHttpClient(string bearerToken, string idempotencyKey = null)
     {
         HttpClient httpClient = _webApplicationFactory.CreateClient();
 
         if (bearerToken is not null)
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+        if (idempotencyKey is not null)
+            httpClient.DefaultRequestHeaders.Add("Idempotency-Key", idempotencyKey);
 
         httpClient.Timeout = TimeSpan.FromSeconds(10);
 

@@ -1,12 +1,14 @@
+using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Infra.Cache;
+using OmegaFY.Chat.API.Infra.Cache.Helpers;
 using OmegaFY.Chat.API.Infra.Cache.Models;
+using OmegaFY.Chat.API.Infra.Constants;
 
 namespace OmegaFY.Chat.API.WebAPI.Middlewares;
 
 public sealed class HttpRequestIdempotencyMiddleware : IMiddleware
 {
     private readonly IHybridCacheProvider _hybridCacheProvider;
-    private const string IDEMPOTENCY_KEY_HEADER = "Idempotency-Key";
 
     public HttpRequestIdempotencyMiddleware(IHybridCacheProvider hybridCacheProvider) 
         => _hybridCacheProvider = hybridCacheProvider;
@@ -19,14 +21,14 @@ public sealed class HttpRequestIdempotencyMiddleware : IMiddleware
             return;
         }
 
-        if (!context.Request.Headers.TryGetValue(IDEMPOTENCY_KEY_HEADER, out var idempotencyKey) || string.IsNullOrWhiteSpace(idempotencyKey))
+        if (!context.Request.Headers.TryGetValue(HeaderConstants.IDEMPOTENCY_KEY, out Microsoft.Extensions.Primitives.StringValues idempotencyKey) || string.IsNullOrWhiteSpace(idempotencyKey))
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsync("Idempotency-Key header is required for non-GET requests.");
             return;
         }
 
-        string cacheKey = $"idempotency:{idempotencyKey}";
+        string cacheKey = CacheKeyGenerator.IdempotencyKey(idempotencyKey!);
         
         (bool cacheHit, _) = await _hybridCacheProvider.GetOrCreateAsync(
             cacheKey,
@@ -36,7 +38,7 @@ public sealed class HttpRequestIdempotencyMiddleware : IMiddleware
             },
             new CacheOptions
             {
-                Expiration = TimeSpan.FromMinutes(1)
+                Expiration = TimeSpanConstants.ONE_MINUTE
             },
             context.RequestAborted);
 

@@ -18,4 +18,6 @@ public static class CacheKeyGenerator
 
     public static string UserConversationMessagesKey(Guid conversationId, Guid userId, int pageNumber, int pageSize)
         => $"chat:conversation:{conversationId}:user:{userId}:messages:page:{pageNumber}:size:{pageSize}";
+
+    public static string IdempotencyKey(string idempotencyKey) => $"idempotency:{idempotencyKey}";
 }
