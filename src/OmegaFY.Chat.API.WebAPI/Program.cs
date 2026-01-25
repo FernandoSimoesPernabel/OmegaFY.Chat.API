@@ -2,6 +2,7 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.WebAPI.Extensions;
+using OmegaFY.Chat.API.WebAPI.Middlewares;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<HttpRequestIdempotencyMiddleware>();
 
 app.UseAuthentication();
 
