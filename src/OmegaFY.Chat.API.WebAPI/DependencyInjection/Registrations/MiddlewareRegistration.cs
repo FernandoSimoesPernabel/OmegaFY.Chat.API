@@ -5,5 +5,5 @@ namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
 public sealed class MiddlewareRegistration : IDependencyInjectionRegister
 {
     public void Register(WebApplicationBuilder builder) 
-        => builder.Services.AddSingleton<HttpRequestIdempotencyMiddleware>();
+        => builder.Services.AddTransient<HttpRequestIdempotencyMiddleware>();
 }

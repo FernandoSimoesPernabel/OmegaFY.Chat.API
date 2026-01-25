@@ -32,7 +32,7 @@ public sealed class HttpRequestIdempotencyMiddleware : IMiddleware
             cacheKey,
             async cancellationToken =>
             {
-                return true;
+                return DateTime.UtcNow;
             },
             new CacheOptions
             {

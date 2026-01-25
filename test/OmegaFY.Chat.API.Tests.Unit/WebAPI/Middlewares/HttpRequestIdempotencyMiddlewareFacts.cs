@@ -35,9 +35,9 @@ public class HttpRequestIdempotencyMiddlewareFacts
 
         // Assert
         Assert.True(nextCalled);
-        await _hybridCacheProvider.DidNotReceive().GetOrCreateAsync<bool>(
+        await _hybridCacheProvider.DidNotReceive().GetOrCreateAsync<DateTime>(
             Arg.Any<string>(),
-            Arg.Any<Func<CancellationToken, ValueTask<bool>>>(),
+            Arg.Any<Func<CancellationToken, ValueTask<DateTime>>>(),
             Arg.Any<CacheOptions>(),
             Arg.Any<CancellationToken>());
     }
@@ -102,12 +102,12 @@ public class HttpRequestIdempotencyMiddlewareFacts
         context.Response.Body = new MemoryStream();
         RequestDelegate next = _ => Task.CompletedTask;
 
-        _hybridCacheProvider.GetOrCreateAsync<bool>(
+        _hybridCacheProvider.GetOrCreateAsync<DateTime>(
             Arg.Any<string>(),
-            Arg.Any<Func<CancellationToken, ValueTask<bool>>>(),
+            Arg.Any<Func<CancellationToken, ValueTask<DateTime>>>(),
             Arg.Any<CacheOptions>(),
             Arg.Any<CancellationToken>())
-            .Returns((true, true));
+            .Returns((true, DateTime.UtcNow));
 
         // Act
         await _sut.InvokeAsync(context, next);
@@ -131,12 +131,12 @@ public class HttpRequestIdempotencyMiddlewareFacts
             return Task.CompletedTask;
         };
 
-        _hybridCacheProvider.GetOrCreateAsync<bool>(
+        _hybridCacheProvider.GetOrCreateAsync<DateTime>(
             Arg.Any<string>(),
-            Arg.Any<Func<CancellationToken, ValueTask<bool>>>(),
+            Arg.Any<Func<CancellationToken, ValueTask<DateTime>>>(),
             Arg.Any<CacheOptions>(),
             Arg.Any<CancellationToken>())
-            .Returns((false, true));
+            .Returns((false, DateTime.UtcNow));
 
         // Act
         await _sut.InvokeAsync(context, next);
@@ -157,20 +157,20 @@ public class HttpRequestIdempotencyMiddlewareFacts
         context.Response.Body = new MemoryStream();
         RequestDelegate next = _ => Task.CompletedTask;
 
-        _hybridCacheProvider.GetOrCreateAsync<bool>(
+        _hybridCacheProvider.GetOrCreateAsync<DateTime>(
             Arg.Any<string>(),
-            Arg.Any<Func<CancellationToken, ValueTask<bool>>>(),
+            Arg.Any<Func<CancellationToken, ValueTask<DateTime>>>(),
             Arg.Any<CacheOptions>(),
             Arg.Any<CancellationToken>())
-            .Returns((false, true));
+            .Returns((false, DateTime.UtcNow));
 
         // Act
         await _sut.InvokeAsync(context, next);
 
         // Assert
-        await _hybridCacheProvider.Received(1).GetOrCreateAsync<bool>(
+        await _hybridCacheProvider.Received(1).GetOrCreateAsync<DateTime>(
             Arg.Is<string>(k => k == $"idempotency:{idempotencyKey}"),
-            Arg.Any<Func<CancellationToken, ValueTask<bool>>>(),
+            Arg.Any<Func<CancellationToken, ValueTask<DateTime>>>(),
             Arg.Is<CacheOptions>(opts => opts.Expiration == TimeSpan.FromMinutes(1)),
             Arg.Any<CancellationToken>());
     }
@@ -189,20 +189,20 @@ public class HttpRequestIdempotencyMiddlewareFacts
         context.Response.Body = new MemoryStream();
         RequestDelegate next = _ => Task.CompletedTask;
 
-        _hybridCacheProvider.GetOrCreateAsync<bool>(
+        _hybridCacheProvider.GetOrCreateAsync<DateTime>(
             Arg.Any<string>(),
-            Arg.Any<Func<CancellationToken, ValueTask<bool>>>(),
+            Arg.Any<Func<CancellationToken, ValueTask<DateTime>>>(),
             Arg.Any<CacheOptions>(),
             Arg.Any<CancellationToken>())
-            .Returns((false, true));
+            .Returns((false, DateTime.UtcNow));
 
         // Act
         await _sut.InvokeAsync(context, next);
 
         // Assert
-        await _hybridCacheProvider.Received(1).GetOrCreateAsync<bool>(
+        await _hybridCacheProvider.Received(1).GetOrCreateAsync<DateTime>(
             Arg.Any<string>(),
-            Arg.Any<Func<CancellationToken, ValueTask<bool>>>(),
+            Arg.Any<Func<CancellationToken, ValueTask<DateTime>>>(),
             Arg.Any<CacheOptions>(),
             Arg.Any<CancellationToken>());
     }
@@ -218,12 +218,12 @@ public class HttpRequestIdempotencyMiddlewareFacts
         RequestDelegate next = _ => Task.CompletedTask;
 
         CacheOptions capturedOptions = null;
-        _hybridCacheProvider.GetOrCreateAsync<bool>(
+        _hybridCacheProvider.GetOrCreateAsync<DateTime>(
             Arg.Any<string>(),
-            Arg.Any<Func<CancellationToken, ValueTask<bool>>>(),
+            Arg.Any<Func<CancellationToken, ValueTask<DateTime>>>(),
             Arg.Do<CacheOptions>(opts => capturedOptions = opts),
             Arg.Any<CancellationToken>())
-            .Returns((false, true));
+            .Returns((false, DateTime.UtcNow));
 
         // Act
         await _sut.InvokeAsync(context, next);
