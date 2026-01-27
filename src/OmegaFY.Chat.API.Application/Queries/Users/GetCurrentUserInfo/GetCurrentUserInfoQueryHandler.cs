@@ -32,7 +32,7 @@ public sealed class GetCurrentUserInfoQueryHandler : QueryHandlerBase<GetCurrent
         _hybridCacheProvider = hybridCacheProvider;
     }
 
-    protected override async Task<HandlerResult<GetCurrentUserInfoQueryResult>> InternalHandleAsync(GetCurrentUserInfoQuery query, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<GetCurrentUserInfoQueryResult>> InternalHandleAsync(GetCurrentUserInfoQuery query, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<GetCurrentUserInfoQueryResult>();

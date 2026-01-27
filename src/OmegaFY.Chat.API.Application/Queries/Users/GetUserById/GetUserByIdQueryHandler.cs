@@ -29,7 +29,7 @@ public sealed class GetUserByIdQueryHandler : QueryHandlerBase<GetUserByIdQueryH
         _hybridCacheProvider = hybridCacheProvider;
     }
 
-    protected override async Task<HandlerResult<GetUserByIdQueryResult>> InternalHandleAsync(GetUserByIdQuery request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<GetUserByIdQueryResult>> InternalHandleAsync(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         (_, UserModel user) = await _hybridCacheProvider.GetOrCreateAsync(
             CacheKeyGenerator.UserByIdKey(request.UserId),

@@ -10,7 +10,7 @@ internal sealed class ExpireMessageCacheFromMessageSentEventHandler : EventHandl
 
     public ExpireMessageCacheFromMessageSentEventHandler(IHybridCacheProvider hybridCacheProvider) => _hybridCacheProvider = hybridCacheProvider;
 
-    protected override async Task HandleAsync(MessageSentEvent @event, CancellationToken cancellationToken)
+    protected async override Task HandleAsync(MessageSentEvent @event, CancellationToken cancellationToken)
     {
         await _hybridCacheProvider.RemoveByTagAsync(CacheTagsGenerator.ChatConversationIdTag(@event.ConversationId), cancellationToken);
         await _hybridCacheProvider.RemoveByTagAsync(CacheTagsGenerator.ChatMessageIdTag(@event.MessageId), cancellationToken);

@@ -33,7 +33,7 @@ public sealed class GetUserConversationsQueryHandler : QueryHandlerBase<GetUserC
         _hybridCacheProvider = hybridCacheProvider;
     }
 
-    protected override async Task<HandlerResult<GetUserConversationsQueryResult>> InternalHandleAsync(GetUserConversationsQuery request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<GetUserConversationsQueryResult>> InternalHandleAsync(GetUserConversationsQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<GetUserConversationsQueryResult>();

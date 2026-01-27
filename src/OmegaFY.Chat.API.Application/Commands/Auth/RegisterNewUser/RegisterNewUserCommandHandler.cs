@@ -51,7 +51,7 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
             new LoginInput(newUser.Id, newUser.Email, command.Password, newUser.DisplayName),
             cancellationToken);
 
-        await _hybridCacheProvider.SetAuthenticationTokenCacheAsync(newUser.Id, authToken, cancellationToken);
+        await _hybridCacheProvider.SetAuthenticationTokenAsync(newUser.Id, authToken, cancellationToken);
         
         await _messageBus.SimplePublishAsync(new UserRegisteredEvent(newUser.Id, newUser.Email, newUser.DisplayName), cancellationToken);
 

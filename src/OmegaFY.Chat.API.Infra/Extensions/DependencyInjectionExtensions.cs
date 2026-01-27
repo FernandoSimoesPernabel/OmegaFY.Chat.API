@@ -136,7 +136,16 @@ public static class DependencyInjectionExtensions
             options.SaveToken = true;
             options.RequireHttpsMetadata = true;
             options.TokenValidationParameters = tokenValidationParameters;
-            options.EventsType = typeof(CustomJwtBearerEvents);
+            options.Events = new CustomJwtBearerEvents()
+            {
+                OnMessageReceived = (context) =>
+                {
+                    if (context.HttpContext.IsSignalRHubRequest())
+                        context.Token = context.HttpContext.GetAccessTokenFromQueryString();
+
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         services.AddAuthorization(auth => auth.AddPolicy(
@@ -227,7 +236,7 @@ public static class DependencyInjectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddChatNotificationClient(this IServiceCollection services)
+    public static IServiceCollection AddChatNotificationProvider(this IServiceCollection services)
     {
         services.AddSignalR();
         services.AddScoped<IChatNotificationProvider, ChatNotificationSignalRProvider>();

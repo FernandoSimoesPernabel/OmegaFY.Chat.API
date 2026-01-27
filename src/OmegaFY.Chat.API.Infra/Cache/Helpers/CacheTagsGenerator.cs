@@ -24,7 +24,19 @@ public static class CacheTagsGenerator
 
     public static string UsersUserIdTag(Guid userId) => $"users:user:{userId}";
 
-    public static string UserIdTag(Guid userId) => $"user:{userId}";
+    public static string UserIdTag(Guid userId) => UserIdTag(userId.ToString());
+
+    public static string UserIdTag(string userId) => $"user:{userId}";
 
     public static string FriendshipIdTag(Guid friendshipId) => $"friendship:{friendshipId}";
+
+    public static string AuthTag() => "auth";
+
+    public static string AuthRefreshTokenTag() => "auth:refresh-token";
+
+    public static string AuthUserIdTag(Guid userId) => AuthUserIdTag(userId.ToString());
+
+    public static string AuthUserIdTag(string userId) => $"auth:user:{userId}";
+
+    public static string AuthLoggedInTag() => "auth:logged-in";
 }

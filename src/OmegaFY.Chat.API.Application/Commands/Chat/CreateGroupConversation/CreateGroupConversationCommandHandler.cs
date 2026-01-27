@@ -28,7 +28,7 @@ public sealed class CreateGroupConversationCommandHandler : CommandHandlerBase<C
         _userInformation = userInformation;
     }
 
-    protected override async Task<HandlerResult<CreateGroupConversationCommandResult>> InternalHandleAsync(CreateGroupConversationCommand request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<CreateGroupConversationCommandResult>> InternalHandleAsync(CreateGroupConversationCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<CreateGroupConversationCommandResult>();

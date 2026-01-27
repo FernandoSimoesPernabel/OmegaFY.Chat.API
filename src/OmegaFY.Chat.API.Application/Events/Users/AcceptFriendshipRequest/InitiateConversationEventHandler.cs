@@ -17,7 +17,7 @@ internal sealed class InitiateConversationEventHandler : EventHandlerHandlerBase
         _chatNotificationProvider = chatNotificationProvider;
     }
 
-    protected override async Task HandleAsync(FriendshipAcceptedEvent @event, CancellationToken cancellationToken)
+    protected async override Task HandleAsync(FriendshipAcceptedEvent @event, CancellationToken cancellationToken)
     {
         Conversation memberToMemberConversation = Conversation.StartMemberToMemberConversation(@event.RequestingUserId, @event.InvitedUserId);
 

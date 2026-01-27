@@ -8,8 +8,5 @@ internal sealed class ChatNotificationSignalRProvider : IChatNotificationProvide
 
     public ChatNotificationSignalRProvider(IHubContext<ChatNotificationHub, IChatNotificationHub> hubContext) => _hubContext = hubContext;
 
-    public async Task ConversationStartedAsync(Guid userId, Guid conversationId)
-    {
-        await _hubContext.Clients.User(userId.ToString()).ConversationStarted(conversationId);
-    }
+    public async Task ConversationStartedAsync(Guid userId, Guid conversationId) => await _hubContext.Clients.User(userId.ToString()).ConversationStartedAsync(conversationId);
 }

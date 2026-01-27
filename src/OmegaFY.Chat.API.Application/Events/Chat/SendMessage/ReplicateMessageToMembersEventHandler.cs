@@ -22,7 +22,7 @@ internal class ReplicateMessageToMembersEventHandler : EventHandlerHandlerBase<M
         _memberMessageRepository = memberMessageRepository;
     }
 
-    protected override async Task HandleAsync(MessageSentEvent @event, CancellationToken cancellationToken)
+    protected async override Task HandleAsync(MessageSentEvent @event, CancellationToken cancellationToken)
     {
         Message message = await _messageRepository.GetMessageByIdAsync(@event.MessageId, cancellationToken);
 

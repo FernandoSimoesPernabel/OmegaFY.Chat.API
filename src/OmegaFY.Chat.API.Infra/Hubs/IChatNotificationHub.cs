@@ -3,5 +3,5 @@ namespace OmegaFY.Chat.API.Infra.Hubs;
 
 internal interface IChatNotificationHub
 {
-    public Task ConversationStarted(Guid conversationId);
+    public Task ConversationStartedAsync(Guid conversationId);
 }

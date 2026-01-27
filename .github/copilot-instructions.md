@@ -47,11 +47,15 @@ Developer workflows (commands)
   - dotnet run --project test/OmegaFY.Chat.API.Tests.Benchmark
 
 Project-specific conventions
+- Never use "var" — always use explicit types for clarity.
 - Never add comments in code — prefer expressive naming and small methods/classes.
+- Prefer not creating variables for single-use values unless it improves readability.
 - Prefer DI registration via the `IDependencyInjectionRegister` pattern in `WebAPI/DependencyInjection/Registrations`. New registrations should be placed there rather than scattering calls across Program.cs.
 - Handlers must validate requests using FluentValidation. Validators are registered by convention (inject `IValidator<TRequest>`). See `HandlerBase` for expected behavior on validation/exception mapping.
 - Use `HandlerResult<TResult>` and `HandlerResult` patterns for handler outputs (found in `Application.Shared`). Do not return raw domain exceptions — let `HandlerBase` map exceptions.
 - Telemetry: always create Activities on long-running operations by using provided `IOpenTelemetryRegisterProvider` or rely on `HandlerBase` which does this automatically for handlers.
+- Always check for constants in `Common.Constants` or `Domain.Constants` before hardcoding values.
+- Always check examples in existing handlers/controllers before implementing new features.
 
 Integration points and external dependencies
 - Database: EF Core with SQL Server (connection string key `AzureSql` in configuration). Context: `Data.EF.Context.ApplicationContext`.

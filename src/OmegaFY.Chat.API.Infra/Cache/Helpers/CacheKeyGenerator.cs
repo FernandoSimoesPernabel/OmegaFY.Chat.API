@@ -4,6 +4,8 @@ public static class CacheKeyGenerator
 {
     public static string RefreshTokenKey(Guid userId, string refreshToken) => $"auth:refresh-token:{userId}:{refreshToken}";
 
+    public static string UserIsLoggedInKey(Guid userId) => UserIsLoggedInKey(userId.ToString());
+
     public static string UserIsLoggedInKey(string userId) => $"auth:logged-in:{userId}";
 
     public static string CurrentUserInfoKey(Guid userId) => $"users:current:{userId}";

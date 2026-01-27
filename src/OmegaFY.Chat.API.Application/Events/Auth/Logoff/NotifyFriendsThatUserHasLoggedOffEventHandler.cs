@@ -2,7 +2,7 @@
 
 namespace OmegaFY.Chat.API.Application.Events.Auth.Logoff;
 
-internal sealed class NotifyThatFriendHasLoggedOffEventHandler : EventHandlerHandlerBase<UserLoggedOffEvent>
+internal sealed class NotifyFriendsThatUserHasLoggedOffEventHandler : EventHandlerHandlerBase<UserLoggedOffEvent>
 {
     protected override Task HandleAsync(UserLoggedOffEvent @event, CancellationToken cancellationToken)
     {

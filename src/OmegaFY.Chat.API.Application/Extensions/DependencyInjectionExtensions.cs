@@ -37,6 +37,7 @@ using OmegaFY.Chat.API.Application.Queries.Chat.GetMessageFromMember;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversationMessages;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetUserConversations;
 using OmegaFY.Chat.API.Application.Queries.Chat.GetUserUnreadMessages;
+using OmegaFY.Chat.API.Application.Queries.Users.CheckIfUserIsOnline;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
 using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
@@ -46,7 +47,7 @@ namespace OmegaFY.Chat.API.Application.Extensions;
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddValidators(this IServiceCollection services) 
+    public static IServiceCollection AddValidators(this IServiceCollection services)
         => services.AddValidatorsFromAssembly(typeof(DependencyInjectionExtensions).Assembly);
 
     public static IServiceCollection AddCommandHandlers(this IServiceCollection services)
@@ -81,6 +82,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<GetUserConversationsQueryHandler>();
         services.AddScoped<GetUserUnreadMessagesQueryHandler>();
 
+        services.AddScoped<CheckIfUserIsOnlineQueryHandler>();
         services.AddScoped<GetCurrentUserInfoQueryHandler>();
         services.AddScoped<GetFriendshipByIdQueryHandler>();
         services.AddScoped<GetUserByIdQueryHandler>();
@@ -92,14 +94,16 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddEventHandlers(this IServiceCollection services)
     {
         services.AddScoped<IEventHandler<UserRegisteredEvent>, SendWelcomeEmailEventHandler>();
-       
-        services.AddScoped<IEventHandler<UserLoggedInEvent>, NotifyThatFriendIsLoggedEventHandler>();
-        
-        services.AddScoped<IEventHandler<UserLoggedOffEvent>, NotifyThatFriendHasLoggedOffEventHandler>();
-        services.AddScoped<IEventHandler<UserLoggedOffEvent>, ExpireCurrentRefreshTokenEventHandler>(); 
-        
+
+        services.AddScoped<IEventHandler<UserLoggedInEvent>, NotifyFriendsThatUserHasLoggedInEventHandler>();
+        services.AddScoped<IEventHandler<UserLoggedInEvent>, MarkUserAsLoggedInEventHandler>(); 
+
+        services.AddScoped<IEventHandler<UserLoggedOffEvent>, MarkUserAsLoggedOffEventHandler>();
+        services.AddScoped<IEventHandler<UserLoggedOffEvent>, NotifyFriendsThatUserHasLoggedOffEventHandler>();
+        services.AddScoped<IEventHandler<UserLoggedOffEvent>, ExpireCurrentRefreshTokenEventHandler>();
+
         services.AddScoped<IEventHandler<UserTokenRefreshedEvent>, ExpireUsedRefreshTokenEventHandler>();
-        
+
         services.AddScoped<IEventHandler<FriendshipAcceptedEvent>, InitiateConversationEventHandler>();
         services.AddScoped<IEventHandler<FriendshipAcceptedEvent>, ExpireFriendshipCacheFromFriendshipAcceptedEventHandler>();
 

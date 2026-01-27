@@ -32,7 +32,7 @@ public sealed class SendMessageCommandHandler : CommandHandlerBase<SendMessageCo
         _userInformation = userInformation;
     }
 
-    protected override async Task<HandlerResult<SendMessageCommandResult>> InternalHandleAsync(SendMessageCommand request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<SendMessageCommandResult>> InternalHandleAsync(SendMessageCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<SendMessageCommandResult>();
