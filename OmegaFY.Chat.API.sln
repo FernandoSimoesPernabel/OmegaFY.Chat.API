@@ -51,6 +51,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Prompts", "Prompts", "{2EB6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{E0EB7864-3506-4F3B-A2DC-5EFF84847D75}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\deploy-azure-webapp.yml = .github\workflows\deploy-azure-webapp.yml
 		.github\workflows\unit-tests.yml = .github\workflows\unit-tests.yml
 	EndProjectSection
 EndProject
