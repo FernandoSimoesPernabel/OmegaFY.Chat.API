@@ -37,7 +37,7 @@ public sealed class ConversationFacts
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => Conversation.StartMemberToMemberConversation(userId, userId));
 
         // Assert
-        Assert.Equal("N„o È possÌvel criar uma conversa entre o mesmo usu·rio.", exception.Message);
+        Assert.Equal("N√£o √© poss√≠vel criar uma conversa entre o mesmo usu√°rio.", exception.Message);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public sealed class ConversationFacts
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => Conversation.CreateGroupChat(createdByUserId, invalidGroupName, maxNumberOfMembers));
 
         // Assert
-        Assert.Equal("O nome do grupo n„o foi informado.", exception.Message);
+        Assert.Equal("O nome do grupo n√£o foi informado.", exception.Message);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public sealed class ConversationFacts
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() =>
             Conversation.CreateGroupChat(createdByUserId, groupName, maxNumberOfMembers));
-        Assert.Equal($"O nome do grupo n„o pode exceder {ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH} caracteres.", exception.Message);
+        Assert.Equal($"O nome do grupo n√£o pode exceder {ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH} caracteres.", exception.Message);
     }
 
     [Theory]
@@ -139,7 +139,7 @@ public sealed class ConversationFacts
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.AddMemberToGroup(newMemberUserId));
 
         // Assert
-        Assert.Equal("N„o È possÌvel adicionar membros em uma conversa que n„o È em grupo.", exception.Message);
+        Assert.Equal("N√£o √© poss√≠vel adicionar membros em uma conversa que n√£o √© em grupo.", exception.Message);
     }
 
     [Fact]
@@ -153,7 +153,7 @@ public sealed class ConversationFacts
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.AddMemberToGroup(createdByUserId));
 
         // Assert
-        Assert.Equal("Usu·rio j· È membro da conversa.", exception.Message);
+        Assert.Equal("Usu√°rio j√° √© membro da conversa.", exception.Message);
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public sealed class ConversationFacts
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.RemoveMemberFromGroup(memberToRemove.Id));
 
         // Assert
-        Assert.Equal("N„o È possÌvel remover membros em uma conversa que n„o È em grupo.", exception.Message);
+        Assert.Equal("N√£o √© poss√≠vel remover membros em uma conversa que n√£o √© em grupo.", exception.Message);
     }
 
     [Fact]
@@ -234,7 +234,7 @@ public sealed class ConversationFacts
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.ChangeGroupConfig("New Name", 10));
 
         // Assert
-        Assert.Equal("N„o È possÌvel alterar a configuraÁ„o de uma conversa que n„o È em grupo.", exception.Message);
+        Assert.Equal("N√£o √© poss√≠vel alterar a configura√ß√£o de uma conversa que n√£o √© em grupo.", exception.Message);
     }
 
     [Fact]
@@ -250,7 +250,7 @@ public sealed class ConversationFacts
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.ChangeGroupConfig("Test Group", 2));
 
         // Assert
-        Assert.Equal("O n˙mero m·ximo de membros n„o pode ser menor que o n˙mero atual de membros.", exception.Message);
+        Assert.Equal("O n√∫mero m√°ximo de membros n√£o pode ser menor que o n√∫mero atual de membros.", exception.Message);
     }
 
     [Fact]
