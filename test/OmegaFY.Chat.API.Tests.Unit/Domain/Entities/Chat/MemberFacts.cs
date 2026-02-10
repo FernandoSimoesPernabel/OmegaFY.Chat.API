@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Domain.Entities.Chat;
+using OmegaFY.Chat.API.Domain.Entities.Chat;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Tests.Unit.Domain.Entities.Chat;

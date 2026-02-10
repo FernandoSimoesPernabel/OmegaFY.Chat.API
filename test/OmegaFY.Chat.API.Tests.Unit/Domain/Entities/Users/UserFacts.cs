@@ -1,4 +1,4 @@
-using OmegaFY.Chat.API.Common.Exceptions;
+Ôªøusing OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Constants;
 using OmegaFY.Chat.API.Domain.Entities.Users;
 using OmegaFY.Chat.API.Domain.Enums;
@@ -37,7 +37,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new User(invalidEmail, displayName));
-        Assert.Equal("O Email informado esta inv·lido.", exception.Message);
+        Assert.Equal("O Email informado esta inv√°lido.", exception.Message);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new User(email, displayName));
-        Assert.Equal("O Email informado esta inv·lido.", exception.Message);
+        Assert.Equal("O Email informado esta inv√°lido.", exception.Message);
     }
 
     [Theory]
@@ -63,7 +63,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new User(email, invalidDisplayName));
-        Assert.Equal("N„o foi informado um nome para o usu·rio", exception.Message);
+        Assert.Equal("N√£o foi informado um nome para o usu√°rio", exception.Message);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new User(email, displayName));
-        Assert.Equal($"O nome de usu·rio deve ter entre {UserConstants.MIN_DISPLAY_NAME_LENGTH} e {UserConstants.MAX_DISPLAY_NAME_LENGTH}.", exception.Message);
+        Assert.Equal($"O nome de usu√°rio deve ter entre {UserConstants.MIN_DISPLAY_NAME_LENGTH} e {UserConstants.MAX_DISPLAY_NAME_LENGTH}.", exception.Message);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new User(email, displayName));
-        Assert.Equal($"O nome de usu·rio deve ter entre {UserConstants.MIN_DISPLAY_NAME_LENGTH} e {UserConstants.MAX_DISPLAY_NAME_LENGTH}.", exception.Message);
+        Assert.Equal($"O nome de usu√°rio deve ter entre {UserConstants.MIN_DISPLAY_NAME_LENGTH} e {UserConstants.MAX_DISPLAY_NAME_LENGTH}.", exception.Message);
     }
 
     [Theory]
@@ -129,7 +129,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.ChangeDisplayName(invalidDisplayName));
-        Assert.Equal("N„o foi informado um nome para o usu·rio", exception.Message);
+        Assert.Equal("N√£o foi informado um nome para o usu√°rio", exception.Message);
     }
 
     [Theory]
@@ -143,7 +143,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.ChangeDisplayName(displayName));
-        Assert.Equal($"O nome de usu·rio deve ter entre {UserConstants.MIN_DISPLAY_NAME_LENGTH} e {UserConstants.MAX_DISPLAY_NAME_LENGTH}.", exception.Message);
+        Assert.Equal($"O nome de usu√°rio deve ter entre {UserConstants.MIN_DISPLAY_NAME_LENGTH} e {UserConstants.MAX_DISPLAY_NAME_LENGTH}.", exception.Message);
     }
 
     [Fact]
@@ -155,7 +155,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.ChangeDisplayName(displayName));
-        Assert.Equal($"O nome de usu·rio deve ter entre {UserConstants.MIN_DISPLAY_NAME_LENGTH} e {UserConstants.MAX_DISPLAY_NAME_LENGTH}.", exception.Message);
+        Assert.Equal($"O nome de usu√°rio deve ter entre {UserConstants.MIN_DISPLAY_NAME_LENGTH} e {UserConstants.MAX_DISPLAY_NAME_LENGTH}.", exception.Message);
     }
 
     [Fact]
@@ -182,7 +182,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.SendFriendshipRequest(null));
-        Assert.Equal("A solicitaÁ„o de amizade n„o pode ser nula.", exception.Message);
+        Assert.Equal("A solicita√ß√£o de amizade n√£o pode ser nula.", exception.Message);
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.SendFriendshipRequest(friendshipRequest));
-        Assert.Equal("A solicitaÁ„o de amizade n„o pertence a este usu·rio.", exception.Message);
+        Assert.Equal("A solicita√ß√£o de amizade n√£o pertence a este usu√°rio.", exception.Message);
     }
 
     [Fact]
@@ -208,7 +208,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.SendFriendshipRequest(friendshipRequest));
-        Assert.Equal("Um usu·rio n„o pode enviar uma solicitaÁ„o de amizade para si mesmo.", exception.Message);
+        Assert.Equal("Um usu√°rio n√£o pode enviar uma solicita√ß√£o de amizade para si mesmo.", exception.Message);
     }
 
     [Fact]
@@ -224,7 +224,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.SendFriendshipRequest(duplicateRequest));
-        Assert.Equal("J· existe uma solicitaÁ„o de amizade entre esses usu·rios.", exception.Message);
+        Assert.Equal("J√° existe uma solicita√ß√£o de amizade entre esses usu√°rios.", exception.Message);
     }
 
     [Fact]
@@ -239,7 +239,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => sut.SendFriendshipRequest(firstRequest));
-        Assert.Equal("J· existe uma solicitaÁ„o de amizade entre esses usu·rios.", exception.Message);
+        Assert.Equal("J√° existe uma solicita√ß√£o de amizade entre esses usu√°rios.", exception.Message);
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public sealed class UserFacts
 
         // Act & Assert
         NotFoundException exception = Assert.Throws<NotFoundException>(() => sut.AcceptFriendshipRequest(nonExistentFriendshipId));
-        Assert.Equal("SolicitaÁ„o de amizade n„o encontrada.", exception.Message);
+        Assert.Equal("Solicita√ß√£o de amizade n√£o encontrada.", exception.Message);
     }
 
     [Fact]
@@ -283,7 +283,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.AcceptFriendshipRequest(friendshipRequest.Id));
-        Assert.Equal("A solicitaÁ„o de amizade n„o pertence a este usu·rio.", exception.Message);
+        Assert.Equal("A solicita√ß√£o de amizade n√£o pertence a este usu√°rio.", exception.Message);
     }
 
     [Fact]
@@ -300,7 +300,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => invited.AcceptFriendshipRequest(friendshipRequest.Id));
-        Assert.Equal("A solicitaÁ„o de amizade j· foi respondida.", exception.Message);
+        Assert.Equal("A solicita√ß√£o de amizade j√° foi respondida.", exception.Message);
     }
 
     [Fact]
@@ -330,7 +330,7 @@ public sealed class UserFacts
 
         // Act & Assert
         NotFoundException exception = Assert.Throws<NotFoundException>(() => sut.RejectFriendshipRequest(nonExistentFriendshipId));
-        Assert.Equal("SolicitaÁ„o de amizade n„o encontrada.", exception.Message);
+        Assert.Equal("Solicita√ß√£o de amizade n√£o encontrada.", exception.Message);
     }
 
     [Fact]
@@ -344,7 +344,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => sut.RejectFriendshipRequest(friendshipRequest.Id));
-        Assert.Equal("A solicitaÁ„o de amizade n„o pertence a este usu·rio.", exception.Message);
+        Assert.Equal("A solicita√ß√£o de amizade n√£o pertence a este usu√°rio.", exception.Message);
     }
 
     [Fact]
@@ -361,7 +361,7 @@ public sealed class UserFacts
 
         // Act & Assert
         DomainInvalidOperationException exception = Assert.Throws<DomainInvalidOperationException>(() => invited.RejectFriendshipRequest(friendshipRequest.Id));
-        Assert.Equal("A solicitaÁ„o de amizade j· foi respondida.", exception.Message);
+        Assert.Equal("A solicita√ß√£o de amizade j√° foi respondida.", exception.Message);
     }
 
     [Fact]
