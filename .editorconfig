@@ -4,7 +4,7 @@
 [*.cs]
 charset = utf-8-bom
 end_of_line = lf
-insert_final_newline = true
+insert_final_newline = false
 
 #Core editorconfig formatting - indentation
 
