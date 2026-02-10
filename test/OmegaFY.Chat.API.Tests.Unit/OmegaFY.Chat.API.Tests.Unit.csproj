@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
+    <UTF8Output>true</UTF8Output>
   </PropertyGroup>
 
   <ItemGroup>

@@ -24,7 +24,4 @@ jobs:
         run: dotnet restore OmegaFY.Chat.API.sln
 
       - name: Run unit tests
-        env:
-          DOTNET_CLI_UI_LANGUAGE: pt-BR
-          LC_ALL: pt_BR.UTF-8
         run: dotnet test test/OmegaFY.Chat.API.Tests.Unit/OmegaFY.Chat.API.Tests.Unit.csproj --no-restore --verbosity normal
