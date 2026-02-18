@@ -12,7 +12,7 @@ internal sealed class ApplicationContext : IdentityDbContext<IdentityUser<Guid>,
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }
