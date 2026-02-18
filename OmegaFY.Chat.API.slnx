@@ -24,9 +24,16 @@
     <Project Path="src/OmegaFY.Chat.API.Common/OmegaFY.Chat.API.Common.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
     <File Path=".github/copilot-instructions.md" />
+  </Folder>
+  <Folder Name="/Solution Items/Prompts/">
     <File Path=".github/prompts/create-command-handler.prompt.md" />
     <File Path=".github/prompts/create-query-handler.prompt.md" />
     <File Path=".github/prompts/create-unit-test.prompt.md" />
+  </Folder>
+  <Folder Name="/Solution Items/Workflows/">
+    <File Path=".github/workflows/deploy-azure-webapp.yml" />
+    <File Path=".github/workflows/unit-tests.yml" />
   </Folder>
 </Solution>
