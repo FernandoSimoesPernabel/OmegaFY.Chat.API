@@ -1,3 +1,4 @@
+using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,8 @@ public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddDapperQueryProviders(this IServiceCollection services, IConfigurationRoot configuration)
     {
+        SqlMapper.AddTypeHandler(new GuidTypeHandler());
+
         services.AddTransient<IDbConnection>(_ => new SqliteConnection(configuration.GetConnectionString("Sqlite")));
 
         services.AddScoped<IChatQueryProvider, ChatQueryProvider>();
@@ -20,5 +23,24 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IUserQueryProvider, UserQueryProvider>();
 
         return services;
+    }
+}
+
+internal sealed class GuidTypeHandler : SqlMapper.TypeHandler<Guid>
+{
+    public override Guid Parse(object value)
+    {
+        return value switch
+        {
+            string stringValue => Guid.Parse(stringValue),
+            Guid guidValue => guidValue,
+            _ => Guid.Empty
+        };
+    }
+
+    public override void SetValue(IDbDataParameter parameter, Guid value)
+    {
+        parameter.Value = value.ToString();
+        parameter.DbType = DbType.String;
     }
 }

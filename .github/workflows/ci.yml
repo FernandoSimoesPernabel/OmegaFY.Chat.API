@@ -1,8 +1,11 @@
 name: Unit Tests
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -25,11 +28,6 @@ jobs:
 
       - name: Run unit tests
         run: dotnet test test/OmegaFY.Chat.API.Tests.Unit/OmegaFY.Chat.API.Tests.Unit.csproj --no-restore --verbosity normal
-
-      - name: Create SQLite database
-        run: |
-          sqlite3 OmegaFYChat.db < "src/OmegaFY.Chat.API.Data.EF/Scripts/001 - Initial_Identity_Tables.sql"
-          sqlite3 OmegaFYChat.db < "src/OmegaFY.Chat.API.Data.EF/Scripts/002 - Initial_Domain_Tables.sql"
 
       - name: Run integration tests
         run: dotnet test test/OmegaFY.Chat.API.Tests.Integration/OmegaFY.Chat.API.Tests.Integration.csproj --no-restore --verbosity normal

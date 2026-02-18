@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OmegaFY.Chat.API.Data.EF.Context;
 using System.Reflection;
 
 namespace OmegaFY.Chat.API.Tests.Integration.Base;
@@ -19,7 +19,7 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Testing");
+        builder.UseEnvironment(Environments.Staging);
     }
 
     protected override IHost CreateHost(IHostBuilder builder)
@@ -35,14 +35,12 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     private async Task ResetDatabaseAsync()
     {
-        await using SqliteConnection connection = new SqliteConnection(Services.GetRequiredService<IConfiguration>().GetConnectionString("Sqlite"));
+        using IServiceScope scope = Services.CreateScope();
 
-        await connection.OpenAsync();
+        ApplicationContext context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
 
-        string script = await File.ReadAllTextAsync("Scripts/000 - Clear_All_Tables.sql");
-
-        await using SqliteCommand command = new SqliteCommand(script, connection);
-
-        await command.ExecuteNonQueryAsync();
+        await context.Database.EnsureDeletedAsync();
+        
+        await context.Database.EnsureCreatedAsync();
     }
 }
