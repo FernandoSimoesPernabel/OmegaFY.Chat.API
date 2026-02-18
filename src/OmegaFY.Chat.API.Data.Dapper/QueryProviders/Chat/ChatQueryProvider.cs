@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
 using OmegaFY.Chat.API.Common.Models;
@@ -9,308 +9,308 @@ namespace OmegaFY.Chat.API.Data.Dapper.QueryProviders.Chat;
 
 internal sealed class ChatQueryProvider : IChatQueryProvider
 {
-    private readonly IDbConnection _dbConnection;
+	private readonly IDbConnection _dbConnection;
 
-    public ChatQueryProvider(IDbConnection dbConnection) => _dbConnection = dbConnection;
+	public ChatQueryProvider(IDbConnection dbConnection) => _dbConnection = dbConnection;
 
-    public async Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+	public async Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, CancellationToken cancellationToken)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
 
-        const string sql = @"
-            SELECT TOP 1
-                C.Id AS ConversationId,
-                C.Type, 
-                C.Status,
-                C.CreatedDate,
-                GC.Id AS GroupConfigId,
-                GC.ConversationId,
-                GC.CreatedByUserId,
-                GC.GroupName,
-                GC.MaxNumberOfMembers
-            
-            FROM 
-                chat.Conversations AS C
+		const string sql = @"
+			SELECT
+				C.Id AS ConversationId,
+				C.Type, 
+				C.Status,
+				C.CreatedDate,
+				GC.Id AS GroupConfigId,
+				GC.ConversationId,
+				GC.CreatedByUserId,
+				GC.GroupName,
+				GC.MaxNumberOfMembers
 
-            LEFT JOIN
-                chat.GroupConfigs AS GC ON C.Id = GC.ConversationId 
-            
-            WHERE 
-                C.Id = @ConversationId;
+			FROM 
+				Conversations AS C
 
-            SELECT
-                M.Id AS MemberId,
-                M.ConversationId,
-                M.UserId, 
-                M.JoinedDate
+			LEFT JOIN
+				GroupConfigs AS GC ON C.Id = GC.ConversationId 
 
-            FROM
-                chat.Members AS M
+			WHERE 
+				C.Id = @ConversationId
 
-            WHERE
-                M.ConversationId = @ConversationId";
+			LIMIT 1;
 
-        await using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { ConversationId = conversationId });
+			SELECT
+				M.Id AS MemberId,
+				M.ConversationId,
+				M.UserId, 
+				M.JoinedDate
 
-        ConversationAndMembersModel conversation = gridReader.Read<ConversationAndMembersModel, GroupConfigModel, ConversationAndMembersModel>(
-            (conversation, groupConfig) => conversation with { GroupConfig = groupConfig },
-            splitOn: nameof(GroupConfigModel.GroupConfigId)).FirstOrDefault();
+			FROM
+				Members AS M
 
-        if (conversation is null)
-            return null;
+			WHERE
+				M.ConversationId = @ConversationId";
 
-        return conversation with
-        {
-            Members = (await gridReader.ReadAsync<MemberModel>()).ToArray()
-        };
-    }
+		await using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { ConversationId = conversationId });
 
-    public async Task<MemberModel> GetMemberByIdAsync(Guid memberId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+		ConversationAndMembersModel conversation = gridReader.Read<ConversationAndMembersModel, GroupConfigModel, ConversationAndMembersModel>(
+			(conversation, groupConfig) => conversation with { GroupConfig = groupConfig },
+			splitOn: nameof(GroupConfigModel.GroupConfigId)).FirstOrDefault();
 
-        const string sql = @"
-            SELECT TOP 1
-                M.Id AS MemberId,
-                M.ConversationId,
-                M.UserId, 
-                M.JoinedDate
+		if (conversation is null)
+			return null;
 
-            FROM
-                chat.Members AS M
+		return conversation with
+		{
+			Members = (await gridReader.ReadAsync<MemberModel>()).ToArray()
+		};
+	}
 
-            WHERE
-                M.Id = @MemberId";
+	public async Task<MemberModel> GetMemberByIdAsync(Guid memberId, CancellationToken cancellationToken)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
 
-        return await _dbConnection.QueryFirstOrDefaultAsync<MemberModel>(sql, new { MemberId = memberId });
-    }
+		const string sql = @"
+			SELECT
+				M.Id AS MemberId,
+				M.ConversationId,
+				M.UserId, 
+				M.JoinedDate
 
-    public async Task<MessageFromMemberModel> GetMessageFromMemberAsync(Guid messageId, Guid userId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+			FROM
+				Members AS M
 
-        const string sql = @"
-            SELECT TOP 1
-                Message.Id AS MessageId,
-                Message.ConversationId,
-                DestinationMember.Id AS MemberId,
-                Message.SenderMemberId,
-                Sender.DisplayName AS SenderDisplayName,
-                MemberMessage.DestinationMemberId,
-                Destination.DisplayName AS DestinationDisplayName,
-                Message.SendDate,
-                MemberMessage.DeliveryDate,
-                Message.Type,
-                MemberMessage.Status,
-                Message.Content
-            
-            FROM
-                chat.Messages AS Message
-            
-            INNER JOIN
-                chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
+			WHERE
+				M.Id = @MemberId
 
-            INNER JOIN
-                chat.Members AS DestinationMember ON DestinationMember.Id = MemberMessage.DestinationMemberId AND DestinationMember.UserId = @UserId
+			LIMIT 1";
 
-            INNER JOIN
-                chat.Members AS SenderMember ON SenderMember.Id = MemberMessage.SenderMemberId
+		return await _dbConnection.QueryFirstOrDefaultAsync<MemberModel>(sql, new { MemberId = memberId });
+	}
 
-            INNER JOIN
-                chat.Users AS Destination ON Destination.Id = DestinationMember.UserId
+	public async Task<MessageFromMemberModel> GetMessageFromMemberAsync(Guid messageId, Guid userId, CancellationToken cancellationToken)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
 
-            INNER JOIN
-                chat.Users AS Sender ON Sender.Id = SenderMember.UserId
+		const string sql = @"
+			SELECT
+				Message.Id AS MessageId,
+				Message.ConversationId,
+				DestinationMember.Id AS MemberId,
+				Message.SenderMemberId,
+				Sender.DisplayName AS SenderDisplayName,
+				MemberMessage.DestinationMemberId,
+				Destination.DisplayName AS DestinationDisplayName,
+				Message.SendDate,
+				MemberMessage.DeliveryDate,
+				Message.Type,
+				MemberMessage.Status,
+				Message.Content
 
-            WHERE
-                Message.Id = @MessageId";
+			FROM
+				Messages AS Message
 
-        return await _dbConnection.QueryFirstOrDefaultAsync<MessageFromMemberModel>(sql, new { MessageId = messageId, UserId = userId });
-    }
+			INNER JOIN
+				MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
 
-    public async Task<(MessageFromMemberModel[], PaginationResultInfo paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, Pagination pagination, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+			INNER JOIN
+				Members AS DestinationMember ON DestinationMember.Id = MemberMessage.DestinationMemberId AND DestinationMember.UserId = @UserId
 
-        const string baseSqlQuery = @"
-            FROM
-                chat.Messages AS Message
-            
-            INNER JOIN
-                chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
+			INNER JOIN
+				Members AS SenderMember ON SenderMember.Id = MemberMessage.SenderMemberId
 
-            INNER JOIN
-                chat.Members AS DestinationMember ON DestinationMember.Id = MemberMessage.DestinationMemberId AND DestinationMember.UserId = @UserId
+			INNER JOIN
+				Users AS Destination ON Destination.Id = DestinationMember.UserId
 
-            INNER JOIN
-                chat.Members AS SenderMember ON SenderMember.Id = MemberMessage.SenderMemberId
+			INNER JOIN
+				Users AS Sender ON Sender.Id = SenderMember.UserId
 
-            INNER JOIN
-                chat.Users AS Destination ON Destination.Id = DestinationMember.UserId
+			WHERE
+				Message.Id = @MessageId
 
-            INNER JOIN
-                chat.Users AS Sender ON Sender.Id = SenderMember.UserId
+			LIMIT 1";
 
-            WHERE
-                Message.ConversationId = @ConversationId";
+		return await _dbConnection.QueryFirstOrDefaultAsync<MessageFromMemberModel>(sql, new { MessageId = messageId, UserId = userId });
+	}
 
-        long totalOfItems = await _dbConnection.ExecuteScalarAsync<long>($"SELECT COUNT(*) {baseSqlQuery}", new { ConversationId = conversationId, UserId = userId });
+	public async Task<(MessageFromMemberModel[], PaginationResultInfo paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, Pagination pagination, CancellationToken cancellationToken)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
 
-        const string sql = @$"
-            SELECT
-                Message.Id AS MessageId,
-                Message.ConversationId,
-                DestinationMember.Id AS MemberId,
-                Message.SenderMemberId,
-                Sender.DisplayName AS SenderDisplayName,
-                MemberMessage.DestinationMemberId,
-                Destination.DisplayName AS DestinationDisplayName,
-                Message.SendDate,
-                MemberMessage.DeliveryDate,
-                Message.Type,
-                MemberMessage.Status,
-                Message.Content
-            
-            {baseSqlQuery}
-            
-            ORDER BY
-                Message.SendDate DESC
+		const string baseSqlQuery = @"
+			FROM
+				Messages AS Message
 
-            OFFSET @Skip ROWS 
-            FETCH NEXT @Take ROWS ONLY";
+			INNER JOIN
+				MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
 
-        PaginationResultInfo paginationInfo = new PaginationResultInfo(pagination.PageNumber, pagination.PageSize, totalOfItems);
+			INNER JOIN
+				Members AS DestinationMember ON DestinationMember.Id = MemberMessage.DestinationMemberId AND DestinationMember.UserId = @UserId
 
-        IEnumerable<MessageFromMemberModel> messages = await _dbConnection.QueryAsync<MessageFromMemberModel>(
-            sql, 
-            new { ConversationId = conversationId, UserId = userId, Skip = paginationInfo.ItemsToSkip(), Take = paginationInfo.PageSize });
+			INNER JOIN
+				Members AS SenderMember ON SenderMember.Id = MemberMessage.SenderMemberId
 
-        return (messages.ToArray(), paginationInfo);
-    }
+			INNER JOIN
+				Users AS Destination ON Destination.Id = DestinationMember.UserId
 
-    public async Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+			INNER JOIN
+				Users AS Sender ON Sender.Id = SenderMember.UserId
 
-        const string sql = @"
-            SELECT
-	            Conversation.Id AS ConversationId,
-                Conversation.Type,
-                Conversation.Status,
-	            ISNULL(Config.GroupName, OtherUser.DisplayName) AS DisplayName,
-	            LastConversationMessage.MessageId,
-	            LastConversationMessage.ConversationId,
-	            LastConversationMessage.SenderMemberId,
-	            LastConversationMessage.SendDate,
-	            LastConversationMessage.Content,
-	            LastConversationMessage.SenderDisplayName,
-                LastConversationMessage.Type,
-                LastConversationMessage.Status
-	
-            FROM 
-	            chat.Conversations AS Conversation
+			WHERE
+				Message.ConversationId = @ConversationId";
 
-            INNER JOIN
-	            chat.Members AS Member ON Member.ConversationId = Conversation.Id
+		long totalOfItems = await _dbConnection.ExecuteScalarAsync<long>($"SELECT COUNT(*) {baseSqlQuery}", new { ConversationId = conversationId, UserId = userId });
 
-            LEFT JOIN
-	            chat.GroupConfigs AS Config ON Config.ConversationId = Conversation.Id
+		const string sql = @$"
+			SELECT
+				Message.Id AS MessageId,
+				Message.ConversationId,
+				DestinationMember.Id AS MemberId,
+				Message.SenderMemberId,
+				Sender.DisplayName AS SenderDisplayName,
+				MemberMessage.DestinationMemberId,
+				Destination.DisplayName AS DestinationDisplayName,
+				Message.SendDate,
+				MemberMessage.DeliveryDate,
+				Message.Type,
+				MemberMessage.Status,
+				Message.Content
 
-            LEFT JOIN
-                chat.Members AS OtherMember ON OtherMember.ConversationId = Conversation.Id AND OtherMember.UserId <> @UserId AND Conversation.Type = 'MemberToMember'
+			{baseSqlQuery}
 
-            LEFT JOIN
-                chat.Users AS OtherUser ON OtherUser.Id = OtherMember.UserId
+			ORDER BY
+				Message.SendDate DESC
 
-            OUTER APPLY
-            (
-                SELECT TOP 1 
-                    Message.Id AS MessageId, 
-                    Message.ConversationId,
-                    Message.SenderMemberId,
-                    SenderMember.UserId AS SenderUserId,
-                    Message.SendDate,
-                    Message.Content,
-                    Message.Type,
-                    MemberMessage.Status,
-                    SenderUser.DisplayName AS SenderDisplayName
-                
-                FROM 
-                    chat.[Messages] AS Message
-                
-                INNER JOIN
-                    chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id AND MemberMessage.DestinationMemberId = Member.Id
-                
-                INNER JOIN
-                    chat.Members AS SenderMember ON SenderMember.Id = Message.SenderMemberId
-                
-                INNER JOIN
-                    chat.Users AS SenderUser ON SenderUser.Id = SenderMember.UserId
-                
-                WHERE
-                    Message.ConversationId = Conversation.Id
-                
-                ORDER BY 
-                    Message.SendDate DESC
-            ) AS LastConversationMessage
+			LIMIT @Take OFFSET @Skip";
 
-            WHERE
-	            Member.UserId = @UserId
+		PaginationResultInfo paginationInfo = new PaginationResultInfo(pagination.PageNumber, pagination.PageSize, totalOfItems);
 
-            ORDER BY
-                LastConversationMessage.SendDate DESC,
-                Conversation.CreatedDate DESC";
+		IEnumerable<MessageFromMemberModel> messages = await _dbConnection.QueryAsync<MessageFromMemberModel>(
+			sql, 
+			new { ConversationId = conversationId, UserId = userId, Skip = paginationInfo.ItemsToSkip(), Take = paginationInfo.PageSize });
 
-        IEnumerable<UserConversationModel> userConversations = await _dbConnection.QueryAsync<UserConversationModel, LastMessageFromConversationModel, UserConversationModel>(
-            sql, (userConversation, lastMessage) => userConversation with { LastMessage = lastMessage },
-            new { UserId = userId },
-            splitOn: nameof(LastMessageFromConversationModel.MessageId));
+		return (messages.ToArray(), paginationInfo);
+	}
 
-        return userConversations.ToArray();
-    }
+	public async Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
 
-    public async Task<(MessageModel[], PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+		const string sql = @"
+			SELECT
+				Conversation.Id AS ConversationId,
+				Conversation.Type,
+				Conversation.Status,
+				COALESCE(Config.GroupName, OtherUser.DisplayName) AS DisplayName,
+				LastMessage.MessageId,
+				LastMessage.ConversationId AS LastMessageConversationId,
+				LastMessage.SenderMemberId,
+				LastMessage.SendDate,
+				LastMessage.Content,
+				LastMessage.SenderDisplayName,
+				LastMessage.Type AS LastMessageType,
+				LastMessage.Status AS LastMessageStatus
 
-        string baseSqlQuery = @$"
-            FROM 
-                chat.Messages AS Message
-            
-            INNER JOIN
-                chat.Members AS Member ON Member.Id = Message.SenderMemberId
+			FROM 
+				Conversations AS Conversation
 
-            INNER JOIN
-                chat.MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id AND MemberMessage.DestinationMemberId = Member.Id
-            
-            WHERE
-                Member.UserId = @UserId {(messageStatus is not null ? "AND MemberMessage.Status = @MessageStatus" : string.Empty)}";
+			INNER JOIN
+				Members AS Member ON Member.ConversationId = Conversation.Id
 
-        long totalOfItems = await _dbConnection.ExecuteScalarAsync<long>($"SELECT COUNT(*) {baseSqlQuery}", new { UserId = userId, MessageStatus = messageStatus?.ToString() });
+			LEFT JOIN
+				GroupConfigs AS Config ON Config.ConversationId = Conversation.Id
 
-        string sql = @$"
-            SELECT
-                Message.Id AS MessageId,
-                Message.ConversationId,
-                Message.SenderMemberId,
-                Message.SendDate,
-                Message.Type,
-                Message.Content
-            
-            {baseSqlQuery}
-            
-            ORDER BY
-                Message.SendDate DESC
+			LEFT JOIN
+				Members AS OtherMember ON OtherMember.ConversationId = Conversation.Id AND OtherMember.UserId <> @UserId AND Conversation.Type = 'MemberToMember'
 
-            OFFSET @Skip ROWS 
-            FETCH NEXT @Take ROWS ONLY";
+			LEFT JOIN
+				Users AS OtherUser ON OtherUser.Id = OtherMember.UserId
 
-        PaginationResultInfo paginationInfo = new PaginationResultInfo(pagination.PageNumber, pagination.PageSize, totalOfItems);
+			LEFT JOIN
+			(
+				SELECT 
+					Message.Id AS MessageId, 
+					Message.ConversationId,
+					Message.SenderMemberId,
+					SenderMember.UserId AS SenderUserId,
+					Message.SendDate,
+					Message.Content,
+					Message.Type,
+					MemberMessage.Status,
+					MemberMessage.DestinationMemberId,
+					SenderUser.DisplayName AS SenderDisplayName,
+					ROW_NUMBER() OVER (PARTITION BY Message.ConversationId, MemberMessage.DestinationMemberId ORDER BY Message.SendDate DESC) AS RowNum
 
-        IEnumerable<MessageModel> messages = await _dbConnection.QueryAsync<MessageModel>(
-            sql, 
-            new { UserId = userId, MessageStatus = messageStatus?.ToString(), Skip = paginationInfo.ItemsToSkip(), Take = paginationInfo.PageSize });
+				FROM 
+					Messages AS Message
 
-        return (messages.ToArray(), paginationInfo);
-    }
+				INNER JOIN
+					MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id
+
+				INNER JOIN
+					Members AS SenderMember ON SenderMember.Id = Message.SenderMemberId
+
+				INNER JOIN
+					Users AS SenderUser ON SenderUser.Id = SenderMember.UserId
+			) AS LastMessage ON LastMessage.ConversationId = Conversation.Id AND LastMessage.DestinationMemberId = Member.Id AND LastMessage.RowNum = 1
+
+			WHERE
+				Member.UserId = @UserId
+
+			ORDER BY
+				LastMessage.SendDate DESC,
+				Conversation.CreatedDate DESC";
+
+		IEnumerable<UserConversationModel> userConversations = await _dbConnection.QueryAsync<UserConversationModel, LastMessageFromConversationModel, UserConversationModel>(
+			sql, (userConversation, lastMessage) => userConversation with { LastMessage = lastMessage },
+			new { UserId = userId },
+			splitOn: nameof(LastMessageFromConversationModel.MessageId));
+
+		return userConversations.ToArray();
+	}
+
+	public async Task<(MessageModel[], PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
+
+		string baseSqlQuery = @$"
+			FROM 
+				Messages AS Message
+
+			INNER JOIN
+				Members AS Member ON Member.Id = Message.SenderMemberId
+
+			INNER JOIN
+				MemberMessages AS MemberMessage ON MemberMessage.MessageId = Message.Id AND MemberMessage.DestinationMemberId = Member.Id
+
+			WHERE
+				Member.UserId = @UserId {(messageStatus is not null ? "AND MemberMessage.Status = @MessageStatus" : string.Empty)}";
+
+		long totalOfItems = await _dbConnection.ExecuteScalarAsync<long>($"SELECT COUNT(*) {baseSqlQuery}", new { UserId = userId, MessageStatus = messageStatus?.ToString() });
+
+		string sql = @$"
+			SELECT
+				Message.Id AS MessageId,
+				Message.ConversationId,
+				Message.SenderMemberId,
+				Message.SendDate,
+				Message.Type,
+				Message.Content
+
+			{baseSqlQuery}
+
+			ORDER BY
+				Message.SendDate DESC
+
+			LIMIT @Take OFFSET @Skip";
+
+		PaginationResultInfo paginationInfo = new PaginationResultInfo(pagination.PageNumber, pagination.PageSize, totalOfItems);
+
+		IEnumerable<MessageModel> messages = await _dbConnection.QueryAsync<MessageModel>(
+			sql, 
+			new { UserId = userId, MessageStatus = messageStatus?.ToString(), Skip = paginationInfo.ItemsToSkip(), Take = paginationInfo.PageSize });
+
+		return (messages.ToArray(), paginationInfo);
+	}
 }

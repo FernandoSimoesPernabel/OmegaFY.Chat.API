@@ -1,84 +1,82 @@
-﻿CREATE TABLE chat.Users (
-    Id uniqueidentifier NOT NULL,
-    Email varchar(320) NOT NULL,
-    DisplayName varchar(100) NOT NULL,
+﻿-- SQLite Domain Tables
 
-    CONSTRAINT PK_Users PRIMARY KEY (Id),
+CREATE TABLE Users (
+	Id TEXT NOT NULL,
+	Email TEXT NOT NULL,
+	DisplayName TEXT NOT NULL,
+
+	CONSTRAINT PK_Users PRIMARY KEY (Id),
 	CONSTRAINT UQ_Users_Email UNIQUE (Email)
 );
 
-CREATE TABLE chat.Friendships (
-	Id UNIQUEIDENTIFIER NOT NULL,
-	RequestingUserId UNIQUEIDENTIFIER NOT NULL,
-	InvitedUserId UNIQUEIDENTIFIER NOT NULL,
-	StartedDate DATETIME2 NOT NULL,
-	[Status] VARCHAR(10) NOT NULL,
+CREATE TABLE Friendships (
+	Id TEXT NOT NULL,
+	RequestingUserId TEXT NOT NULL,
+	InvitedUserId TEXT NOT NULL,
+	StartedDate TEXT NOT NULL,
+	Status TEXT NOT NULL,
 
 	CONSTRAINT PK_Friendships PRIMARY KEY (Id, RequestingUserId, InvitedUserId),
-	CONSTRAINT FK_Users_Friendships_RequestingUserId FOREIGN KEY (RequestingUserId) REFERENCES chat.Users (Id),
-	CONSTRAINT FK_Users_Friendships_InvitedUserId FOREIGN KEY (InvitedUserId) REFERENCES chat.Users (Id)
+	CONSTRAINT FK_Users_Friendships_RequestingUserId FOREIGN KEY (RequestingUserId) REFERENCES Users (Id),
+	CONSTRAINT FK_Users_Friendships_InvitedUserId FOREIGN KEY (InvitedUserId) REFERENCES Users (Id)
 );
 
-GO
-
-CREATE TABLE chat.Conversations (
-	Id UNIQUEIDENTIFIER NOT NULL,
-	[Type] VARCHAR(15) NOT NULL,
-	[Status] VARCHAR(10) NOT NULL,
-	CreatedDate DATETIME2 NOT NULL
+CREATE TABLE Conversations (
+	Id TEXT NOT NULL,
+	Type TEXT NOT NULL,
+	Status TEXT NOT NULL,
+	CreatedDate TEXT NOT NULL,
 
 	CONSTRAINT PK_Conversations PRIMARY KEY (Id)
 );
 
-CREATE TABLE chat.GroupConfigs (
-	Id UNIQUEIDENTIFIER NOT NULL,
-	ConversationId UNIQUEIDENTIFIER NOT NULL,
-	CreatedByUserId UNIQUEIDENTIFIER NOT NULL,
-	GroupName NVARCHAR(100) NOT NULL,
-	MaxNumberOfMembers TINYINT NOT NULL,
+CREATE TABLE GroupConfigs (
+	Id TEXT NOT NULL,
+	ConversationId TEXT NOT NULL,
+	CreatedByUserId TEXT NOT NULL,
+	GroupName TEXT NOT NULL,
+	MaxNumberOfMembers INTEGER NOT NULL,
 
 	CONSTRAINT PK_GroupConfigs PRIMARY KEY (Id),
-	CONSTRAINT FK_Conversations_GroupConfigs_ConversationId FOREIGN KEY (ConversationId) REFERENCES chat.Conversations (Id),
-	CONSTRAINT FK_Users_GroupConfigs_CreatedByUserId FOREIGN KEY (CreatedByUserId) REFERENCES chat.Users (Id)
+	CONSTRAINT FK_Conversations_GroupConfigs_ConversationId FOREIGN KEY (ConversationId) REFERENCES Conversations (Id),
+	CONSTRAINT FK_Users_GroupConfigs_CreatedByUserId FOREIGN KEY (CreatedByUserId) REFERENCES Users (Id)
 );
 
-CREATE TABLE chat.[Members] (
-	Id UNIQUEIDENTIFIER NOT NULL,
-	ConversationId UNIQUEIDENTIFIER NOT NULL,
-	UserId UNIQUEIDENTIFIER NOT NULL,
-	JoinedDate DATETIME2 NOT NULL,
+CREATE TABLE Members (
+	Id TEXT NOT NULL,
+	ConversationId TEXT NOT NULL,
+	UserId TEXT NOT NULL,
+	JoinedDate TEXT NOT NULL,
 
 	CONSTRAINT PK_Members PRIMARY KEY (Id),
-	CONSTRAINT FK_Conversations_Members_ConversationId FOREIGN KEY (ConversationId) REFERENCES chat.Conversations (Id),
-	CONSTRAINT FK_Users_Members_UserId FOREIGN KEY (UserId) REFERENCES chat.Users (Id),
+	CONSTRAINT FK_Conversations_Members_ConversationId FOREIGN KEY (ConversationId) REFERENCES Conversations (Id),
+	CONSTRAINT FK_Users_Members_UserId FOREIGN KEY (UserId) REFERENCES Users (Id),
 	CONSTRAINT UQ_Members_ConversationId_UserId UNIQUE (ConversationId, UserId)
-)
+);
 
-CREATE TABLE chat.[Messages] (
-	Id UNIQUEIDENTIFIER NOT NULL,
-	ConversationId UNIQUEIDENTIFIER NOT NULL,
-	SenderMemberId UNIQUEIDENTIFIER NOT NULL,
-	SendDate DATETIME2 NOT NULL,
-	[Type] VARCHAR(20) NOT NULL,
-	Content NVARCHAR(1000) NOT NULL,
+CREATE TABLE Messages (
+	Id TEXT NOT NULL,
+	ConversationId TEXT NOT NULL,
+	SenderMemberId TEXT NOT NULL,
+	SendDate TEXT NOT NULL,
+	Type TEXT NOT NULL,
+	Content TEXT NOT NULL,
 
 	CONSTRAINT PK_Messages PRIMARY KEY (Id),
-	CONSTRAINT FK_Conversations_Messages_ConversationId FOREIGN KEY (ConversationId) REFERENCES chat.Conversations (Id),
-	CONSTRAINT FK_Users_Messages_SenderMemberId FOREIGN KEY (SenderMemberId) REFERENCES chat.[Members] (Id)
-)
+	CONSTRAINT FK_Conversations_Messages_ConversationId FOREIGN KEY (ConversationId) REFERENCES Conversations (Id),
+	CONSTRAINT FK_Users_Messages_SenderMemberId FOREIGN KEY (SenderMemberId) REFERENCES Members (Id)
+);
 
-CREATE TABLE chat.MemberMessages (
-	Id UNIQUEIDENTIFIER NOT NULL,
-	MessageId UNIQUEIDENTIFIER NOT NULL,
-	SenderMemberId UNIQUEIDENTIFIER NOT NULL,
-	DestinationMemberId UNIQUEIDENTIFIER NOT NULL,
-	DeliveryDate DATETIME2 NOT NULL,
-	[Status] VARCHAR(20) NOT NULL,
+CREATE TABLE MemberMessages (
+	Id TEXT NOT NULL,
+	MessageId TEXT NOT NULL,
+	SenderMemberId TEXT NOT NULL,
+	DestinationMemberId TEXT NOT NULL,
+	DeliveryDate TEXT NOT NULL,
+	Status TEXT NOT NULL,
 
 	CONSTRAINT PK_MemberMessages PRIMARY KEY (Id),
-	CONSTRAINT FK_Conversations_MemberMessages_MessageId FOREIGN KEY (MessageId) REFERENCES chat.[Messages] (Id),
-	CONSTRAINT FK_Users_MemberMessages_SenderMemberId FOREIGN KEY (SenderMemberId) REFERENCES chat.[Members] (Id),
-	CONSTRAINT FK_Users_MemberMessages_DestinationMemberId FOREIGN KEY (DestinationMemberId) REFERENCES chat.[Members] (Id)
-)
-
-GO
+	CONSTRAINT FK_Conversations_MemberMessages_MessageId FOREIGN KEY (MessageId) REFERENCES Messages (Id),
+	CONSTRAINT FK_Users_MemberMessages_SenderMemberId FOREIGN KEY (SenderMemberId) REFERENCES Members (Id),
+	CONSTRAINT FK_Users_MemberMessages_DestinationMemberId FOREIGN KEY (DestinationMemberId) REFERENCES Members (Id)
+);

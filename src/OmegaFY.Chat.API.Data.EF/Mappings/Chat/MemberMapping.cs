@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
 
@@ -16,6 +16,6 @@ internal sealed class MemberMapping : IEntityTypeConfiguration<Member>
 
         builder.Property(member => member.JoinedDate).IsRequired();
 
-        builder.ToTable("Members", "chat");
+        builder.ToTable("Members");
     }
 }

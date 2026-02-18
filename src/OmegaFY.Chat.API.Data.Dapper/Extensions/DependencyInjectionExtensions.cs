@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
@@ -13,7 +13,7 @@ public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddDapperQueryProviders(this IServiceCollection services, IConfigurationRoot configuration)
     {
-        services.AddTransient<IDbConnection>(_ => new SqlConnection(configuration.GetConnectionString("AzureSql")));
+        services.AddTransient<IDbConnection>(_ => new SqliteConnection(configuration.GetConnectionString("Sqlite")));
 
         services.AddScoped<IChatQueryProvider, ChatQueryProvider>();
 

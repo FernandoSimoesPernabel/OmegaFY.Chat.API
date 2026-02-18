@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
 
@@ -24,6 +24,6 @@ internal sealed class ConversationMapping : IEntityTypeConfiguration<Conversatio
 
         builder.Navigation(conversation => conversation.Members).AutoInclude();
 
-        builder.ToTable("Conversations", "chat");
+        builder.ToTable("Conversations");
     }
 }

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,14 +35,13 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     private async Task ResetDatabaseAsync()
     {
-        await using SqlConnection connection = new SqlConnection(Services.GetRequiredService<IConfiguration>().GetConnectionString("AzureSql"));
-        
+        await using SqliteConnection connection = new SqliteConnection(Services.GetRequiredService<IConfiguration>().GetConnectionString("Sqlite"));
+
         await connection.OpenAsync();
 
-        await using SqlCommand command = new("[dbo].[sp_ResetDatabaseTables]", connection)
-        {
-            CommandType = System.Data.CommandType.StoredProcedure
-        };
+        string script = await File.ReadAllTextAsync("Scripts/000 - Clear_All_Tables.sql");
+
+        await using SqliteCommand command = new SqliteCommand(script, connection);
 
         await command.ExecuteNonQueryAsync();
     }
