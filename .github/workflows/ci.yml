@@ -26,8 +26,21 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore OmegaFY.Chat.API.sln
 
+      - name: Build
+        run: dotnet build OmegaFY.Chat.API.sln --no-restore --configuration Release
+
       - name: Run unit tests
-        run: dotnet test test/OmegaFY.Chat.API.Tests.Unit/OmegaFY.Chat.API.Tests.Unit.csproj --no-restore --verbosity normal
+        run: dotnet test test/OmegaFY.Chat.API.Tests.Unit/OmegaFY.Chat.API.Tests.Unit.csproj --no-restore --no-build --configuration Release --verbosity normal
 
       - name: Run integration tests
-        run: dotnet test test/OmegaFY.Chat.API.Tests.Integration/OmegaFY.Chat.API.Tests.Integration.csproj --no-restore --verbosity normal
+        run: dotnet test test/OmegaFY.Chat.API.Tests.Integration/OmegaFY.Chat.API.Tests.Integration.csproj --no-restore --no-build --configuration Release --verbosity normal
+        env:
+          ASPNETCORE_ENVIRONMENT: Staging
+          ConnectionStrings__Sqlite: ${{ secrets.SQLITE_CONNECTION_STRING }}
+          JwtSettings__Audience: ${{ secrets.JWT_AUDIENCE }}
+          JwtSettings__Issuer: ${{ secrets.JWT_ISSUER }}
+          JwtSettings__Secret: ${{ secrets.JWT_SECRET }}
+          JwtSettings__TimeToExpireToken: ${{ secrets.JWT_TIME_TO_EXPIRE_TOKEN }}
+          JwtSettings__TimeToExpireRefreshToken: ${{ secrets.JWT_TIME_TO_EXPIRE_REFRESH_TOKEN }}
+          OpenTelemetrySettings__ServiceName: ${{ secrets.OPENTELEMETRY_SERVICE_NAME }}
+          OpenTelemetrySettings__HoneycombSettings__HoneycombApiKey: ${{ secrets.HONEYCOMB_API_KEY }}
