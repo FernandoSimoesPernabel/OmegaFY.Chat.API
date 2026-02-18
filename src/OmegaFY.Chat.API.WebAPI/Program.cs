@@ -1,6 +1,6 @@
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using OmegaFY.Chat.API.Common.Constants;
+//using HealthChecks.UI.Client;
+//using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+//using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.WebAPI.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

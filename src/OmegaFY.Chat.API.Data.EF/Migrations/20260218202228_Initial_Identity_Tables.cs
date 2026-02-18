@@ -51,65 +51,6 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Conversations",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Type = table.Column<string>(type: "TEXT", unicode: false, maxLength: 15, nullable: false),
-                    Status = table.Column<string>(type: "TEXT", unicode: false, maxLength: 10, nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Conversations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MemberMessages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    MessageId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    SenderMemberId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    DestinationMemberId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    DeliveryDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", unicode: false, maxLength: 20, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MemberMessages", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Messages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ConversationId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    SenderMemberId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    SendDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Type = table.Column<string>(type: "TEXT", unicode: false, maxLength: 20, nullable: false),
-                    Content = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", unicode: false, maxLength: 320, nullable: false),
-                    DisplayName = table.Column<string>(type: "TEXT", unicode: false, maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -215,74 +156,6 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "GroupConfigs",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ConversationId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CreatedByUserId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    GroupName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    MaxNumberOfMembers = table.Column<byte>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GroupConfigs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GroupConfigs_Conversations_ConversationId",
-                        column: x => x.ConversationId,
-                        principalTable: "Conversations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Members",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ConversationId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Members", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Members_Conversations_ConversationId",
-                        column: x => x.ConversationId,
-                        principalTable: "Conversations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Friendships",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    RequestingUserId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    InvitedUserId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    StartedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Status = table.Column<int>(type: "varchar(10)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Friendships", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Friendships_Users_InvitedUserId",
-                        column: x => x.InvitedUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Friendships_Users_RequestingUserId",
-                        column: x => x.RequestingUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -319,33 +192,6 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Friendships_InvitedUserId",
-                table: "Friendships",
-                column: "InvitedUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Friendships_RequestingUserId",
-                table: "Friendships",
-                column: "RequestingUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupConfigs_ConversationId",
-                table: "GroupConfigs",
-                column: "ConversationId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Members_ConversationId",
-                table: "Members",
-                column: "ConversationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -367,31 +213,10 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Friendships");
-
-            migrationBuilder.DropTable(
-                name: "GroupConfigs");
-
-            migrationBuilder.DropTable(
-                name: "MemberMessages");
-
-            migrationBuilder.DropTable(
-                name: "Members");
-
-            migrationBuilder.DropTable(
-                name: "Messages");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Conversations");
         }
     }
 }

@@ -429,3 +429,4 @@ FodyWeavers.xsd
 
 # TemplateEngineHost
 TemplateEngineHost/
+*.db
