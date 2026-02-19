@@ -14,6 +14,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    environment: Staging
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,3 +46,4 @@ jobs:
           JwtSettings__TimeToExpireRefreshToken: ${{ secrets.JWT_TIME_TO_EXPIRE_REFRESH_TOKEN }}
           OpenTelemetrySettings__ServiceName: ${{ secrets.OPENTELEMETRY_SERVICE_NAME }}
           OpenTelemetrySettings__HoneycombSettings__HoneycombApiKey: ${{ secrets.HONEYCOMB_API_KEY }}
+          IpOrUserTokenBucketPolicySettings: ${{ secrets.IP_OR_USER_TOKEN_BUCKET_POLICY_SETTINGS }}
