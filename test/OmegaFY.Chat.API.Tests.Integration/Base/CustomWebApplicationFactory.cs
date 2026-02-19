@@ -71,6 +71,6 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
         Console.WriteLine(">>> Executando MigrateAsync...");
         await context.Database.MigrateAsync();
 
-        Console.WriteLine(">>> ResetDatabaseAsync concluído com sucesso!")
+        Console.WriteLine(">>> ResetDatabaseAsync concluído com sucesso!");
     }
 }
