@@ -429,3 +429,6 @@ FodyWeavers.xsd
 
 # TemplateEngineHost
 TemplateEngineHost/
+*.db
+/src/OmegaFY.Chat.API.WebAPI/Chat.db-shm
+/src/OmegaFY.Chat.API.WebAPI/Chat.db-wal

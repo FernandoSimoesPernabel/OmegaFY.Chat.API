@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OmegaFY.Chat.API.Domain.Entities.Users;
 
@@ -20,6 +20,6 @@ internal sealed class FriendshipMapping : IEntityTypeConfiguration<Friendship>
 
         builder.Property(friendship => friendship.Status).HasColumnType("varchar(10)").IsRequired();
 
-        builder.ToTable("Friendships", "chat");
+        builder.ToTable("Friendships");
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OmegaFY.Chat.API.Domain.Constants;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
@@ -19,6 +19,6 @@ internal sealed class GroupConfigMapping : IEntityTypeConfiguration<GroupConfig>
 
         builder.Property(group => group.MaxNumberOfMembers).IsRequired();
 
-        builder.ToTable("GroupConfigs", "chat");
+        builder.ToTable("GroupConfigs");
     }
 }
