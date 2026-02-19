@@ -46,4 +46,8 @@ jobs:
           JwtSettings__TimeToExpireRefreshToken: ${{ secrets.JWT_TIME_TO_EXPIRE_REFRESH_TOKEN }}
           OpenTelemetrySettings__ServiceName: ${{ secrets.OPENTELEMETRY_SERVICE_NAME }}
           OpenTelemetrySettings__HoneycombSettings__HoneycombApiKey: ${{ secrets.HONEYCOMB_API_KEY }}
-          IpOrUserTokenBucketPolicySettings: ${{ secrets.IP_OR_USER_TOKEN_BUCKET_POLICY_SETTINGS }}
+          IpOrUserTokenBucketPolicySettings__ReplenishmentPeriod: ${{ secrets.TOKEN_REPLENISHMENT_PERIOD }}
+          IpOrUserTokenBucketPolicySettings__UserTokenLimit: ${{ secrets.TOKEN_USER_TOKEN_LIMIT }}
+          IpOrUserTokenBucketPolicySettings__UserTokensPerPeriod: ${{ secrets.TOKEN_USER_TOKENS_PER_PERIOD }}
+          IpOrUserTokenBucketPolicySettings__IpTokenLimit: ${{ secrets.TOKEN_IP_TOKEN_LIMIT }}
+          IpOrUserTokenBucketPolicySettings__IpTokensPerPeriod: ${{ secrets.TOKEN_IP_TOKENS_PER_PERIOD }}
