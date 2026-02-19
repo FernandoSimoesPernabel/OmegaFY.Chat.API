@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,11 +38,18 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
     private async Task ResetDatabaseAsync()
     {
         using IServiceScope scope = Services.CreateScope();
-
+        
         ApplicationContext context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
 
+        string dbPath = Path.Combine(Path.GetTempPath(), "ChatTests.db");
+        string directory = Path.GetDirectoryName(dbPath);
+
+        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+
+        SqliteConnection.ClearAllPools();
+
         await context.Database.EnsureDeletedAsync();
-        
         await context.Database.MigrateAsync();
     }
 }
