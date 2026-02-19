@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,13 +22,13 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddEntityFrameworkUserManager(this IServiceCollection services)
         => services.AddScoped<IUserManager, EntityFrameworkUserManager>();
 
-    public static IServiceCollection AddSqlServerEntityFrameworkContexts(this IServiceCollection services, IConfigurationRoot configuration, IHostEnvironment environment)
+    public static IServiceCollection AddSqliteEntityFrameworkContexts(this IServiceCollection services, IConfigurationRoot configuration, IHostEnvironment environment)
     {
-        string connectionString = configuration.GetConnectionString("AzureSql");
+        string connectionString = configuration.GetConnectionString("Sqlite");
 
         return services.AddDbContextPool<ApplicationContext>(options =>
         {
-            options.UseSqlServer(connectionString);
+            options.UseSqlite(connectionString);
 
             if (environment.IsDevelopment())
             {

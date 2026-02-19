@@ -1,6 +1,7 @@
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using OmegaFY.Chat.API.Common.Constants;
+//using HealthChecks.UI.Client;
+//using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+//using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Data.EF.Extensions;
 using OmegaFY.Chat.API.WebAPI.Extensions;
 using OmegaFY.Chat.API.WebAPI.Middlewares;
 
@@ -10,6 +11,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDependencyInjectionRegister(builder);
 
 WebApplication app = builder.Build();
+
+await app.RunMigrationsAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -39,4 +42,4 @@ app.UseRateLimiter();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

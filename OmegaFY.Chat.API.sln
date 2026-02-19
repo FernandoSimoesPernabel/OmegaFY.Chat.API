@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.2.11408.102 d18.0
+VisualStudioVersion = 18.2.11408.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.WebAPI", "src\OmegaFY.Chat.API.WebAPI\OmegaFY.Chat.API.WebAPI.csproj", "{43C497EB-91B2-4127-965A-659B6289EAC5}"
 EndProject
@@ -37,13 +37,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.Data.Dappe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.github\copilot-instructions.md = .github\copilot-instructions.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.Tests.Integration", "test\OmegaFY.Chat.API.Tests.Integration\OmegaFY.Chat.API.Tests.Integration.csproj", "{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Prompts", "Prompts", "{2EB62440-F96F-427E-9205-7AE35BD40A4F}"
+	ProjectSection(SolutionItems) = preProject
 		.github\prompts\create-command-handler.prompt.md = .github\prompts\create-command-handler.prompt.md
 		.github\prompts\create-query-handler.prompt.md = .github\prompts\create-query-handler.prompt.md
 		.github\prompts\create-unit-test.prompt.md = .github\prompts\create-unit-test.prompt.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaFY.Chat.API.Tests.Integration", "test\OmegaFY.Chat.API.Tests.Integration\OmegaFY.Chat.API.Tests.Integration.csproj", "{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{6707274D-E528-4427-8B53-1714ECA8A6A7}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,6 +116,8 @@ Global
 		{8000E866-F587-4BBF-B0A5-E3374A0F06F4} = {ACEDD0B1-2763-4CC0-9A77-5CB7597D2805}
 		{7034C2CE-89D6-4FA8-B76A-D7C0974694C9} = {643747C7-0307-8931-84D8-A7D1915E22E5}
 		{DBD0ADCE-CF5D-CFD0-0E3D-972FDB0C633D} = {ACEDD0B1-2763-4CC0-9A77-5CB7597D2805}
+		{2EB62440-F96F-427E-9205-7AE35BD40A4F} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{6707274D-E528-4427-8B53-1714ECA8A6A7} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F5E0E93-9783-4F31-A9B0-63967A0E72BD}

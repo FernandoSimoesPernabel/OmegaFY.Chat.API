@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
 
@@ -20,6 +20,6 @@ internal sealed class MemberMessageMapping : IEntityTypeConfiguration<MemberMess
 
         builder.Property(message => message.Status).HasConversion<string>().HasMaxLength(20).IsUnicode(false).IsRequired();
 
-        builder.ToTable("MemberMessages", "chat");
+        builder.ToTable("MemberMessages");
     }
 }

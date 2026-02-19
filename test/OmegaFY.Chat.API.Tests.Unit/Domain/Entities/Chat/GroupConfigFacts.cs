@@ -42,7 +42,7 @@ public sealed class GroupConfigFacts
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new GroupConfig(conversationId, createdByUserId, invalidGroupName, maxNumberOfMembers));
 
         // Assert
-        Assert.Equal("O nome do grupo n„o foi informado.", exception.Message);
+        Assert.Equal("O nome do grupo n√£o foi informado.", exception.Message);
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public sealed class GroupConfigFacts
         DomainArgumentException exception = Assert.Throws<DomainArgumentException>(() => new GroupConfig(conversationId, createdByUserId, groupName, maxNumberOfMembers));
 
         // Assert
-        Assert.Equal($"O nome do grupo n„o pode exceder {ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH} caracteres.", exception.Message);
+        Assert.Equal($"O nome do grupo n√£o pode exceder {ChatConstants.GROUP_CHAT_NAME_MAX_LENGTH} caracteres.", exception.Message);
     }
 
     [Theory]
