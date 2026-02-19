@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi;
 using OmegaFY.Chat.API.Common.Constants;

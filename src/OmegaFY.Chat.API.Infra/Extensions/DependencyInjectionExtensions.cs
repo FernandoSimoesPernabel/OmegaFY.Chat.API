@@ -183,7 +183,7 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddHybridCacheProvider(this IServiceCollection services)
     {
         services.AddHybridCache();
-        services.AddScoped<IHybridCacheProvider, HybridCacheProvider>();
+        services.AddSingleton<IHybridCacheProvider, HybridCacheProvider>();
 
         return services;
     }
