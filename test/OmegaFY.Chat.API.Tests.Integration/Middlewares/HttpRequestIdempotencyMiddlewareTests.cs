@@ -1,8 +1,5 @@
-using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
-using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Tests.Integration.Base;
 using OmegaFY.Chat.API.Tests.Integration.Constants;
-using OmegaFY.Chat.API.WebAPI.Models;
 
 namespace OmegaFY.Chat.API.Tests.Integration.Middlewares;
 
@@ -22,7 +19,7 @@ public class HttpRequestIdempotencyMiddlewareTests : IntegrationTestBase
         };
 
         // Act
-        HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", request, addIdempotencyKey: false);
+        HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", request, null, null);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -33,6 +30,7 @@ public class HttpRequestIdempotencyMiddlewareTests : IntegrationTestBase
     {
         // Arrange
         string idempotencyKey = Guid.NewGuid().ToString();
+
         object request = new
         {
             Email = $"test-{Guid.NewGuid():N}@omega.com",
@@ -41,7 +39,7 @@ public class HttpRequestIdempotencyMiddlewareTests : IntegrationTestBase
         };
 
         // Act
-        HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", request, idempotencyKey: idempotencyKey);
+        HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", request, null, idempotencyKey);
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -52,13 +50,14 @@ public class HttpRequestIdempotencyMiddlewareTests : IntegrationTestBase
     {
         // Arrange
         string idempotencyKey = Guid.NewGuid().ToString();
+
         object firstRequest = new
         {
             Email = $"test-{Guid.NewGuid():N}@omega.com",
             DisplayName = "Test User",
             Password = TestConstants.DEFAULT_PASSWORD
         };
-        
+
         object secondRequest = new
         {
             Email = $"test-{Guid.NewGuid():N}@omega.com",
@@ -67,13 +66,13 @@ public class HttpRequestIdempotencyMiddlewareTests : IntegrationTestBase
         };
 
         // Act - First request
-        HttpResponseMessage firstResponse = await PostAsync("/api/auth/register-new-user", firstRequest, idempotencyKey: idempotencyKey);
-        
+        HttpResponseMessage firstResponse = await PostAsync("/api/auth/register-new-user", firstRequest, null, idempotencyKey);
+
         // Wait a bit to ensure cache is set
         await Task.Delay(100);
-        
+
         // Act - Second request with same idempotency key but different payload
-        HttpResponseMessage secondResponse = await PostAsync("/api/auth/register-new-user", secondRequest, idempotencyKey: idempotencyKey);
+        HttpResponseMessage secondResponse = await PostAsync("/api/auth/register-new-user", secondRequest, null, idempotencyKey);
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, firstResponse.StatusCode);
@@ -90,7 +89,7 @@ public class HttpRequestIdempotencyMiddlewareTests : IntegrationTestBase
         string token = await AuthenticateAsync(email, password);
 
         // Act - GET request without idempotency key
-        HttpResponseMessage response = await GetAsync("/api/users/me", token, addIdempotencyKey: false);
+        HttpResponseMessage response = await GetAsync("/api/users/me", token);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -108,7 +107,7 @@ public class HttpRequestIdempotencyMiddlewareTests : IntegrationTestBase
         object request = new { DisplayName = "Updated Name" };
 
         // Act
-        HttpResponseMessage response = await PutAsync("/api/users/change-display-name", request, token, addIdempotencyKey: false);
+        HttpResponseMessage response = await PutAsync("/api/users/change-display-name", request, token, null);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -124,7 +123,7 @@ public class HttpRequestIdempotencyMiddlewareTests : IntegrationTestBase
         string token = await AuthenticateAsync(email, password);
 
         // Act
-        HttpResponseMessage response = await DeleteAsync("/api/auth/logoff", token, addIdempotencyKey: false);
+        HttpResponseMessage response = await DeleteAsync("/api/auth/logoff", token, null);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

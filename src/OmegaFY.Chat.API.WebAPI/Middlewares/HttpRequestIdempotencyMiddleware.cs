@@ -3,6 +3,7 @@ using OmegaFY.Chat.API.Infra.Cache;
 using OmegaFY.Chat.API.Infra.Cache.Helpers;
 using OmegaFY.Chat.API.Infra.Cache.Models;
 using OmegaFY.Chat.API.Infra.Constants;
+using OmegaFY.Chat.API.Infra.Extensions;
 
 namespace OmegaFY.Chat.API.WebAPI.Middlewares;
 
@@ -10,8 +11,13 @@ public sealed class HttpRequestIdempotencyMiddleware : IMiddleware
 {
     private readonly IHybridCacheProvider _hybridCacheProvider;
 
-    public HttpRequestIdempotencyMiddleware(IHybridCacheProvider hybridCacheProvider) 
-        => _hybridCacheProvider = hybridCacheProvider;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public HttpRequestIdempotencyMiddleware(IHybridCacheProvider hybridCacheProvider, IHttpContextAccessor httpContextAccessor)
+    {
+        _hybridCacheProvider = hybridCacheProvider;
+        _httpContextAccessor = httpContextAccessor;
+    }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -21,22 +27,21 @@ public sealed class HttpRequestIdempotencyMiddleware : IMiddleware
             return;
         }
 
-        if (!context.Request.Headers.TryGetValue(HeaderConstants.IDEMPOTENCY_KEY, out Microsoft.Extensions.Primitives.StringValues idempotencyKey) || string.IsNullOrWhiteSpace(idempotencyKey))
+        string idempotencyKey = context.GetRequestHeaderByName(HeaderConstants.IDEMPOTENCY_KEY);
+
+        if (string.IsNullOrWhiteSpace(idempotencyKey))
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsync("Idempotency-Key header is required for non-GET requests.");
             return;
         }
 
-        string cacheKey = CacheKeyGenerator.IdempotencyKey(idempotencyKey!);
-        
+        string cacheKey = CacheKeyGenerator.IdempotencyKey(_httpContextAccessor.HttpContext.GenerateFingerprint(), idempotencyKey);
+
         (bool cacheHit, _) = await _hybridCacheProvider.GetOrCreateAsync(
             cacheKey,
-            async cancellationToken =>
-            {
-                return DateTime.UtcNow;
-            },
-            new CacheOptions
+            async cancellationToken => DateTime.UtcNow,
+            new CacheOptions()
             {
                 Expiration = TimeSpanConstants.ONE_MINUTE
             },

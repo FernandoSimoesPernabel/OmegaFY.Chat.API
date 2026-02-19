@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.WebAPI.Filters;
+using OmegaFY.Chat.API.WebAPI.Filters;
 using System.Text.Json.Serialization;
 
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
