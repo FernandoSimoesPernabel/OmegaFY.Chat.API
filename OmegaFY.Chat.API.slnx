@@ -33,7 +33,6 @@
     <File Path=".github/prompts/create-unit-test.prompt.md" />
   </Folder>
   <Folder Name="/Solution Items/Workflows/">
-    <File Path=".github/workflows/deploy-azure-webapp.yml" />
-    <File Path=".github/workflows/unit-tests.yml" />
+    <File Path=".github/workflows/ci.yml" />
   </Folder>
 </Solution>

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OmegaFY.Chat.API.Domain.Constants;
 using OmegaFY.Chat.API.Domain.Entities.Users;
@@ -29,6 +29,6 @@ internal sealed class UserMapping : IEntityTypeConfiguration<User>
 
         builder.Ignore(user => user.Friendships);
 
-        builder.ToTable("Users", "chat");
+        builder.ToTable("Users");
     }
 }

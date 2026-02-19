@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
@@ -18,16 +18,18 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         cancellationToken.ThrowIfCancellationRequested();
 
         const string sql = @"
-            SELECT TOP 1
+            SELECT
                 U.Id, 
                 U.DisplayName, 
                 U.Email
-            
+
             FROM 
-                chat.Users AS U
-            
+                Users AS U
+
             WHERE 
-                U.Id = @UserId;
+                U.Id = @UserId
+
+            LIMIT 1;
 
             SELECT
                 F.Id AS FriendshipId,
@@ -35,10 +37,10 @@ internal sealed class UserQueryProvider : IUserQueryProvider
                 F.InvitedUserId,
                 F.StartedDate,
                 F.Status
-            
+
             FROM 
-                chat.Friendships AS F
-            
+                Friendships AS F
+
             WHERE 
                 (F.RequestingUserId = @UserId OR F.InvitedUserId = @UserId)";
 
@@ -60,18 +62,20 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         cancellationToken.ThrowIfCancellationRequested();
 
         const string sql = @"
-            SELECT TOP 1
+            SELECT
                 Id AS FriendshipId, 
                 RequestingUserId, 
                 InvitedUserId,
                 StartedDate,
                 Status
-            
+
             FROM 
-                chat.Friendships
-            
+                Friendships
+
             WHERE 
-                Id = @FriendshipId AND (RequestingUserId = @UserId OR InvitedUserId = @UserId)";
+                Id = @FriendshipId AND (RequestingUserId = @UserId OR InvitedUserId = @UserId)
+
+            LIMIT 1";
 
         return _dbConnection.QueryFirstOrDefaultAsync<FriendshipModel>(sql, new { FriendshipId = friendshipId, UserId = userId });
     }
@@ -81,20 +85,22 @@ internal sealed class UserQueryProvider : IUserQueryProvider
         cancellationToken.ThrowIfCancellationRequested();
 
         const string sql = @"
-            SELECT TOP 1
+            SELECT
                 U.Id, 
                 U.DisplayName, 
                 U.Email,
                 F.Status AS FriendshipStatus
-            
+
             FROM 
-                chat.Users AS U
+                Users AS U
 
             LEFT JOIN 
-                chat.Friendships AS F ON (F.InvitedUserId = U.Id OR F.RequestingUserId = U.Id) AND (F.InvitedUserId = @UserId OR F.RequestingUserId = @UserId)
-            
+                Friendships AS F ON (F.InvitedUserId = U.Id OR F.RequestingUserId = U.Id) AND (F.InvitedUserId = @UserId OR F.RequestingUserId = @UserId)
+
             WHERE 
-                U.Id = @UserId";
+                U.Id = @UserId
+
+            LIMIT 1";
 
         return _dbConnection.QueryFirstOrDefaultAsync<UserModel>(sql, new { UserId = userId });
     }
@@ -109,15 +115,15 @@ internal sealed class UserQueryProvider : IUserQueryProvider
                 U.DisplayName, 
                 U.Email,
                 F.Status AS FriendshipStatus
-            
+
             FROM 
-                chat.Users AS U
+                Users AS U
 
             LEFT JOIN 
-                chat.Friendships AS F ON (F.InvitedUserId = U.Id OR F.RequestingUserId = U.Id) AND (F.InvitedUserId = @UserId OR F.RequestingUserId = @UserId)
+                Friendships AS F ON (F.InvitedUserId = U.Id OR F.RequestingUserId = U.Id) AND (F.InvitedUserId = @UserId OR F.RequestingUserId = @UserId)
 
             WHERE
-                (@DisplayName IS NULL OR U.DisplayName LIKE '%' + @DisplayName + '%')
+                (@DisplayName IS NULL OR U.DisplayName LIKE '%' || @DisplayName || '%')
                 AND (@FriendshipStatus IS NULL OR F.Status = @FriendshipStatus)
 
             ORDER BY
