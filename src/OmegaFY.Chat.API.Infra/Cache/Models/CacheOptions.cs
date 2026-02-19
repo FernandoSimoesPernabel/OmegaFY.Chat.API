@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Infra.Cache.Models;
+namespace OmegaFY.Chat.API.Infra.Cache.Models;
 
 public sealed class CacheOptions
 {

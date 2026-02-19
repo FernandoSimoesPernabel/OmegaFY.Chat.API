@@ -20,7 +20,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options => options.UseRequestInterceptor("(request) => { request.headers['Idempotency-Key'] = crypto.randomUUID(); return request; }"));
 }
 
 app.UseHttpsRedirection();
@@ -28,6 +28,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseHttpRequestIdempotencyMiddleware();
 
 //app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT, new HealthCheckOptions()
 //{

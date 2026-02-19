@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Infra.Extensions;
 
@@ -12,8 +12,12 @@ internal sealed class HttpContextAccessorUserInformation : IUserInformation
 
     public string Email { get; }
 
+    public string Fingerprint { get; }
+
     public HttpContextAccessorUserInformation(IHttpContextAccessor httpContextAccessor)
     {
+        Fingerprint = httpContextAccessor.HttpContext.GenerateFingerprint();
+
         IsAuthenticated = httpContextAccessor.HttpContext.User.IsAuthenticated();
 
         if (!IsAuthenticated)

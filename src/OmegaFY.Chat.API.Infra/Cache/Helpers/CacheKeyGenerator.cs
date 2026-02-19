@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Infra.Cache.Helpers;
+namespace OmegaFY.Chat.API.Infra.Cache.Helpers;
 
 public static class CacheKeyGenerator
 {
@@ -22,4 +22,6 @@ public static class CacheKeyGenerator
 
     public static string UserConversationMessagesKey(Guid conversationId, Guid userId, int pageNumber, int pageSize)
         => $"chat:conversation:{conversationId}:user:{userId}:messages:page:{pageNumber}:size:{pageSize}";
+
+    public static string IdempotencyKey(string fingerprint, string idempotencyKey) => $"idempotency:{fingerprint}:{idempotencyKey}";
 }

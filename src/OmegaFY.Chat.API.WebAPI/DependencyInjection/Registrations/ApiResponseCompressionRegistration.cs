@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
 
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
