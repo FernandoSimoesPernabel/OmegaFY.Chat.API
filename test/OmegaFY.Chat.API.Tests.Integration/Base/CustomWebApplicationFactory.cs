@@ -37,19 +37,40 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     private async Task ResetDatabaseAsync()
     {
+        Console.WriteLine(">>> Iniciando ResetDatabaseAsync...");
+
         using IServiceScope scope = Services.CreateScope();
-        
-        ApplicationContext context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+        var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
-        string dbPath = Path.Combine(Path.GetTempPath(), "ChatTests.db");
-        string directory = Path.GetDirectoryName(dbPath);
+        // 1. Log da Connection String original
+        var originalConn = config.GetConnectionString("Sqlite");
+        Console.WriteLine($">>> Connection String Original: {originalConn}");
 
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
+        var builder = new SqliteConnectionStringBuilder(originalConn);
+        var fileName = Path.GetFileName(builder.DataSource);
 
+        // 2. Log do diretório temporário e novo caminho
+        var tempPath = Path.GetTempPath();
+        var absoluteDbPath = Path.Combine(tempPath, fileName);
+        Console.WriteLine($">>> Path Temporário do SO: {tempPath}");
+        Console.WriteLine($">>> Caminho Absoluto Final: {absoluteDbPath}");
+
+        // 3. Aplica a nova connection string ao contexto
+        builder.DataSource = absoluteDbPath;
+        context.Database.GetDbConnection().ConnectionString = builder.ConnectionString;
+        Console.WriteLine($">>> Connection String Atualizada: {context.Database.GetDbConnection().ConnectionString}");
+
+        // 4. Operações de Banco
+        Console.WriteLine(">>> Limpando pools de conexão...");
         SqliteConnection.ClearAllPools();
 
+        Console.WriteLine(">>> Executando EnsureDeletedAsync...");
         await context.Database.EnsureDeletedAsync();
+
+        Console.WriteLine(">>> Executando MigrateAsync...");
         await context.Database.MigrateAsync();
+
+        Console.WriteLine(">>> ResetDatabaseAsync concluído com sucesso!")
     }
 }
