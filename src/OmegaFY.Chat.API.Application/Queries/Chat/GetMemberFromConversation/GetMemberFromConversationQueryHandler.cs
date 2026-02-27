@@ -21,7 +21,7 @@ public sealed class GetMemberFromConversationQueryHandler : QueryHandlerBase<Get
         _chatQueryProvider = chatQueryProvider;
     }
 
-    protected override async Task<HandlerResult<GetMemberFromConversationQueryResult>> InternalHandleAsync(GetMemberFromConversationQuery request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<GetMemberFromConversationQueryResult>> InternalHandleAsync(GetMemberFromConversationQuery request, CancellationToken cancellationToken)
     {
         MemberModel member = await _chatQueryProvider.GetMemberByIdAsync(request.MemberId, cancellationToken);
 

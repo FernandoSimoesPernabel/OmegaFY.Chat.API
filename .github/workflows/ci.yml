@@ -26,10 +26,10 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore OmegaFY.Chat.API.sln
+        run: dotnet restore OmegaFY.Chat.API.slnx
 
       - name: Build
-        run: dotnet build OmegaFY.Chat.API.sln --no-restore --configuration Release
+        run: dotnet build OmegaFY.Chat.API.slnx --no-restore --configuration Release
 
       - name: Run unit tests
         run: dotnet test test/OmegaFY.Chat.API.Tests.Unit/OmegaFY.Chat.API.Tests.Unit.csproj --no-restore --no-build --configuration Release --verbosity normal

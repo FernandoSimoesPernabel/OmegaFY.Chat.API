@@ -33,7 +33,7 @@ public sealed class GetMessageFromMemberQueryHandler : QueryHandlerBase<GetMessa
         _hybridCacheProvider = hybridCacheProvider;
     }
 
-    protected override async Task<HandlerResult<GetMessageFromMemberQueryResult>> InternalHandleAsync(GetMessageFromMemberQuery request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<GetMessageFromMemberQueryResult>> InternalHandleAsync(GetMessageFromMemberQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<GetMessageFromMemberQueryResult>();

@@ -16,13 +16,13 @@ internal sealed class HybridCacheProvider : HybridCacheProviderBase
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         HybridCache hybridCache) : base(logger, openTelemetryRegisterProvider) => _hybridCache = hybridCache;
 
-    public override async ValueTask RemoveAsync(string key, CancellationToken cancellationToken) => await _hybridCache.RemoveAsync(key, cancellationToken);
+    public async override ValueTask RemoveAsync(string key, CancellationToken cancellationToken) => await _hybridCache.RemoveAsync(key, cancellationToken);
 
-    public override async ValueTask RemoveByTagAsync(string tag, CancellationToken cancellationToken) => await _hybridCache.RemoveByTagAsync(tag, cancellationToken);
+    public async override ValueTask RemoveByTagAsync(string tag, CancellationToken cancellationToken) => await _hybridCache.RemoveByTagAsync(tag, cancellationToken);
 
-    public override async ValueTask SetAsync<T>(string key, T value, CacheOptions options, CancellationToken cancellationToken) 
+    public async override ValueTask SetAsync<T>(string key, T value, CacheOptions options, CancellationToken cancellationToken) 
         => await _hybridCache.SetAsync(key, value, options?.ToHybridCacheEntryOptions(), options?.Tags, cancellationToken);
 
-    protected override async ValueTask<T> InternalGetOrCreateAsync<T>(string key, Func<CancellationToken, ValueTask<T>> factory, CacheOptions options, CancellationToken cancellationToken) 
+    protected async override ValueTask<T> InternalGetOrCreateAsync<T>(string key, Func<CancellationToken, ValueTask<T>> factory, CacheOptions options, CancellationToken cancellationToken) 
         => await _hybridCache.GetOrCreateAsync(key, factory, options?.ToHybridCacheEntryOptions(), options?.Tags, cancellationToken);
 }

@@ -10,7 +10,7 @@ internal sealed class ExpireConversationCacheFromMemberAddedToGroupEventHandler 
 
     public ExpireConversationCacheFromMemberAddedToGroupEventHandler(IHybridCacheProvider hybridCacheProvider) => _hybridCacheProvider = hybridCacheProvider;
 
-    protected override async Task HandleAsync(MemberAddedToGroupEvent @event, CancellationToken cancellationToken)
+    protected async override Task HandleAsync(MemberAddedToGroupEvent @event, CancellationToken cancellationToken)
     {
         await _hybridCacheProvider.RemoveByTagAsync(CacheTagsGenerator.ChatConversationIdTag(@event.ConversationId), cancellationToken);
         await _hybridCacheProvider.RemoveByTagAsync(CacheTagsGenerator.ChatUserIdTag(@event.UserId), cancellationToken);

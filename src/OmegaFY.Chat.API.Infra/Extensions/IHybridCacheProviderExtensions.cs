@@ -1,4 +1,5 @@
-﻿using OmegaFY.Chat.API.Infra.Authentication.Models;
+﻿using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Cache;
 using OmegaFY.Chat.API.Infra.Cache.Helpers;
 using OmegaFY.Chat.API.Infra.Cache.Models;
@@ -7,7 +8,7 @@ namespace OmegaFY.Chat.API.Infra.Extensions;
 
 public static class IHybridCacheProviderExtensions
 {
-    public static ValueTask SetAuthenticationTokenCacheAsync(
+    public static ValueTask SetAuthenticationTokenAsync(
         this IHybridCacheProvider hybridCacheProvider,
         Guid userId,
         AuthenticationToken authToken,
@@ -22,11 +23,25 @@ public static class IHybridCacheProviderExtensions
            {
                Expiration = cacheTTL,
                LocalCacheExpiration = cacheTTL,
-               Tags = ["auth", "auth:refresh-token", $"auth:user:{userId}", $"user:{userId}"]
+               Tags = [CacheTagsGenerator.AuthTag(), CacheTagsGenerator.AuthRefreshTokenTag(), CacheTagsGenerator.AuthUserIdTag(userId), CacheTagsGenerator.UserIdTag(userId)]
            },
            cancellationToken);
     }
 
-    public static ValueTask RemoveAuthenticationTokenCacheAsync(this IHybridCacheProvider hybridCacheProvider, Guid userId, string refreshToken, CancellationToken cancellationToken)
+    public static ValueTask RemoveAuthenticationTokenAsync(this IHybridCacheProvider hybridCacheProvider, Guid userId, string refreshToken, CancellationToken cancellationToken)
         => hybridCacheProvider.RemoveAsync(CacheKeyGenerator.RefreshTokenKey(userId, refreshToken), cancellationToken);
+
+    public static ValueTask SetUserIsLoggedInAsync(this IHybridCacheProvider hybridCacheProvider, string userId, CancellationToken cancellationToken)
+    {
+        return hybridCacheProvider.SetAsync(
+            CacheKeyGenerator.UserIsLoggedInKey(userId),
+            userId,
+            new CacheOptions()
+            {
+                Expiration = TimeSpanConstants.ONE_HOUR,
+                LocalCacheExpiration = TimeSpanConstants.ONE_HOUR,
+                Tags = [CacheTagsGenerator.AuthTag(), CacheTagsGenerator.AuthLoggedInTag(), CacheTagsGenerator.AuthUserIdTag(userId), CacheTagsGenerator.UserIdTag(userId)]
+            },
+            cancellationToken);
+    }
 }

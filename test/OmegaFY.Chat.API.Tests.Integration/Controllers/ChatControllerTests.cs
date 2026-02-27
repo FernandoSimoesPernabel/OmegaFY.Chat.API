@@ -396,8 +396,7 @@ public class ChatControllerTests : IntegrationTestBase
         HttpResponseMessage sendResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages", messageRequest, creatorToken);
         ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
 
-        // Wait for async event processing to create MemberMessage records
-        await Task.Delay(5000);
+        await WaitQueueToProcessAsync();
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{sendContent.Data.MessageId}", memberToken);
@@ -475,8 +474,7 @@ public class ChatControllerTests : IntegrationTestBase
         HttpResponseMessage sendResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages", messageRequest, creatorToken);
         ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
 
-        // Wait for async event processing to create MemberMessage records
-        await Task.Delay(10000);
+        await WaitQueueToProcessAsync();
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{sendContent.Data.MessageId}/mark-as-read", new { }, memberToken);
@@ -893,8 +891,7 @@ public class ChatControllerTests : IntegrationTestBase
         HttpResponseMessage sendResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages", messageRequest, creatorToken);
         ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
 
-        // Wait for async event processing to create MemberMessage records
-        await Task.Delay(5000);
+        await WaitQueueToProcessAsync();
 
         // Act
         HttpResponseMessage response = await DeleteAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{sendContent.Data.MessageId}", memberToken);

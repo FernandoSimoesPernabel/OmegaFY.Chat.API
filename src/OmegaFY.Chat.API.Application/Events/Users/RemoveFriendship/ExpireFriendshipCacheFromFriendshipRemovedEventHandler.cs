@@ -10,7 +10,7 @@ internal sealed class ExpireFriendshipCacheFromFriendshipRemovedEventHandler : E
 
     public ExpireFriendshipCacheFromFriendshipRemovedEventHandler(IHybridCacheProvider hybridCacheProvider) => _hybridCacheProvider = hybridCacheProvider;
 
-    protected override async Task HandleAsync(FriendshipRemovedEvent @event, CancellationToken cancellationToken)
+    protected async override Task HandleAsync(FriendshipRemovedEvent @event, CancellationToken cancellationToken)
     {
         await _hybridCacheProvider.RemoveByTagAsync(CacheTagsGenerator.FriendshipIdTag(@event.FriendshipId), cancellationToken);
         await _hybridCacheProvider.RemoveByTagAsync(CacheTagsGenerator.UsersUserIdTag(@event.RequestingUserId), cancellationToken);

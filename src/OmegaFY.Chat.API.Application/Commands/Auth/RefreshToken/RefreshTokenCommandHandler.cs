@@ -64,7 +64,7 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
             new RefreshTokenInput(user.Id, user.Email, user.DisplayName),
             cancellationToken);
 
-        await _hybridCacheProvider.SetAuthenticationTokenCacheAsync(user.Id, newAuthToken, cancellationToken);
+        await _hybridCacheProvider.SetAuthenticationTokenAsync(user.Id, newAuthToken, cancellationToken);
 
         await _messageBus.SimplePublishAsync(new UserTokenRefreshedEvent(user.Id, request.RefreshToken, newAuthToken.RefreshToken), cancellationToken);
 

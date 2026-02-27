@@ -48,7 +48,7 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
             await _authenticationService.LoginAsync(new LoginInput(user.Id, user.Email, request.Password, user.DisplayName), cancellationToken);
 
         if (request.RememberMe)
-            await _hybridCacheProvider.SetAuthenticationTokenCacheAsync(user.Id, authToken, cancellationToken);
+            await _hybridCacheProvider.SetAuthenticationTokenAsync(user.Id, authToken, cancellationToken);
 
         await _messageBus.SimplePublishAsync(new UserLoggedInEvent(user.Id), cancellationToken);
 

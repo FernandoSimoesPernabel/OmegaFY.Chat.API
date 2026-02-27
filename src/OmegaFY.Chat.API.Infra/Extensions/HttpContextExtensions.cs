@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using OmegaFY.Chat.API.Common.Helpers;
+using OmegaFY.Chat.API.Infra.Constants;
 
 namespace OmegaFY.Chat.API.Infra.Extensions;
 
@@ -12,6 +13,12 @@ public static class HttpContextExtensions
             return string.Empty;
 
         return result;
+    }
+
+    public static string GetAccessTokenFromQueryString(this HttpContext httpContext)
+    {
+        string accessToken = httpContext.GetRequestHeaderByName(QueryStringConstants.ACCESS_TOKEN);
+        return string.IsNullOrWhiteSpace(accessToken) ? null : accessToken;
     }
 
     public static string GetRemoteIpAddress(this HttpContext httpContext)
@@ -46,4 +53,6 @@ public static class HttpContextExtensions
         string fingerprint = $"{httpContext.GetRemoteIpAddress()}-{httpContext.GetUserAgent()}-{httpContext.GetOriginOrReferer()}";
         return MD5Helper.ComputeStringHashFromString(fingerprint);
     }
+
+    public static bool IsSignalRHubRequest(this HttpContext httpContext) => httpContext.Request.Path.StartsWithSegments(SignalRHubConstants.HUB_PATH);
 }

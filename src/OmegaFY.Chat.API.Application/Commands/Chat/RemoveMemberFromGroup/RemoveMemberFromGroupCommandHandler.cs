@@ -28,7 +28,7 @@ public sealed class RemoveMemberFromGroupCommandHandler : CommandHandlerBase<Rem
         _repository = repository;
     }
 
-    protected override async Task<HandlerResult<RemoveMemberFromGroupCommandResult>> InternalHandleAsync(RemoveMemberFromGroupCommand request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<RemoveMemberFromGroupCommandResult>> InternalHandleAsync(RemoveMemberFromGroupCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<RemoveMemberFromGroupCommandResult>();

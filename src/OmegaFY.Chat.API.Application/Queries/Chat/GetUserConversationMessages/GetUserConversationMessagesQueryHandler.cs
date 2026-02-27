@@ -34,7 +34,7 @@ public sealed class GetUserConversationMessagesQueryHandler : QueryHandlerBase<G
         _hybridCacheProvider = hybridCacheProvider;
     }
 
-    protected override async Task<HandlerResult<GetUserConversationMessagesQueryResult>> InternalHandleAsync(GetUserConversationMessagesQuery request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<GetUserConversationMessagesQueryResult>> InternalHandleAsync(GetUserConversationMessagesQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<GetUserConversationMessagesQueryResult>();

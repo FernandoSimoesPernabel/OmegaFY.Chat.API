@@ -3,6 +3,8 @@ The goal of these instructions is to make an AI coding agent immediately product
 This is a Chat API built with ASP.NET Core, using CQRS-style command/query separation with message bus for decoupled event processing. Core domains: users (with friendships), authentication (JWT), and real-time chat features (conversations, messages, groups). The architecture emphasizes maintainability through clear separation of concerns and standardized handler/validation patterns.
 
 Keep answers concise and code-focused. When changing code, prefer small, well-tested edits that follow existing patterns.
+Always start in plan mode and ask for confirmation before making code changes. When writing code, follow the project's conventions and patterns closely. If you need to add new features, look for similar existing implementations as examples.
+Only make changes when you have above 90% confidence in the correctness and alignment with project patterns. If unsure, ask for clarification or more information before proceeding.
 
 Quick architecture summary
 - Multi-project .NET 7+ solution (C#): main projects under `src/` are:
@@ -47,11 +49,15 @@ Developer workflows (commands)
   - dotnet run --project test/OmegaFY.Chat.API.Tests.Benchmark
 
 Project-specific conventions
+- Never use "var" — always use explicit types for clarity.
 - Never add comments in code — prefer expressive naming and small methods/classes.
+- Prefer not creating variables for single-use values unless it improves readability.
 - Prefer DI registration via the `IDependencyInjectionRegister` pattern in `WebAPI/DependencyInjection/Registrations`. New registrations should be placed there rather than scattering calls across Program.cs.
 - Handlers must validate requests using FluentValidation. Validators are registered by convention (inject `IValidator<TRequest>`). See `HandlerBase` for expected behavior on validation/exception mapping.
 - Use `HandlerResult<TResult>` and `HandlerResult` patterns for handler outputs (found in `Application.Shared`). Do not return raw domain exceptions — let `HandlerBase` map exceptions.
 - Telemetry: always create Activities on long-running operations by using provided `IOpenTelemetryRegisterProvider` or rely on `HandlerBase` which does this automatically for handlers.
+- Always check for constants in `Common.Constants` or `Domain.Constants` before hardcoding values.
+- Always check examples in existing handlers/controllers before implementing new features.
 
 Integration points and external dependencies
 - Database: EF Core with SQL Server (connection string key `AzureSql` in configuration). Context: `Data.EF.Context.ApplicationContext`.

@@ -2,6 +2,7 @@
 using OmegaFY.Chat.API.Application.Commands.Users.RejectFriendshipRequest;
 using OmegaFY.Chat.API.Application.Commands.Users.RemoveFriendship;
 using OmegaFY.Chat.API.Application.Commands.Users.SendFriendshipRequest;
+using OmegaFY.Chat.API.Application.Queries.Users.CheckIfUserIsOnline;
 using OmegaFY.Chat.API.Application.Queries.Users.GetCurrentUserInfo;
 using OmegaFY.Chat.API.Application.Queries.Users.GetFriendshipById;
 using OmegaFY.Chat.API.Application.Queries.Users.GetUserById;
@@ -34,6 +35,12 @@ public sealed class UsersController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserById(GetUserByIdQueryHandler handler, [FromRoute] Guid userId, CancellationToken cancellationToken)
         => Ok(await handler.HandleAsync(new GetUserByIdQuery(userId), cancellationToken));
+
+    [HttpGet("{userId:guid}/check-is-online")]
+    [ProducesResponseType(typeof(ApiResponse<CheckIfUserIsOnlineQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CheckIfUserIsOnline(CheckIfUserIsOnlineQueryHandler handler, [FromRoute] Guid userId, CancellationToken cancellationToken)
+        => Ok(await handler.HandleAsync(new CheckIfUserIsOnlineQuery(userId), cancellationToken));
 
     [HttpGet("me/friendships/{friendshipId:guid}")]
     [ProducesResponseType(typeof(ApiResponse<GetFriendshipByIdQueryResult>), StatusCodes.Status200OK)]

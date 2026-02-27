@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Data.EF.Context;
+using OmegaFY.Chat.API.Infra.Hubs;
+using OmegaFY.Chat.API.Tests.Integration.Mocks;
 using System.Reflection;
 
 namespace OmegaFY.Chat.API.Tests.Integration.Base;
@@ -21,6 +24,12 @@ public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment(Environments.Staging);
+
+        builder.ConfigureServices(services =>
+        {
+            services.RemoveAll<IChatNotificationProvider>();
+            services.AddSingleton<IChatNotificationProvider, MockChatNotificationProvider>();
+        });
     }
 
     protected override IHost CreateHost(IHostBuilder builder)

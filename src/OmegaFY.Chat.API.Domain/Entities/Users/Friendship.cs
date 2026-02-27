@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Domain.Enums;
+using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Domain.Entities.Users;
@@ -23,5 +23,9 @@ public sealed class Friendship : Entity
 
     public void Accept() => Status = FriendshipStatus.Accepted;
 
-    public void Reject() => Status = FriendshipStatus.Rejected; 
+    public void Reject() => Status = FriendshipStatus.Rejected;
+
+    public bool IsAccepted() => Status == FriendshipStatus.Accepted;
+
+    public ReferenceId GetFriendUserId(ReferenceId userId) => RequestingUserId == userId ? InvitedUserId : RequestingUserId;
 }

@@ -12,6 +12,6 @@ internal sealed class ExpireCurrentRefreshTokenEventHandler : EventHandlerHandle
 
     protected async override Task HandleAsync(UserLoggedOffEvent @event, CancellationToken cancellationToken)
     {
-        await _hybridCacheProvider.RemoveAuthenticationTokenCacheAsync(@event.UserId, @event.CurrentRefreshToken, cancellationToken);
+        await _hybridCacheProvider.RemoveAuthenticationTokenAsync(@event.UserId, @event.CurrentRefreshToken, cancellationToken);
     }
 }

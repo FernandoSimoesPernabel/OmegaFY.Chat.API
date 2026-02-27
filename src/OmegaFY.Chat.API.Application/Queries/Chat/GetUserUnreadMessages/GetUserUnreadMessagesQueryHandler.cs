@@ -27,7 +27,7 @@ public sealed class GetUserUnreadMessagesQueryHandler : QueryHandlerBase<GetUser
         _userInformation = userInformation;
     }
 
-    protected override async Task<HandlerResult<GetUserUnreadMessagesQueryResult>> InternalHandleAsync(GetUserUnreadMessagesQuery request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<GetUserUnreadMessagesQueryResult>> InternalHandleAsync(GetUserUnreadMessagesQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<GetUserUnreadMessagesQueryResult>();

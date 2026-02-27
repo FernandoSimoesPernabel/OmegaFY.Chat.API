@@ -22,7 +22,7 @@ public sealed class LogoffCommandHandler : CommandHandlerBase<LogoffCommandHandl
         _userInformation = userInformation;
     }
 
-    protected override async Task<HandlerResult<LogoffCommandResult>> InternalHandleAsync(LogoffCommand request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<LogoffCommandResult>> InternalHandleAsync(LogoffCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<LogoffCommandResult>();

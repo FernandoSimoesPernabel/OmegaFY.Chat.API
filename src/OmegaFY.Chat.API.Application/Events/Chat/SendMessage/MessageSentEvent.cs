@@ -6,11 +6,14 @@ public sealed record class MessageSentEvent : IEvent
 
     public Guid MessageId { get; init; }
 
+    public Guid SenderUserId { get; init; }
+
     public MessageSentEvent() { }
 
-    public MessageSentEvent(Guid conversationId, Guid messageId)
+    public MessageSentEvent(Guid conversationId, Guid messageId, Guid senderUserId)
     {
         ConversationId = conversationId;
         MessageId = messageId;
+        SenderUserId = senderUserId;
     }
 }

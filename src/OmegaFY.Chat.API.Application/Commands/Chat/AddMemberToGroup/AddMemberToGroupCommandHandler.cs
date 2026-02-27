@@ -28,7 +28,7 @@ public sealed class AddMemberToGroupCommandHandler : CommandHandlerBase<AddMembe
         _repository = repository;
     }
 
-    protected override async Task<HandlerResult<AddMemberToGroupCommandResult>> InternalHandleAsync(AddMemberToGroupCommand request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<AddMemberToGroupCommandResult>> InternalHandleAsync(AddMemberToGroupCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
             return HandlerResult.CreateUnauthenticated<AddMemberToGroupCommandResult>();

@@ -1,7 +1,6 @@
-//using HealthChecks.UI.Client;
-//using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-//using OmegaFY.Chat.API.Common.Constants;
+using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Data.EF.Extensions;
+using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.WebAPI.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -30,15 +29,12 @@ app.UseAuthorization();
 
 app.UseHttpRequestIdempotencyMiddleware();
 
-//app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT, new HealthCheckOptions()
-//{
-//    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-//});
-
-//app.UseHealthChecksUI(options => options.UIPath = HealthCheckConstants.UI_ENDPOINT);
+app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT);
 
 app.UseRateLimiter();
 
 app.MapControllers();
+
+app.MapSignalHub();
 
 await app.RunAsync();

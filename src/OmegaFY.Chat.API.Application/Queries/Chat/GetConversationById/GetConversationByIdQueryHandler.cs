@@ -29,7 +29,7 @@ public sealed class GetConversationByIdQueryHandler : QueryHandlerBase<GetConver
         _hybridCacheProvider = hybridCacheProvider;
     }
 
-    protected override async Task<HandlerResult<GetConversationByIdQueryResult>> InternalHandleAsync(GetConversationByIdQuery request, CancellationToken cancellationToken)
+    protected async override Task<HandlerResult<GetConversationByIdQueryResult>> InternalHandleAsync(GetConversationByIdQuery request, CancellationToken cancellationToken)
     {
         (_, ConversationAndMembersModel conversation) = await _hybridCacheProvider.GetOrCreateAsync(
             CacheKeyGenerator.ConversationByIdKey(request.ConversationId),

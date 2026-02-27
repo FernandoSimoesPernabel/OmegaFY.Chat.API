@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OmegaFY.Chat.API.Common.Models;
@@ -20,6 +18,8 @@ using OmegaFY.Chat.API.Infra.Cache;
 using OmegaFY.Chat.API.Infra.Cache.Implementations;
 using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.Extensions;
+using OmegaFY.Chat.API.Infra.Hubs;
+using OmegaFY.Chat.API.Infra.Hubs.Implementations;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Configs;
@@ -136,7 +136,16 @@ public static class DependencyInjectionExtensions
             options.SaveToken = true;
             options.RequireHttpsMetadata = true;
             options.TokenValidationParameters = tokenValidationParameters;
-            options.EventsType = typeof(CustomJwtBearerEvents);
+            options.Events = new CustomJwtBearerEvents()
+            {
+                OnMessageReceived = (context) =>
+                {
+                    if (context.HttpContext.IsSignalRHubRequest())
+                        context.Token = context.HttpContext.GetAccessTokenFromQueryString();
+
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         services.AddAuthorization(auth => auth.AddPolicy(
@@ -223,6 +232,14 @@ public static class DependencyInjectionExtensions
                 await context.HttpContext.Response.WriteAsync("Rate limit exceeded. Please try again later...", cancellationToken);
             };
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddChatNotificationProvider(this IServiceCollection services)
+    {
+        services.AddSignalR();
+        services.AddScoped<IChatNotificationProvider, ChatNotificationSignalRProvider>();
 
         return services;
     }

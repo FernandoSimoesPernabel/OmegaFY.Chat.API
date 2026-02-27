@@ -1,11 +1,16 @@
-﻿using OmegaFY.Chat.API.Application.Events.Base;
+using OmegaFY.Chat.API.Application.Events.Base;
+using OmegaFY.Chat.API.Infra.Hubs;
 
 namespace OmegaFY.Chat.API.Application.Events.Users.SendFriendshipRequest;
 
 internal sealed class FriendshipRequestedEventHandler : EventHandlerHandlerBase<FriendshipRequestedEvent>
 {
-    protected override Task HandleAsync(FriendshipRequestedEvent @event, CancellationToken cancellationToken)
+    private readonly IChatNotificationProvider _chatNotificationProvider;
+
+    public FriendshipRequestedEventHandler(IChatNotificationProvider chatNotificationProvider) => _chatNotificationProvider = chatNotificationProvider;
+
+    protected async override Task HandleAsync(FriendshipRequestedEvent @event, CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        await _chatNotificationProvider.FriendshipRequestReceivedAsync(@event.InvitedUserId, @event.FriendshipId);
     }
 }
