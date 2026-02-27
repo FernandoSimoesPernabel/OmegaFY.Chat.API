@@ -1,11 +1,17 @@
-﻿using OmegaFY.Chat.API.Application.Events.Base;
+using OmegaFY.Chat.API.Application.Events.Base;
+using OmegaFY.Chat.API.Infra.Hubs;
 
 namespace OmegaFY.Chat.API.Application.Events.Users.RemoveFriendship;
 
 internal sealed class CloseConversationEventHandler : EventHandlerHandlerBase<FriendshipRemovedEvent>
 {
-    protected override Task HandleAsync(FriendshipRemovedEvent @event, CancellationToken cancellationToken)
+    private readonly IChatNotificationProvider _chatNotificationProvider;
+
+    public CloseConversationEventHandler(IChatNotificationProvider chatNotificationProvider) => _chatNotificationProvider = chatNotificationProvider;
+
+    protected async override Task HandleAsync(FriendshipRemovedEvent @event, CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        await _chatNotificationProvider.FriendshipRemovedAsync(@event.RequestingUserId, @event.FriendshipId);
+        await _chatNotificationProvider.FriendshipRemovedAsync(@event.InvitedUserId, @event.FriendshipId);
     }
 }

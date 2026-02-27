@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using OmegaFY.Chat.API.Application.Commands.Auth.Login;
 using OmegaFY.Chat.API.Application.Commands.Auth.Logoff;
@@ -124,8 +124,10 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IEventHandler<GroupConfigChangedEvent>, ExpireConversationCacheFromGroupConfigChangedEventHandler>();
 
         services.AddScoped<IEventHandler<MemberAddedToGroupEvent>, ExpireConversationCacheFromMemberAddedToGroupEventHandler>();
+        services.AddScoped<IEventHandler<MemberAddedToGroupEvent>, NotifyMemberAddedToGroupEventHandler>();
 
         services.AddScoped<IEventHandler<MemberRemovedFromGroupEvent>, ExpireConversationCacheFromMemberRemovedFromGroupEventHandler>();
+        services.AddScoped<IEventHandler<MemberRemovedFromGroupEvent>, NotifyMemberRemovedFromGroupEventHandler>();
 
         services.AddScoped<IEventHandler<MessageReadEvent>, ExpireMessageCacheFromMessageReadEventHandler>();
 

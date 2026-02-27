@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
+using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Domain.Entities.Chat;
 
@@ -19,4 +19,6 @@ public sealed class Member : Entity
 
         JoinedDate = DateTime.UtcNow;
     }
+
+    public bool IsUser(ReferenceId userId) => UserId == userId;
 }

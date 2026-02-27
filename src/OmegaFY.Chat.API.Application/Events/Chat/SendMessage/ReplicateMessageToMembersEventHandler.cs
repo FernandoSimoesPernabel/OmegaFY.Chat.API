@@ -1,6 +1,7 @@
-﻿using OmegaFY.Chat.API.Application.Events.Base;
+using OmegaFY.Chat.API.Application.Events.Base;
 using OmegaFY.Chat.API.Domain.Entities.Chat;
 using OmegaFY.Chat.API.Domain.Repositories.Chat;
+using OmegaFY.Chat.API.Infra.Hubs;
 
 namespace OmegaFY.Chat.API.Application.Events.Chat.SendMessage;
 
@@ -12,14 +13,18 @@ internal class ReplicateMessageToMembersEventHandler : EventHandlerHandlerBase<M
 
     private readonly IMemberMessageRepository _memberMessageRepository;
 
+    private readonly IChatNotificationProvider _chatNotificationProvider;
+
     public ReplicateMessageToMembersEventHandler(
-        IConversationRepository conversationRepository, 
-        IMessageRepository messageRepository, 
-        IMemberMessageRepository memberMessageRepository)
+        IConversationRepository conversationRepository,
+        IMessageRepository messageRepository,
+        IMemberMessageRepository memberMessageRepository,
+        IChatNotificationProvider chatNotificationProvider)
     {
         _conversationRepository = conversationRepository;
         _messageRepository = messageRepository;
         _memberMessageRepository = memberMessageRepository;
+        _chatNotificationProvider = chatNotificationProvider;
     }
 
     protected async override Task HandleAsync(MessageSentEvent @event, CancellationToken cancellationToken)
@@ -36,6 +41,6 @@ internal class ReplicateMessageToMembersEventHandler : EventHandlerHandlerBase<M
 
         await _memberMessageRepository.SaveChangesAsync(cancellationToken);
 
-        //TODO SignalR de nova mensagem para os membros da conversa
+        await Task.WhenAll(conversation.Members.Where(member => !member.IsUser(@event.SenderUserId)).Select(member => _chatNotificationProvider.MessageReceivedAsync(member.UserId, @event.ConversationId, @event.MessageId)));
     }
 }
