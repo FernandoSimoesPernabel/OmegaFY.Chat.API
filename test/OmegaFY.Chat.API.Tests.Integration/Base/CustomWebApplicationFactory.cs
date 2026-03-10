@@ -14,12 +14,12 @@ namespace OmegaFY.Chat.API.Tests.Integration.Base;
 
 public sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await ResetDatabaseAsync();
     }
 
-    public new Task DisposeAsync() => Task.CompletedTask;
+    public new ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
