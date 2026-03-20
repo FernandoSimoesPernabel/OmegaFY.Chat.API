@@ -5,6 +5,7 @@ This is a Chat API built with ASP.NET Core, using CQRS-style command/query separ
 Keep answers concise and code-focused. When changing code, prefer small, well-tested edits that follow existing patterns.
 Always start in plan mode and ask for confirmation before making code changes. When writing code, follow the project's conventions and patterns closely. If you need to add new features, look for similar existing implementations as examples.
 Only make changes when you have above 90% confidence in the correctness and alignment with project patterns. If unsure, ask for clarification or more information before proceeding.
+Always check OmegaFY.Chat.API\.github\skills for relevant skills before starting a task. Use the skills to format responses when applicable.
 
 Quick architecture summary
 - Multi-project .NET 7+ solution (C#): main projects under `src/` are:
