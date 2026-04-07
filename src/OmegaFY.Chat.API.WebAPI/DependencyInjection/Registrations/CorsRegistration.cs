@@ -1,3 +1,5 @@
+using OmegaFY.Chat.API.WebAPI.Models.Configs;
+
 namespace OmegaFY.Chat.API.WebAPI.DependencyInjection.Registrations;
 
 public sealed class CorsRegistration : IDependencyInjectionRegister
@@ -6,10 +8,17 @@ public sealed class CorsRegistration : IDependencyInjectionRegister
     {
         builder.Services.AddCors(options =>
         {
+            CorsSettings corsSettings = builder.Configuration.GetSection(nameof(CorsSettings)).Get<CorsSettings>();
+
             options.AddDefaultPolicy(policy =>
             {
-                //TODO fazer isso melhor na branch do CORS, talvez ler as origins de um arquivo de configuração ou algo do tipo
-                policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                policy.WithMethods(corsSettings.AllowedMethods);
+
+                policy.WithHeaders(corsSettings.AllowedHeaders);
+
+                policy.WithOrigins(corsSettings.AllowedOrigins);
+
+                policy.AllowCredentials();
             });
         });
     }
