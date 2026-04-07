@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Infra.RateLimite.Configs;
+namespace OmegaFY.Chat.API.Infra.RateLimite.Configs;
 
 public record class IpOrUserTokenBucketPolicySettings
 {

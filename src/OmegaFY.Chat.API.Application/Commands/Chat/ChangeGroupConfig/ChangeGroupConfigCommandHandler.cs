@@ -46,7 +46,7 @@ public sealed class ChangeGroupConfigCommandHandler : CommandHandlerBase<ChangeG
         await _repository.SaveChangesAsync(cancellationToken);
 
         await _messageBus.SimplePublishAsync(
-            new GroupConfigChangedEvent(conversation.Id, conversation.GroupConfig.GroupName, conversation.GroupConfig.MaxNumberOfMembers, conversation.GetMembersUserIds()), 
+            new GroupConfigChangedEvent(conversation.Id, conversation.GroupConfig.GroupName, conversation.GroupConfig.MaxNumberOfMembers), 
             cancellationToken);
 
         return HandlerResult.Create(new ChangeGroupConfigCommandResult(

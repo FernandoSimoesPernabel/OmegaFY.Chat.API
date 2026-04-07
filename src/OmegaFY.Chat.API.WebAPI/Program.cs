@@ -18,16 +18,16 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
     app.UseSwagger();
-    app.UseSwaggerUI(options => options.UseRequestInterceptor("(request) => { request.headers['Idempotency-Key'] = crypto.randomUUID(); return request; }"));
+    app.UseSwaggerUI();
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseHttpRequestIdempotencyMiddleware();
 
 app.UseHealthChecks(HealthCheckConstants.API_ENDPOINT);
 

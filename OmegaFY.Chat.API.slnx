@@ -32,6 +32,10 @@
     <File Path=".github/prompts/create-query-handler.prompt.md" />
     <File Path=".github/prompts/create-unit-test.prompt.md" />
   </Folder>
+  <Folder Name="/Solution Items/Skills/" />
+  <Folder Name="/Solution Items/Skills/pr-format/">
+    <File Path=".github/skills/pr-format/SKILL.md" />
+  </Folder>
   <Folder Name="/Solution Items/Workflows/">
     <File Path=".github/workflows/ci.yml" />
   </Folder>
