@@ -1,11 +1,16 @@
 namespace OmegaFY.Chat.API.Common.Models;
 
-public sealed record CursorPaginationResultInfo<T> : PaginationResultInfo where T : struct
+public readonly record struct CursorPaginationResultInfo<T> where T : struct
 {
-    public T? NextCursor { get; init; }
+    public T? NextCursor { get; }
 
-    public CursorPaginationResultInfo(int take, T? nextCursor) : base(1, take, 0)
+    public long TotalOfItemsRemaining { get; }
+
+    public bool HasMore => TotalOfItemsRemaining > 0;
+
+    public CursorPaginationResultInfo(T? nextCursor, long totalOfItemsRemaining)
     {
         NextCursor = nextCursor;
+        TotalOfItemsRemaining = totalOfItemsRemaining;
     }
 }

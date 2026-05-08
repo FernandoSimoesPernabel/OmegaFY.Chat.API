@@ -1,14 +1,14 @@
 ﻿namespace OmegaFY.Chat.API.Common.Models;
 
-public record PaginationResultInfo
+public readonly record struct PaginationResultInfo
 {
-    public int CurrentPage { get; init; }
+    public int CurrentPage { get; }
 
-    public int PageSize { get; init; }
+    public int PageSize { get; }
 
-    public int TotalPages { get; init; }
+    public int TotalPages { get; }
 
-    public long TotalOfItems { get; init; }
+    public long TotalOfItems { get; }
 
     public bool HasPrevious => TotalPages > 0 && CurrentPage > 1;
 

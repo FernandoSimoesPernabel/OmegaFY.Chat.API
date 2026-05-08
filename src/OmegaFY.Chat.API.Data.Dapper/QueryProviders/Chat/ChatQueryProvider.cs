@@ -138,7 +138,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		const string baseSqlQuery = @"
+		string baseSqlQuery = @$"
 			FROM
 				Messages AS Message
 
@@ -158,7 +158,9 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				Users AS Sender ON Sender.Id = SenderMember.UserId
 
 			WHERE
-				Message.ConversationId = @ConversationId";
+				Message.ConversationId = @ConversationId {(pagination.Cursor is not null ? "AND Message.SendDate < @Cursor" : string.Empty)}";
+
+		long totalOfItemsRemaining = await _dbConnection.ExecuteScalarAsync<long>($"SELECT COUNT(*) {baseSqlQuery}", new { ConversationId = conversationId, UserId = userId, pagination.Cursor });
 
 		string sql = @$"
 			SELECT
@@ -175,7 +177,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				MemberMessage.Status,
 				Message.Content
 
-			{baseSqlQuery} {(pagination.Cursor is not null ? "AND Message.SendDate > @Cursor" : string.Empty)}
+			{baseSqlQuery}
 
 			ORDER BY
 				Message.SendDate DESC
@@ -188,7 +190,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
 		MessageFromMemberModel[] messagesArray = messages.ToArray();
 
-		return (messagesArray, new CursorPaginationResultInfo<DateTime>(pagination.Take, messagesArray.FirstOrDefault()?.SendDate));
+		return (messagesArray, new CursorPaginationResultInfo<DateTime>(messagesArray.FirstOrDefault()?.SendDate, totalOfItemsRemaining - messagesArray.Length));
 	}
 
 	public async Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken)
