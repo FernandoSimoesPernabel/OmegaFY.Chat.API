@@ -6,12 +6,10 @@ public sealed class GetUserConversationMessagesQueryValidator : AbstractValidato
 {
     public GetUserConversationMessagesQueryValidator()
     {
-        RuleFor(x => x.ConversationId).NotEmpty().WithMessage("O ID da conversa é obrigatório.");
+        RuleFor(x => x.ConversationId).NotEmpty().WithMessage("O ID da conversa Ã© obrigatÃ³rio.");
 
-        RuleFor(x => x.Pagination).NotNull().WithMessage("É obrigatório fornecer as informações de paginação.");
+        RuleFor(x => x.Pagination).NotNull().WithMessage("Ã‰ obrigatÃ³rio fornecer as informaÃ§Ãµes de paginaÃ§Ã£o.");
 
-        RuleFor(x => x.Pagination.PageNumber).GreaterThan(0).WithMessage("O número da página deve ser maior que zero.");
-
-        RuleFor(x => x.Pagination.PageSize).GreaterThan(0).WithMessage("O tamanho da página deve ser maior que zero.");
+        RuleFor(x => x.Pagination.Take).GreaterThan(0).WithMessage("O nÃºmero de itens a retornar deve ser maior que zero.");
     }
 }
