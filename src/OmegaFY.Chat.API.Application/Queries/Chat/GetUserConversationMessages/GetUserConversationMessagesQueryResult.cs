@@ -7,11 +7,11 @@ public sealed record GetUserConversationMessagesQueryResult : IQueryResult
 {
     public MessageFromMemberModel[] Messages { get; init; } = [];
 
-    public PaginationResultInfo PaginationInfo { get; init; }
+    public CursorPaginationResultInfo<DateTime> PaginationInfo { get; init; }
 
     public GetUserConversationMessagesQueryResult() { }
 
-    public GetUserConversationMessagesQueryResult(MessageFromMemberModel[] messages, PaginationResultInfo paginationInfo)
+    public GetUserConversationMessagesQueryResult(MessageFromMemberModel[] messages, CursorPaginationResultInfo<DateTime> paginationInfo)
     {
         Messages = messages ?? [];
         PaginationInfo = paginationInfo;

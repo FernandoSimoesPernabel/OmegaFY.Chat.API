@@ -41,9 +41,9 @@ public sealed class GetUserConversationMessagesQueryHandler : QueryHandlerBase<G
 
         Guid userId = _userInformation.CurrentRequestUserId.Value;
 
-        (_, (MessageFromMemberModel[] messageFromMembers, PaginationResultInfo paginationInfo) result) =
+        (_, (MessageFromMemberModel[] messageFromMembers, CursorPaginationResultInfo<DateTime> paginationInfo) result) =
             await _hybridCacheProvider.GetOrCreateAsync(
-                CacheKeyGenerator.UserConversationMessagesKey(request.ConversationId, userId, request.Pagination.PageNumber, request.Pagination.PageSize),
+                CacheKeyGenerator.UserConversationMessagesKey(request.ConversationId, userId, request.Pagination.Take, request.Pagination.Cursor),
                 async (cancellationToken) => await _chatQueryProvider.GetMessagesFromMemberAsync(request.ConversationId, userId, request.Pagination, cancellationToken),
                 new CacheOptions()
                 {

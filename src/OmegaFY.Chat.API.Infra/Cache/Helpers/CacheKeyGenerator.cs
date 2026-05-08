@@ -20,6 +20,6 @@ public static class CacheKeyGenerator
 
     public static string UserConversationsKey(Guid userId) => $"chat:user:{userId}:conversations";
 
-    public static string UserConversationMessagesKey(Guid conversationId, Guid userId, int pageNumber, int pageSize)
-        => $"chat:conversation:{conversationId}:user:{userId}:messages:page:{pageNumber}:size:{pageSize}";
+    public static string UserConversationMessagesKey(Guid conversationId, Guid userId, int take, DateTime? cursor)
+        => $"chat:conversation:{conversationId}:user:{userId}:messages:take:{take}:{(cursor.HasValue ? $"cursor:{cursor.Value:O}" : "cursor:none")}";
 }

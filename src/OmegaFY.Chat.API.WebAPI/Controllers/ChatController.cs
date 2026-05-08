@@ -40,7 +40,7 @@ public sealed class ChatController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUserConversationMessages(GetUserConversationMessagesQueryHandler handler, [FromRoute] Guid conversationId, [FromQuery] Pagination pagination, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetUserConversationMessages(GetUserConversationMessagesQueryHandler handler, [FromRoute] Guid conversationId, [FromQuery] CursorPagination<DateTime> pagination, CancellationToken cancellationToken)
         => Ok(await handler.HandleAsync(new GetUserConversationMessagesQuery(conversationId, pagination), cancellationToken));
 
     [HttpGet("{conversationId:guid}")]

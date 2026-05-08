@@ -12,7 +12,7 @@ public interface IChatQueryProvider
     
     public Task<MessageFromMemberModel> GetMessageFromMemberAsync(Guid messageId, Guid userId, CancellationToken cancellationToken);
 
-    public Task<(MessageFromMemberModel[], PaginationResultInfo paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, Pagination pagination, CancellationToken cancellationToken);
+    public Task<(MessageFromMemberModel[], CursorPaginationResultInfo<DateTime> paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, CursorPagination<DateTime> pagination, CancellationToken cancellationToken);
    
     public Task<(MessageModel[], PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken);
     

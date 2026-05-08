@@ -6,11 +6,11 @@ public sealed record GetUserConversationMessagesQuery : IQuery
 {
     public Guid ConversationId { get; init; }
 
-    public Pagination Pagination { get; init; }
+    public CursorPagination<DateTime> Pagination { get; init; }
 
     public GetUserConversationMessagesQuery() { }
 
-    public GetUserConversationMessagesQuery(Guid conversationId, Pagination pagination)
+    public GetUserConversationMessagesQuery(Guid conversationId, CursorPagination<DateTime> pagination)
     {
         ConversationId = conversationId;
         Pagination = pagination;
