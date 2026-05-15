@@ -16,6 +16,7 @@ using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Tests.Integration.Base;
 using OmegaFY.Chat.API.Tests.Integration.Constants;
+using OmegaFY.Chat.API.Tests.Integration.Extensions;
 using OmegaFY.Chat.API.WebAPI.Models;
 
 namespace OmegaFY.Chat.API.Tests.Integration.Controllers;
@@ -36,7 +37,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/chat", request, token);
-        ApiResponse<CreateGroupConversationCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> content = await response.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -59,7 +60,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/chat", request, token);
-        ApiResponse<CreateGroupConversationCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> content = await response.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -91,11 +92,11 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Get Conversation Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/{createContent.Data.ConversationId}", token);
-        ApiResponse<GetConversationByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetConversationByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetConversationByIdQueryResult> content = await response.Content.ReadApiResponseAsync<GetConversationByIdQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -117,7 +118,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/{nonExistentConversationId}", token);
-        ApiResponse<GetConversationByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetConversationByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetConversationByIdQueryResult> content = await response.Content.ReadApiResponseAsync<GetConversationByIdQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -149,7 +150,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync("/api/chat/me/conversations", token);
-        ApiResponse<GetUserConversationsQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserConversationsQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUserConversationsQueryResult> content = await response.Content.ReadApiResponseAsync<GetUserConversationsQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -173,7 +174,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync("/api/chat/me/conversations", token);
-        ApiResponse<GetUserConversationsQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserConversationsQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUserConversationsQueryResult> content = await response.Content.ReadApiResponseAsync<GetUserConversationsQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -203,7 +204,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync("/api/chat/me/get-unread-messages", token);
-        ApiResponse<GetUserUnreadMessagesQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserUnreadMessagesQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUserUnreadMessagesQueryResult> content = await response.Content.ReadApiResponseAsync<GetUserUnreadMessagesQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -234,13 +235,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Send Message Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object messageRequest = new { Type = MessageType.Normal, Body = "Hello, World!" };
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages", messageRequest, token);
-        ApiResponse<SendMessageCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendMessageCommandResult> content = await response.Content.ReadApiResponseAsync<SendMessageCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -262,13 +263,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Empty Body Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         object messageRequest = new { Type = MessageType.Normal, Body = "" };
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages", messageRequest, token);
-        ApiResponse<SendMessageCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendMessageCommandResult> content = await response.Content.ReadApiResponseAsync<SendMessageCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -290,7 +291,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{nonExistentConversationId}/messages", messageRequest, token);
-        ApiResponse<SendMessageCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendMessageCommandResult> content = await response.Content.ReadApiResponseAsync<SendMessageCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -323,11 +324,11 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Conv Messages Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/me/{createContent.Data.ConversationId}/messages", token);
-        ApiResponse<GetUserConversationMessagesQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserConversationMessagesQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUserConversationMessagesQueryResult> content = await response.Content.ReadApiResponseAsync<GetUserConversationMessagesQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -349,7 +350,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/me/{nonExistentConversationId}/messages", token);
-        ApiResponse<GetUserConversationMessagesQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserConversationMessagesQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUserConversationMessagesQueryResult> content = await response.Content.ReadApiResponseAsync<GetUserConversationMessagesQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -387,20 +388,20 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Get Message Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, creatorToken);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object addMemberRequest = new { UserId = memberUser.UserId };
         await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, creatorToken);
 
         object messageRequest = new { Type = MessageType.Normal, Body = "Test Message" };
         HttpResponseMessage sendResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages", messageRequest, creatorToken);
-        ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadApiResponseAsync<SendMessageCommandResult>();
 
         await WaitQueueToProcessAsync();
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{sendContent.Data.MessageId}", memberToken);
-        ApiResponse<GetMessageFromMemberQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetMessageFromMemberQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetMessageFromMemberQueryResult> content = await response.Content.ReadApiResponseAsync<GetMessageFromMemberQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -421,13 +422,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Msg Nonexistent Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         Guid nonExistentMessageId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{nonExistentMessageId}", token);
-        ApiResponse<GetMessageFromMemberQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetMessageFromMemberQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetMessageFromMemberQueryResult> content = await response.Content.ReadApiResponseAsync<GetMessageFromMemberQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -465,14 +466,14 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Mark Read Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, creatorToken);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object addMemberRequest = new { UserId = memberUser.UserId };
         await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, creatorToken);
 
         object messageRequest = new { Type = MessageType.Normal, Body = "Message to be read" };
         HttpResponseMessage sendResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages", messageRequest, creatorToken);
-        ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadApiResponseAsync<SendMessageCommandResult>();
 
         await WaitQueueToProcessAsync();
 
@@ -493,13 +494,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Mark Read Nonexistent Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         Guid nonExistentMessageId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{nonExistentMessageId}/mark-as-read", new { }, token);
-        ApiResponse<MarkMessageAsReadCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<MarkMessageAsReadCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<MarkMessageAsReadCommandResult> content = await response.Content.ReadApiResponseAsync<MarkMessageAsReadCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -535,13 +536,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Add Member Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, creatorToken);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object addMemberRequest = new { UserId = memberUser.UserId };
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, creatorToken);
-        ApiResponse<AddMemberToGroupCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<AddMemberToGroupCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<AddMemberToGroupCommandResult> content = await response.Content.ReadApiResponseAsync<AddMemberToGroupCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -563,13 +564,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Add Member Nonexistent Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object addMemberRequest = new { UserId = Guid.NewGuid() };
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, token);
-        ApiResponse<AddMemberToGroupCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<AddMemberToGroupCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<AddMemberToGroupCommandResult> content = await response.Content.ReadApiResponseAsync<AddMemberToGroupCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -588,13 +589,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Add Member Empty Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object addMemberRequest = new { UserId = Guid.Empty };
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, token);
-        ApiResponse<AddMemberToGroupCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<AddMemberToGroupCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<AddMemberToGroupCommandResult> content = await response.Content.ReadApiResponseAsync<AddMemberToGroupCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -619,7 +620,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/chat/{nonExistentConversationId}/members", addMemberRequest, creatorToken);
-        ApiResponse<AddMemberToGroupCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<AddMemberToGroupCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<AddMemberToGroupCommandResult> content = await response.Content.ReadApiResponseAsync<AddMemberToGroupCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -655,15 +656,15 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Get Member Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, creatorToken);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object addMemberRequest = new { UserId = memberUser.UserId };
         HttpResponseMessage addResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, creatorToken);
-        ApiResponse<AddMemberToGroupCommandResult> addContent = await addResponse.Content.ReadFromJsonAsync<ApiResponse<AddMemberToGroupCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<AddMemberToGroupCommandResult> addContent = await addResponse.Content.ReadApiResponseAsync<AddMemberToGroupCommandResult>();
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/{createContent.Data.ConversationId}/members/{addContent.Data.MemberId}", creatorToken);
-        ApiResponse<GetMemberFromConversationQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetMemberFromConversationQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetMemberFromConversationQueryResult> content = await response.Content.ReadApiResponseAsync<GetMemberFromConversationQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -684,13 +685,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Get Member Nonexistent Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         Guid nonExistentMemberId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/chat/{createContent.Data.ConversationId}/members/{nonExistentMemberId}", token);
-        ApiResponse<GetMemberFromConversationQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetMemberFromConversationQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetMemberFromConversationQueryResult> content = await response.Content.ReadApiResponseAsync<GetMemberFromConversationQueryResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -723,13 +724,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Original Group Name", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object changeConfigRequest = new { NewGroupName = "Updated Group Name", NewMaxNumberOfMembers = (byte)20 };
 
         // Act
         HttpResponseMessage response = await PutAsync($"/api/chat/{createContent.Data.ConversationId}/group-config", changeConfigRequest, token);
-        ApiResponse<ChangeGroupConfigCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<ChangeGroupConfigCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<ChangeGroupConfigCommandResult> content = await response.Content.ReadApiResponseAsync<ChangeGroupConfigCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -751,13 +752,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Original Group Name", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object changeConfigRequest = new { NewGroupName = "", NewMaxNumberOfMembers = (byte)20 };
 
         // Act
         HttpResponseMessage response = await PutAsync($"/api/chat/{createContent.Data.ConversationId}/group-config", changeConfigRequest, token);
-        ApiResponse<ChangeGroupConfigCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<ChangeGroupConfigCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<ChangeGroupConfigCommandResult> content = await response.Content.ReadApiResponseAsync<ChangeGroupConfigCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -779,7 +780,7 @@ public class ChatControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PutAsync($"/api/chat/{nonExistentConversationId}/group-config", changeConfigRequest, token);
-        ApiResponse<ChangeGroupConfigCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<ChangeGroupConfigCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<ChangeGroupConfigCommandResult> content = await response.Content.ReadApiResponseAsync<ChangeGroupConfigCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -815,11 +816,11 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Remove Member Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, creatorToken);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object addMemberRequest = new { UserId = memberUser.UserId };
         HttpResponseMessage addResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, creatorToken);
-        ApiResponse<AddMemberToGroupCommandResult> addContent = await addResponse.Content.ReadFromJsonAsync<ApiResponse<AddMemberToGroupCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<AddMemberToGroupCommandResult> addContent = await addResponse.Content.ReadApiResponseAsync<AddMemberToGroupCommandResult>();
 
         // Act
         HttpResponseMessage response = await DeleteAsync($"/api/chat/{createContent.Data.ConversationId}/members/{addContent.Data.MemberId}", creatorToken);
@@ -838,13 +839,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Remove Member Nonexistent Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         Guid nonExistentMemberId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage response = await DeleteAsync($"/api/chat/{createContent.Data.ConversationId}/members/{nonExistentMemberId}", token);
-        ApiResponse<RemoveMemberFromGroupCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RemoveMemberFromGroupCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RemoveMemberFromGroupCommandResult> content = await response.Content.ReadApiResponseAsync<RemoveMemberFromGroupCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -882,14 +883,14 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Delete Message Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, creatorToken);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         object addMemberRequest = new { UserId = memberUser.UserId };
         await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, creatorToken);
 
         object messageRequest = new { Type = MessageType.Normal, Body = "Message to delete" };
         HttpResponseMessage sendResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages", messageRequest, creatorToken);
-        ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadFromJsonAsync<ApiResponse<SendMessageCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendMessageCommandResult> sendContent = await sendResponse.Content.ReadApiResponseAsync<SendMessageCommandResult>();
 
         await WaitQueueToProcessAsync();
 
@@ -910,13 +911,13 @@ public class ChatControllerTests : IntegrationTestBase
 
         object createRequest = new { GroupName = "Delete Msg Nonexistent Test", MaxNumberOfMembers = (byte)10 };
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, token);
-        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<CreateGroupConversationCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
         Guid nonExistentMessageId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage response = await DeleteAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{nonExistentMessageId}", token);
-        ApiResponse<MarkMessageAsDeletedCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<MarkMessageAsDeletedCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<MarkMessageAsDeletedCommandResult> content = await response.Content.ReadApiResponseAsync<MarkMessageAsDeletedCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
