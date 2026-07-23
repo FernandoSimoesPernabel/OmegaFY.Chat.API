@@ -36,7 +36,7 @@ public sealed class GetMessageFromMemberQueryHandler : QueryHandlerBase<GetMessa
     protected async override Task<HandlerResult<GetMessageFromMemberQueryResult>> InternalHandleAsync(GetMessageFromMemberQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<GetMessageFromMemberQueryResult>();
+            return HandlerResult.CreateUnauthorized<GetMessageFromMemberQueryResult>();
 
         Guid userId = _userInformation.CurrentRequestUserId.Value;
 

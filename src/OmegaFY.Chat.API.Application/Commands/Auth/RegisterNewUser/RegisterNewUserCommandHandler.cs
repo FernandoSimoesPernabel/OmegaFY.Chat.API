@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Application.Extensions;
@@ -58,6 +58,6 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
         return HandlerResult.Create(new RegisterNewUserCommandResult(
             newUser.Id,
             new Token(authToken.Token, authToken.TokenExpirationDate),
-            new Token(authToken.RefreshToken, authToken.TokenExpirationDate)));
+            new Token(authToken.RefreshToken, authToken.RefreshTokenExpirationDate)));
     }
 }

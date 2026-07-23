@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.Base;
@@ -36,7 +36,7 @@ public sealed class GetFriendshipByIdQueryHandler : QueryHandlerBase<GetFriendsh
     protected async override Task<HandlerResult<GetFriendshipByIdQueryResult>> InternalHandleAsync(GetFriendshipByIdQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<GetFriendshipByIdQueryResult>();
+            return HandlerResult.CreateUnauthorized<GetFriendshipByIdQueryResult>();
 
         Guid userId = _userInformation.CurrentRequestUserId.Value;
 

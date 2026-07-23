@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.RefreshToken;
 using OmegaFY.Chat.API.Application.Extensions;
@@ -45,19 +45,19 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
     protected async override Task<HandlerResult<RefreshTokenCommandResult>> InternalHandleAsync(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<RefreshTokenCommandResult>();
+            return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
 
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 
         if (user is null)
-            return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
+            return HandlerResult.CreateForbidden<RefreshTokenCommandResult>();
         
         (_, AuthenticationToken? currentToken) = await _hybridCacheProvider.GetOrDefaultAsync<AuthenticationToken?>(
             CacheKeyGenerator.RefreshTokenKey(_userInformation.CurrentRequestUserId.Value, request.RefreshToken), 
             cancellationToken);
 
         if (!currentToken.HasValue || request.CurrentToken != currentToken.Value.Token)
-            return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
+            return HandlerResult.CreateForbidden<RefreshTokenCommandResult>();
 
         AuthenticationToken newAuthToken = await _authenticationService.RefreshTokenAsync(
             currentToken.Value,

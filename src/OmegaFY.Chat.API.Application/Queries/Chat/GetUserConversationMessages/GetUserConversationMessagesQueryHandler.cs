@@ -37,7 +37,7 @@ public sealed class GetUserConversationMessagesQueryHandler : QueryHandlerBase<G
     protected async override Task<HandlerResult<GetUserConversationMessagesQueryResult>> InternalHandleAsync(GetUserConversationMessagesQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<GetUserConversationMessagesQueryResult>();
+            return HandlerResult.CreateUnauthorized<GetUserConversationMessagesQueryResult>();
 
         Guid userId = _userInformation.CurrentRequestUserId.Value;
 

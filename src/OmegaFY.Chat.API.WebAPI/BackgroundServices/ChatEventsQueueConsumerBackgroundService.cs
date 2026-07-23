@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Application.Events;
+using OmegaFY.Chat.API.Application.Events;
 using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.MessageBus;
