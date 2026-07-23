@@ -250,11 +250,12 @@ public class AuthControllerTests : IntegrationTestBase
     {
         // Arrange
         string email = $"refresh-{Guid.NewGuid():N}@omega.com";
-        await RegisterUserAsync(email, "Refresh Test User", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult result = await RegisterUserAsync(email, "Refresh Test User", TestConstants.DEFAULT_PASSWORD);
         (string token, string refreshToken) = await AuthenticateWithRefreshTokenAsync(email, TestConstants.DEFAULT_PASSWORD);
 
         object refreshRequest = new
         {
+            result.UserId,
             CurrentToken = token,
             RefreshToken = refreshToken
         };
@@ -276,32 +277,16 @@ public class AuthControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RefreshToken_WithoutAuthentication_ReturnsUnauthorized()
-    {
-        // Arrange
-        object refreshRequest = new
-        {
-            CurrentToken = "invalid-token",
-            RefreshToken = "invalid-refresh-token"
-        };
-
-        // Act
-        HttpResponseMessage response = await PostAsync("/api/auth/refresh-token", refreshRequest);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task RefreshToken_WithInvalidRefreshToken_ReturnsUnauthorized()
+    public async Task RefreshToken_WithInvalidRefreshToken_ReturnsForbidden()
     {
         // Arrange
         string email = $"invalid-refresh-{Guid.NewGuid():N}@omega.com";
-        await RegisterUserAsync(email, "Invalid Refresh Test User", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult result = await RegisterUserAsync(email, "Invalid Refresh Test User", TestConstants.DEFAULT_PASSWORD);
         (string token, _) = await AuthenticateWithRefreshTokenAsync(email, TestConstants.DEFAULT_PASSWORD);
 
         object refreshRequest = new
         {
+            result.UserId,
             CurrentToken = token,
             RefreshToken = "invalid-refresh-token"
         };
@@ -311,7 +296,7 @@ public class AuthControllerTests : IntegrationTestBase
         ApiResponse<RefreshTokenCommandResult> content = await response.Content.ReadApiResponseAsync<RefreshTokenCommandResult>();
 
         // Assert
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         Assert.NotNull(content);
         Assert.False(content.Succeeded);
         Assert.NotEmpty(content.Errors);

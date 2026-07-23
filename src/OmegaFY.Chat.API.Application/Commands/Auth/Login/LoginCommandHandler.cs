@@ -56,7 +56,7 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
             user.Id,
             user.DisplayName,
             user.Email,
-            new Token(authToken.Token, authToken.TokenExpirationDate),
-            request.RememberMe ? new Token(authToken.RefreshToken, authToken.RefreshTokenExpirationDate) : null));
+            new Token(user.Id, authToken.Token, authToken.TokenExpirationDate),
+            request.RememberMe ? new Token(user.Id, authToken.RefreshToken, authToken.RefreshTokenExpirationDate) : null));
     }
 }

@@ -25,6 +25,7 @@ public sealed class AuthController : ApiControllerBase
     public async Task<IActionResult> Login(LoginCommandHandler handler, [FromBody] LoginRequest request, CancellationToken cancellationToken) 
         => Ok(await handler.HandleAsync(request.ToCommand(), cancellationToken));
 
+    [AllowAnonymous]
     [HttpPost("refresh-token")]
     [ProducesResponseType(typeof(ApiResponse<RefreshTokenCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]

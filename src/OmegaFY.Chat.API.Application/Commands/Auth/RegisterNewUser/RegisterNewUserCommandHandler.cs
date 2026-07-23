@@ -57,7 +57,7 @@ public sealed class RegisterNewUserCommandHandler : CommandHandlerBase<RegisterN
 
         return HandlerResult.Create(new RegisterNewUserCommandResult(
             newUser.Id,
-            new Token(authToken.Token, authToken.TokenExpirationDate),
-            new Token(authToken.RefreshToken, authToken.RefreshTokenExpirationDate)));
+            new Token(newUser.Id, authToken.Token, authToken.TokenExpirationDate),
+            new Token(newUser.Id, authToken.RefreshToken, authToken.RefreshTokenExpirationDate)));
     }
 }

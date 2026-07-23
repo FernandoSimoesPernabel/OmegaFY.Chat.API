@@ -23,8 +23,6 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
 
     private readonly IAuthenticationService _authenticationService;
 
-    private readonly IUserInformation _userInformation;
-
     public RefreshTokenCommandHandler(
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
@@ -33,43 +31,36 @@ public sealed class RefreshTokenCommandHandler : CommandHandlerBase<RefreshToken
         ILogger<RefreshTokenCommandHandler> logger,
         IHybridCacheProvider hybridCacheProvider,
         IUserRepository repository,
-        IAuthenticationService authenticationService,
-        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
+        IAuthenticationService authenticationService) : base(hostEnvironment, openTelemetryRegisterProvider, validator, messageBus, logger)
     {
         _hybridCacheProvider = hybridCacheProvider;
         _repository = repository;
         _authenticationService = authenticationService;
-        _userInformation = userInformation;
     }
 
     protected async override Task<HandlerResult<RefreshTokenCommandResult>> InternalHandleAsync(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
-
-        User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
+        User user = await _repository.GetByIdAsync(request.UserId, cancellationToken);
 
         if (user is null)
-            return HandlerResult.CreateForbidden<RefreshTokenCommandResult>();
-        
+            return HandlerResult.CreateUnauthorized<RefreshTokenCommandResult>();
+
         (_, AuthenticationToken? currentToken) = await _hybridCacheProvider.GetOrDefaultAsync<AuthenticationToken?>(
-            CacheKeyGenerator.RefreshTokenKey(_userInformation.CurrentRequestUserId.Value, request.RefreshToken), 
+            CacheKeyGenerator.RefreshTokenKey(user.Id, request.RefreshToken),
             cancellationToken);
 
         if (!currentToken.HasValue || request.CurrentToken != currentToken.Value.Token)
             return HandlerResult.CreateForbidden<RefreshTokenCommandResult>();
 
-        AuthenticationToken newAuthToken = await _authenticationService.RefreshTokenAsync(
-            currentToken.Value,
-            new RefreshTokenInput(user.Id, user.Email, user.DisplayName),
-            cancellationToken);
+        AuthenticationToken newAuthToken = 
+            await _authenticationService.RefreshTokenAsync(new RefreshTokenInput(user.Id, user.Email, user.DisplayName), cancellationToken);
 
         await _hybridCacheProvider.SetAuthenticationTokenAsync(user.Id, newAuthToken, cancellationToken);
 
         await _messageBus.SimplePublishAsync(new UserTokenRefreshedEvent(user.Id, request.RefreshToken, newAuthToken.RefreshToken), cancellationToken);
 
         return HandlerResult.Create(new RefreshTokenCommandResult(
-            new Token(newAuthToken.Token, newAuthToken.TokenExpirationDate),
-            new Token(newAuthToken.RefreshToken, newAuthToken.RefreshTokenExpirationDate)));
+            new Token(user.Id, newAuthToken.Token, newAuthToken.TokenExpirationDate),
+            new Token(user.Id, newAuthToken.RefreshToken, newAuthToken.RefreshTokenExpirationDate)));
     }
 }
