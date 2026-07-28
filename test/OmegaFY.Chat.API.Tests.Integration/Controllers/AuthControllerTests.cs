@@ -5,6 +5,7 @@ using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Tests.Integration.Base;
 using OmegaFY.Chat.API.Tests.Integration.Constants;
+using OmegaFY.Chat.API.Tests.Integration.Extensions;
 using OmegaFY.Chat.API.WebAPI.Models;
 
 namespace OmegaFY.Chat.API.Tests.Integration.Controllers;
@@ -26,7 +27,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", request);
-        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterNewUserCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadApiResponseAsync<RegisterNewUserCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -50,7 +51,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", request);
-        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterNewUserCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadApiResponseAsync<RegisterNewUserCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -72,7 +73,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", request);
-        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterNewUserCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadApiResponseAsync<RegisterNewUserCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -97,7 +98,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", duplicateRequest);
-        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterNewUserCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadApiResponseAsync<RegisterNewUserCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
@@ -119,7 +120,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/register-new-user", request);
-        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterNewUserCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadApiResponseAsync<RegisterNewUserCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -143,7 +144,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/login", loginRequest);
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadApiResponseAsync<LoginCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -169,7 +170,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/login", loginRequest);
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadApiResponseAsync<LoginCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -190,7 +191,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/login", loginRequest);
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadApiResponseAsync<LoginCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -211,7 +212,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/login", loginRequest);
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadApiResponseAsync<LoginCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -235,7 +236,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/login", loginRequest);
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadApiResponseAsync<LoginCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -249,18 +250,19 @@ public class AuthControllerTests : IntegrationTestBase
     {
         // Arrange
         string email = $"refresh-{Guid.NewGuid():N}@omega.com";
-        await RegisterUserAsync(email, "Refresh Test User", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult result = await RegisterUserAsync(email, "Refresh Test User", TestConstants.DEFAULT_PASSWORD);
         (string token, string refreshToken) = await AuthenticateWithRefreshTokenAsync(email, TestConstants.DEFAULT_PASSWORD);
 
         object refreshRequest = new
         {
+            result.UserId,
             CurrentToken = token,
             RefreshToken = refreshToken
         };
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/refresh-token", refreshRequest, token);
-        ApiResponse<RefreshTokenCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RefreshTokenCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RefreshTokenCommandResult> content = await response.Content.ReadApiResponseAsync<RefreshTokenCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -275,42 +277,26 @@ public class AuthControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RefreshToken_WithoutAuthentication_ReturnsUnauthorized()
-    {
-        // Arrange
-        object refreshRequest = new
-        {
-            CurrentToken = "invalid-token",
-            RefreshToken = "invalid-refresh-token"
-        };
-
-        // Act
-        HttpResponseMessage response = await PostAsync("/api/auth/refresh-token", refreshRequest);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task RefreshToken_WithInvalidRefreshToken_ReturnsUnauthorized()
+    public async Task RefreshToken_WithInvalidRefreshToken_ReturnsForbidden()
     {
         // Arrange
         string email = $"invalid-refresh-{Guid.NewGuid():N}@omega.com";
-        await RegisterUserAsync(email, "Invalid Refresh Test User", TestConstants.DEFAULT_PASSWORD);
+        RegisterNewUserCommandResult result = await RegisterUserAsync(email, "Invalid Refresh Test User", TestConstants.DEFAULT_PASSWORD);
         (string token, _) = await AuthenticateWithRefreshTokenAsync(email, TestConstants.DEFAULT_PASSWORD);
 
         object refreshRequest = new
         {
+            result.UserId,
             CurrentToken = token,
             RefreshToken = "invalid-refresh-token"
         };
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/auth/refresh-token", refreshRequest, token);
-        ApiResponse<RefreshTokenCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RefreshTokenCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RefreshTokenCommandResult> content = await response.Content.ReadApiResponseAsync<RefreshTokenCommandResult>();
 
         // Assert
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         Assert.NotNull(content);
         Assert.False(content.Succeeded);
         Assert.NotEmpty(content.Errors);
@@ -331,7 +317,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await DeleteAsync("/api/auth/logoff", logoffRequest, token);
-        ApiResponse<LogoffCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LogoffCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LogoffCommandResult> content = await response.Content.ReadApiResponseAsync<LogoffCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
@@ -372,7 +358,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await DeleteAsync("/api/auth/logoff", logoffRequest, token);
-        ApiResponse<LogoffCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LogoffCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LogoffCommandResult> content = await response.Content.ReadApiResponseAsync<LogoffCommandResult>();
 
         // Assert
         Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);

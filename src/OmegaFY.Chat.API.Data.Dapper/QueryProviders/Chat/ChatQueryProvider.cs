@@ -2,6 +2,7 @@ using Dapper;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
 using OmegaFY.Chat.API.Common.Models;
+using OmegaFY.Chat.API.Domain.Entities.Chat;
 using OmegaFY.Chat.API.Domain.Enums;
 using System.Data;
 
@@ -134,7 +135,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 		return await _dbConnection.QueryFirstOrDefaultAsync<MessageFromMemberModel>(sql, new { MessageId = messageId, UserId = userId });
 	}
 
-	public async Task<(MessageFromMemberModel[], CursorPaginationResultInfo<DateTime> paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, CursorPagination<DateTime> pagination, CancellationToken cancellationToken)
+	public async Task<(MessageFromMemberModel[] messageFromMembers, CursorPaginationResultInfo<DateTime> paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, CursorPagination<DateTime> pagination, CancellationToken cancellationToken)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -186,7 +187,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
 		IEnumerable<MessageFromMemberModel> messages = await _dbConnection.QueryAsync<MessageFromMemberModel>(
 			sql,
-			new { ConversationId = conversationId, UserId = userId, pagination.Cursor, Take = pagination.Take });
+			new { ConversationId = conversationId, UserId = userId, pagination.Cursor, pagination.Take });
 
 		MessageFromMemberModel[] messagesArray = messages.ToArray();
 
@@ -270,7 +271,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 		return userConversations.ToArray();
 	}
 
-	public async Task<(MessageModel[], PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken)
+	public async Task<(MessageModel[] messageFromMembers, PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -313,4 +314,30 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
 		return (messages.ToArray(), paginationInfo);
 	}
+
+    public async Task<string> GetConversationDisplayNameAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        const string sql = @"
+            SELECT
+                COALESCE(Config.GroupName, OtherUser.DisplayName) AS DisplayName
+
+            FROM 
+                Conversations AS Conversation
+
+			LEFT JOIN
+				GroupConfigs AS Config ON Config.ConversationId = Conversation.Id
+
+			LEFT JOIN
+				Members AS OtherMember ON OtherMember.ConversationId = Conversation.Id AND OtherMember.UserId <> @UserId AND Conversation.Type = 'MemberToMember'
+
+			LEFT JOIN
+				Users AS OtherUser ON OtherUser.Id = OtherMember.UserId
+            
+            WHERE
+                Conversation.Id = @ConversationId";
+
+        return await _dbConnection.QueryFirstOrDefaultAsync<string>(sql, new { ConversationId = conversationId, UserId = userId });
+    }
 }

@@ -37,11 +37,11 @@ public sealed class GetUserConversationMessagesQueryHandler : QueryHandlerBase<G
     protected async override Task<HandlerResult<GetUserConversationMessagesQueryResult>> InternalHandleAsync(GetUserConversationMessagesQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<GetUserConversationMessagesQueryResult>();
+            return HandlerResult.CreateUnauthorized<GetUserConversationMessagesQueryResult>();
 
         Guid userId = _userInformation.CurrentRequestUserId.Value;
 
-        (_, (MessageFromMemberModel[] messageFromMembers, CursorPaginationResultInfo<DateTime> paginationInfo) result) =
+        (_, (MessageFromMemberModel[] messageFromMembers, CursorPaginationResultInfo<DateTime> paginationInfo)) =
             await _hybridCacheProvider.GetOrCreateAsync(
                 CacheKeyGenerator.UserConversationMessagesKey(request.ConversationId, userId, request.Pagination.Take, request.Pagination.Cursor),
                 async (cancellationToken) => await _chatQueryProvider.GetMessagesFromMemberAsync(request.ConversationId, userId, request.Pagination, cancellationToken),
@@ -53,6 +53,8 @@ public sealed class GetUserConversationMessagesQueryHandler : QueryHandlerBase<G
                 },
                 cancellationToken);
 
-        return HandlerResult.Create(new GetUserConversationMessagesQueryResult(result.messageFromMembers, result.paginationInfo));
+        string conversationDisplayName = await _chatQueryProvider.GetConversationDisplayNameAsync(request.ConversationId, userId, cancellationToken);
+
+        return HandlerResult.Create(new GetUserConversationMessagesQueryResult(conversationDisplayName, messageFromMembers, paginationInfo));
     }
 }
