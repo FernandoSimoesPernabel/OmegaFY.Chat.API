@@ -53,8 +53,6 @@ public sealed class GetUserConversationMessagesQueryHandler : QueryHandlerBase<G
                 },
                 cancellationToken);
 
-        string conversationDisplayName = await _chatQueryProvider.GetConversationDisplayNameAsync(request.ConversationId, userId, cancellationToken);
-
-        return HandlerResult.Create(new GetUserConversationMessagesQueryResult(conversationDisplayName, messageFromMembers, paginationInfo));
+        return HandlerResult.Create(new GetUserConversationMessagesQueryResult(messageFromMembers, paginationInfo));
     }
 }

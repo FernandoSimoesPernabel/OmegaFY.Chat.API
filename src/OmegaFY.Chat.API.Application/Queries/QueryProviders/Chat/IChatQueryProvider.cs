@@ -6,7 +6,7 @@ namespace OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
 
 public interface IChatQueryProvider
 {
-    public Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, CancellationToken cancellationToken);
+    public Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken);
     
     public Task<MemberModel> GetMemberByIdAsync(Guid memberId, CancellationToken cancellationToken);
     
@@ -17,6 +17,4 @@ public interface IChatQueryProvider
     public Task<(MessageModel[] messageFromMembers, PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken);
     
     public Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken);
-
-    public Task<string> GetConversationDisplayNameAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken);
 }

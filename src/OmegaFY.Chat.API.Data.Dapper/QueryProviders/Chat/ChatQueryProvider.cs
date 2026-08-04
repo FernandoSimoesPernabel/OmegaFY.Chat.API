@@ -2,7 +2,6 @@ using Dapper;
 using OmegaFY.Chat.API.Application.Models;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Chat;
 using OmegaFY.Chat.API.Common.Models;
-using OmegaFY.Chat.API.Domain.Entities.Chat;
 using OmegaFY.Chat.API.Domain.Enums;
 using System.Data;
 
@@ -14,7 +13,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
 	public ChatQueryProvider(IDbConnection dbConnection) => _dbConnection = dbConnection;
 
-	public async Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, CancellationToken cancellationToken)
+	public async Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -24,6 +23,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				C.Type, 
 				C.Status,
 				C.CreatedDate,
+                COALESCE(GC.GroupName, OtherUser.DisplayName) AS DisplayName,
 				GC.Id AS GroupConfigId,
 				GC.ConversationId,
 				GC.CreatedByUserId,
@@ -34,7 +34,13 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				Conversations AS C
 
 			LEFT JOIN
-				GroupConfigs AS GC ON C.Id = GC.ConversationId 
+				GroupConfigs AS GC ON GC.ConversationId = C.Id
+
+			LEFT JOIN
+				Members AS OtherMember ON OtherMember.ConversationId = C.Id AND OtherMember.UserId <> @UserId AND C.Type = 'MemberToMember'
+
+			LEFT JOIN
+				Users AS OtherUser ON OtherUser.Id = OtherMember.UserId
 
 			WHERE 
 				C.Id = @ConversationId
@@ -45,15 +51,22 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				M.Id AS MemberId,
 				M.ConversationId,
 				M.UserId, 
+                U.DisplayName,
 				M.JoinedDate
 
 			FROM
 				Members AS M
 
-			WHERE
-				M.ConversationId = @ConversationId";
+            INNER JOIN
+                Users AS U ON U.Id = M.UserId
 
-		await using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { ConversationId = conversationId });
+			WHERE
+				M.ConversationId = @ConversationId
+            
+            ORDER BY
+                U.DisplayName";
+
+		await using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { ConversationId = conversationId, UserId = userId });
 
 		ConversationAndMembersModel conversation = gridReader.Read<ConversationAndMembersModel, GroupConfigModel, ConversationAndMembersModel>(
 			(conversation, groupConfig) => conversation with { GroupConfig = groupConfig },
@@ -314,30 +327,4 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
 		return (messages.ToArray(), paginationInfo);
 	}
-
-    public async Task<string> GetConversationDisplayNameAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        const string sql = @"
-            SELECT
-                COALESCE(Config.GroupName, OtherUser.DisplayName) AS DisplayName
-
-            FROM 
-                Conversations AS Conversation
-
-			LEFT JOIN
-				GroupConfigs AS Config ON Config.ConversationId = Conversation.Id
-
-			LEFT JOIN
-				Members AS OtherMember ON OtherMember.ConversationId = Conversation.Id AND OtherMember.UserId <> @UserId AND Conversation.Type = 'MemberToMember'
-
-			LEFT JOIN
-				Users AS OtherUser ON OtherUser.Id = OtherMember.UserId
-            
-            WHERE
-                Conversation.Id = @ConversationId";
-
-        return await _dbConnection.QueryFirstOrDefaultAsync<string>(sql, new { ConversationId = conversationId, UserId = userId });
-    }
 }

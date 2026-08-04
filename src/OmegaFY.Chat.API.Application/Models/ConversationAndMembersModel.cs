@@ -12,6 +12,8 @@ public sealed record class ConversationAndMembersModel
 
     public DateTime CreatedDate { get; init; }
 
+    public string DisplayName { get; set; }
+
     public GroupConfigModel GroupConfig { get; init; }
 
     public MemberModel[] Members { get; init; }
