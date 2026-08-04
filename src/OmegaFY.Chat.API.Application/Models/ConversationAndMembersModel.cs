@@ -12,7 +12,7 @@ public sealed record class ConversationAndMembersModel
 
     public DateTime CreatedDate { get; init; }
 
-    public string DisplayName { get; set; }
+    public string DisplayName { get; init; }
 
     public GroupConfigModel GroupConfig { get; init; }
 

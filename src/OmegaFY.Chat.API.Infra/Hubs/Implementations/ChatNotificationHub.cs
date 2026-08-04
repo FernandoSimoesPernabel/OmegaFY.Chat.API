@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using OmegaFY.Chat.API.Infra.Cache;
+using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.Extensions;
 
 namespace OmegaFY.Chat.API.Infra.Hubs.Implementations;
 
-[Authorize]
+[Authorize(PoliciesNamesConstants.BEARER_JWT_POLICY)]
 internal sealed class ChatNotificationHub : Hub<IChatNotificationHub>
 {
     private readonly IHybridCacheProvider _hybridCacheProvider;
