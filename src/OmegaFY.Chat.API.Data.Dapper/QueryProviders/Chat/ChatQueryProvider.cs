@@ -224,7 +224,8 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				LastMessage.Content,
 				LastMessage.SenderDisplayName,
 				LastMessage.Type AS LastMessageType,
-				LastMessage.Status AS LastMessageStatus
+				LastMessage.Status AS LastMessageStatus,
+                (SELECT COUNT(*) FROM MemberMessages AS Aux WHERE Aux.DestinationMemberId = Member.Id AND Aux.Status = 'Unread') AS UnreadMessagesCount
 
 			FROM 
 				Conversations AS Conversation
