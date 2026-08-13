@@ -204,7 +204,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
 		MessageFromMemberModel[] messagesArray = messages.ToArray();
 
-		return (messagesArray, new CursorPaginationResultInfo<DateTime>(messagesArray.FirstOrDefault()?.SendDate, totalOfItemsRemaining - messagesArray.Length));
+		return (messagesArray, new CursorPaginationResultInfo<DateTime>(messagesArray.LastOrDefault()?.SendDate, totalOfItemsRemaining - messagesArray.Length));
 	}
 
 	public async Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken)
