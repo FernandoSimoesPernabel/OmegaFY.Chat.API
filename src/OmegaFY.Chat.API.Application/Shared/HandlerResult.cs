@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Common.Exceptions;
+using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Common.Exceptions.Base;
 
 namespace OmegaFY.Chat.API.Application.Shared;
@@ -27,7 +27,7 @@ public abstract record class HandlerResult
 
     public static HandlerResult<TResult> CreateUnauthorized<TResult>() => CreateError<TResult>(new UnauthorizedException());
 
-    public static HandlerResult<TResult> CreateUnauthenticated<TResult>() => CreateError<TResult>(new UnauthenticatedException());
+    public static HandlerResult<TResult> CreateForbidden<TResult>() => CreateError<TResult>(new ForbiddenException());
 
     public static HandlerResult<TResult> CreateNotFound<TResult>() => CreateError<TResult>(new NotFoundException());
 

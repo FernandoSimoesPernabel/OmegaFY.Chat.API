@@ -10,6 +10,8 @@ internal sealed class FriendshipMapping : IEntityTypeConfiguration<Friendship>
     {
         builder.HasKey(friendship => friendship.Id);
 
+        builder.HasIndex(friendship => new { friendship.RequestingUserId, friendship.InvitedUserId }).IsUnique();
+
         builder.Property(friendship => friendship.Id).IsRequired().ValueGeneratedNever();
 
         builder.Property(friendship => friendship.RequestingUserId).IsRequired();

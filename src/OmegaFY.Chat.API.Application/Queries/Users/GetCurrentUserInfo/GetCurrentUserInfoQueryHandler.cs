@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Queries.Base;
 using OmegaFY.Chat.API.Application.Queries.QueryProviders.Users;
@@ -35,7 +35,7 @@ public sealed class GetCurrentUserInfoQueryHandler : QueryHandlerBase<GetCurrent
     protected async override Task<HandlerResult<GetCurrentUserInfoQueryResult>> InternalHandleAsync(GetCurrentUserInfoQuery query, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<GetCurrentUserInfoQueryResult>();
+            return HandlerResult.CreateUnauthorized<GetCurrentUserInfoQueryResult>();
 
         Guid userId = _userInformation.CurrentRequestUserId.Value;
 

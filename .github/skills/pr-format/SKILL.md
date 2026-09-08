@@ -1,11 +1,14 @@
 ---
 name: pr-format
-description: Formata texto bruto como Pull Request profissional
+description: Format raw change notes into a professional Pull Request description
 ---
 
-Analise as alterações atuais do repositório (arquivos modificados, diff e contexto) e gere uma Pull Request profissional no formato:
+Analyze the current repository changes (modified files, diff, and context) and generate a professional Pull Request description using this format:
 
-[feat/fix/refactor/chore/nuget - baseado no que foi modificado no arquivo] ([api, application, infra, data, domain, tests, shared] - baseado em quais projetos foi mexido (pode ser mais de um)): [Descrição explicativa do que foi feito no contexto geral]
-Ou seja, feat (application, domain, data) - Adiciona nova funcionalidade de autenticação utilizando JWT, permitindo que os usuários façam login e acessem recursos protegidos.
+[feat/fix/refactor/chore/nuget - based on the type of changes] ([api, application, infra, data, domain, tests, shared] - based on impacted projects, one or more): [Clear high-level summary of what was implemented]
 
-- Lista objetiva de impactos, dependências ou riscos.
+Example:
+feat (application, domain, data): Adds a new JWT-based authentication flow, allowing users to log in and access protected resources.
+
+Then include:
+- An objective list of impacts, dependencies, or risks.
