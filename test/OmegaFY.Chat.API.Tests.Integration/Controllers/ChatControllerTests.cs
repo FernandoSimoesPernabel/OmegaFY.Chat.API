@@ -452,7 +452,7 @@ public class ChatControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task MarkMessageAsRead_WithValidMessageId_ReturnsNoContent()
+    public async Task MarkMessageAsRead_WithValidMessageId_ReturnsOk()
     {
         // Arrange
         string creatorEmail = $"mark-read-creator-{Guid.NewGuid():N}@omega.com";
@@ -478,10 +478,10 @@ public class ChatControllerTests : IntegrationTestBase
         await WaitQueueToProcessAsync();
 
         // Act
-        HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{sendContent.Data.MessageId}/mark-as-read", new { }, memberToken);
+        HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{sendContent.Data.MessageId}/read", new { }, memberToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
@@ -499,7 +499,7 @@ public class ChatControllerTests : IntegrationTestBase
         Guid nonExistentMessageId = Guid.NewGuid();
 
         // Act
-        HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{nonExistentMessageId}/mark-as-read", new { }, token);
+        HttpResponseMessage response = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{nonExistentMessageId}/read", new { }, token);
         ApiResponse<MarkMessageAsReadCommandResult> content = await response.Content.ReadApiResponseAsync<MarkMessageAsReadCommandResult>();
 
         // Assert
@@ -517,7 +517,7 @@ public class ChatControllerTests : IntegrationTestBase
         Guid messageId = Guid.NewGuid();
 
         // Act
-        HttpResponseMessage response = await PostAsync($"/api/chat/{conversationId}/messages/{messageId}/mark-as-read", new { });
+        HttpResponseMessage response = await PostAsync($"/api/chat/{conversationId}/messages/{messageId}/read", new { });
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -804,7 +804,7 @@ public class ChatControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RemoveMemberFromGroup_WithValidMemberId_ReturnsNoContent()
+    public async Task RemoveMemberFromGroup_WithValidMemberId_ReturnsOk()
     {
         // Arrange
         string creatorEmail = $"remove-member-{Guid.NewGuid():N}@omega.com";
@@ -818,7 +818,7 @@ public class ChatControllerTests : IntegrationTestBase
         HttpResponseMessage createResponse = await PostAsync("/api/chat", createRequest, creatorToken);
         ApiResponse<CreateGroupConversationCommandResult> createContent = await createResponse.Content.ReadApiResponseAsync<CreateGroupConversationCommandResult>();
 
-        object addMemberRequest = new { UserId = memberUser.UserId };
+        object addMemberRequest = new { memberUser.UserId };
         HttpResponseMessage addResponse = await PostAsync($"/api/chat/{createContent.Data.ConversationId}/members", addMemberRequest, creatorToken);
         ApiResponse<AddMemberToGroupCommandResult> addContent = await addResponse.Content.ReadApiResponseAsync<AddMemberToGroupCommandResult>();
 
@@ -826,7 +826,7 @@ public class ChatControllerTests : IntegrationTestBase
         HttpResponseMessage response = await DeleteAsync($"/api/chat/{createContent.Data.ConversationId}/members/{addContent.Data.MemberId}", creatorToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
@@ -869,7 +869,7 @@ public class ChatControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task MarkMessageAsDeleted_WithValidMessageId_ReturnsNoContent()
+    public async Task MarkMessageAsDeleted_WithValidMessageId_ReturnsOk()
     {
         // Arrange
         string creatorEmail = $"delete-message-creator-{Guid.NewGuid():N}@omega.com";
@@ -898,7 +898,7 @@ public class ChatControllerTests : IntegrationTestBase
         HttpResponseMessage response = await DeleteAsync($"/api/chat/{createContent.Data.ConversationId}/messages/{sendContent.Data.MessageId}", memberToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]

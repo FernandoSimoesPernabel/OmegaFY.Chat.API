@@ -391,7 +391,7 @@ public class UsersControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task AcceptFriendshipRequest_WithValidFriendshipId_ReturnsNoContent()
+    public async Task AcceptFriendshipRequest_WithValidFriendshipId_ReturnsOk()
     {
         // Arrange
         string requestingEmail = $"accept-req-{Guid.NewGuid():N}@omega.com";
@@ -411,7 +411,7 @@ public class UsersControllerTests : IntegrationTestBase
         HttpResponseMessage response = await PostAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}/accept", new { }, invitedToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
@@ -503,7 +503,7 @@ public class UsersControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RejectFriendshipRequest_WithValidFriendshipId_ReturnsNoContent()
+    public async Task RejectFriendshipRequest_WithValidFriendshipId_ReturnsOk()
     {
         // Arrange
         string requestingEmail = $"reject-req-{Guid.NewGuid():N}@omega.com";
@@ -523,7 +523,7 @@ public class UsersControllerTests : IntegrationTestBase
         HttpResponseMessage response = await PostAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}/reject", new { }, invitedToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
@@ -615,7 +615,7 @@ public class UsersControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RemoveFriendship_WithValidAcceptedFriendship_ReturnsNoContent()
+    public async Task RemoveFriendship_WithValidAcceptedFriendship_ReturnsOk()
     {
         // Arrange
         string requestingEmail = $"remove-req-{Guid.NewGuid():N}@omega.com";
@@ -636,11 +636,11 @@ public class UsersControllerTests : IntegrationTestBase
         HttpResponseMessage response = await DeleteAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}", requesterToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
-    public async Task RemoveFriendship_ByInvitedUser_ReturnsNoContent()
+    public async Task RemoveFriendship_ByInvitedUser_ReturnsOk()
     {
         // Arrange
         string requestingEmail = $"remove-by-inv-req-{Guid.NewGuid():N}@omega.com";
@@ -661,7 +661,7 @@ public class UsersControllerTests : IntegrationTestBase
         HttpResponseMessage response = await DeleteAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}", invitedToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
@@ -685,7 +685,7 @@ public class UsersControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RemoveFriendship_PendingFriendship_ReturnsNoContent()
+    public async Task RemoveFriendship_PendingFriendship_ReturnsOk()
     {
         // Arrange
         string requestingEmail = $"remove-pending-req-{Guid.NewGuid():N}@omega.com";
@@ -703,7 +703,7 @@ public class UsersControllerTests : IntegrationTestBase
         HttpResponseMessage response = await DeleteAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}", requesterToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]

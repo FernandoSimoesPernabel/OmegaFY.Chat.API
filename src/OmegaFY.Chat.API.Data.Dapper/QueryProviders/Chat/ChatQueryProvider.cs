@@ -120,7 +120,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				MemberMessage.DeliveryDate,
 				Message.Type,
 				MemberMessage.Status,
-				Message.Content
+				IIF(MemberMessage.Status = 'Deleted', 'Mensagem deletada', Message.Content) AS Content
 
 			FROM
 				Messages AS Message
@@ -189,7 +189,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				MemberMessage.DeliveryDate,
 				Message.Type,
 				MemberMessage.Status,
-				Message.Content
+				IIF(MemberMessage.Status = 'Deleted', 'Mensagem deletada', Message.Content) AS Content
 
 			{baseSqlQuery}
 
@@ -250,7 +250,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 					Message.SenderMemberId,
 					SenderMember.UserId AS SenderUserId,
 					Message.SendDate,
-					Message.Content,
+					IIF(MemberMessage.Status = 'Deleted', 'Mensagem deletada', Message.Content) AS Content,
 					Message.Type,
 					MemberMessage.Status,
 					MemberMessage.DestinationMemberId,
@@ -311,7 +311,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				Message.SenderMemberId,
 				Message.SendDate,
 				Message.Type,
-				Message.Content
+				IIF(MemberMessage.Status = 'Deleted', 'Mensagem deletada', Message.Content) AS Content
 
 			{baseSqlQuery}
 
