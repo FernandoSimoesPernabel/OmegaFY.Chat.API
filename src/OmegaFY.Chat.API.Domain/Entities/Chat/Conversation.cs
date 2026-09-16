@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Common.Exceptions;
+using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
@@ -46,7 +46,7 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     public void AddMemberToGroup(ReferenceId userIdToAdd)
     {
-        if (Type != ConversationType.GroupChat)
+        if (!IsGroupChat())
             throw new DomainInvalidOperationException("Não é possível adicionar membros em uma conversa que não é em grupo.");
 
         if (IsUserInConversation(userIdToAdd))
@@ -57,10 +57,18 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
 
     public void RemoveMemberFromGroup(ReferenceId memberIdToRemove)
     {
-        if (Type != ConversationType.GroupChat)
+        if (!IsGroupChat())
             throw new DomainInvalidOperationException("Não é possível remover membros em uma conversa que não é em grupo.");
 
-        _members.RemoveAll(member => member.Id == memberIdToRemove);
+        Member memberToRemove = GetMemberByMemberId(memberIdToRemove);
+
+        if (memberToRemove is null)
+            throw new NotFoundException();
+
+        if (memberToRemove.UserId == GroupConfig.CreatedByUserId)
+            throw new DomainInvalidOperationException("Não é permitido remover o criador do grupo da conversa.");
+
+        _members.Remove(memberToRemove);
     }
 
     public void ChangeGroupConfig(string newGroupName, byte newMaxNumberOfMembers)
@@ -75,6 +83,8 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
         GroupConfig.ChangeMaxNumberOfMembers(newMaxNumberOfMembers);
     }
 
+    public bool IsGroupChat() => Type == ConversationType.GroupChat;
+
     public bool IsUserInConversation(ReferenceId userId) => _members.Exists(member => member.UserId == userId);
 
     public Member GetMemberByUserId(ReferenceId userId) => _members.Find(member => member.UserId == userId);
@@ -86,6 +96,6 @@ public sealed class Conversation : Entity, IAggregateRoot<Conversation>
     public static Conversation StartMemberToMemberConversation(ReferenceId memberOneUserId, ReferenceId memberTwoUserId)
         => new Conversation(memberOneUserId, memberTwoUserId);
 
-    public static Conversation CreateGroupChat(ReferenceId createdByUserId, string groupName, byte maxNumberOfMembers) 
+    public static Conversation CreateGroupChat(ReferenceId createdByUserId, string groupName, byte maxNumberOfMembers)
         => new Conversation(createdByUserId, groupName, maxNumberOfMembers);
 }

@@ -830,7 +830,7 @@ public class ChatControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RemoveMemberFromGroup_WithNonExistentMemberId_ReturnsInternalServerError()
+    public async Task RemoveMemberFromGroup_WithNonExistentMemberId_ReturnsNotFound()
     {
         // Arrange
         string email = $"remove-member-nonexistent-{Guid.NewGuid():N}@omega.com";
@@ -848,7 +848,7 @@ public class ChatControllerTests : IntegrationTestBase
         ApiResponse<RemoveMemberFromGroupCommandResult> content = await response.Content.ReadApiResponseAsync<RemoveMemberFromGroupCommandResult>();
 
         // Assert
-        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         Assert.NotNull(content);
         Assert.False(content.Succeeded);
         Assert.NotEmpty(content.Errors);
