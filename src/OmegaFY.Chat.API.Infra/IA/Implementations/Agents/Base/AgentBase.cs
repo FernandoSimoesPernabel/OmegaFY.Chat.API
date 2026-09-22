@@ -1,16 +1,17 @@
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OmegaFY.Chat.API.Common.Helpers;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.IA.Models;
 
-namespace OmegaFY.Chat.API.Infra.IA.Implementations.Base;
+namespace OmegaFY.Chat.API.Infra.IA.Implementations.Agents.Base;
 
 public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> where TRequest : class where TResult : class
 {
     private static readonly AgentOptions DEFAULT_AGENT_OPTIONS = new()
     {
-        Model = AgentModel.Gemini_1_5_Turbo,
+        Model = AgentModel.Gemini_3_5_Flash_Lite,
         Temperature = 0,
         MaxOutputTokens = 1000
     };
@@ -21,11 +22,11 @@ public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> w
 
     protected readonly AgentOptions _agentOptions;
 
-    protected AgentBase(ILogger<AgentBase<TRequest, TResult>> logger, IChatClient chatClient)
+    protected AgentBase(ILogger<AgentBase<TRequest, TResult>> logger, IServiceProvider serviceProvider)
     {
         _logger = logger;
-        _chatClient = chatClient;
         _agentOptions = BuildAgentOptions();
+        _chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(_agentOptions.Model);
     }
 
     protected abstract string BuildSystemPrompt();

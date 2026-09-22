@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.GenAI" Version="1.21.1" />
     <PackageReference Include="Honeycomb.AspNetCore" Version="1.4.0" />
     <PackageReference Include="Honeycomb.OpenTelemetry" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />

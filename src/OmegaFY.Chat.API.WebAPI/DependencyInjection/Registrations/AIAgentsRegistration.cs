@@ -6,7 +6,7 @@ public sealed class AIAgentsRegistration : IDependencyInjectionRegister
 {
     public void Register(WebApplicationBuilder builder)
     {
-        builder.Services.AddGoogleGeminiChatClients(builder.Configuration);
+        builder.Services.AddGoogleChatClients(builder.Configuration);
 
         builder.Services.AddAIAgents();
     }

@@ -8,8 +8,11 @@ public static class AgentModelExtensions
     {
         return model switch
         {
-            AgentModel.Gemini_1_5_Turbo => "gemini-1.5-turbo",
-            _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
+            AgentModel.Gemini_3_5_Flash_Lite => "gemini-3.5-flash-lite",
+            AgentModel.Gemini_3_6_Flash => "gemini-3.6-flash",
+            AgentModel.Gemini_3_7_Flash => "gemini-3.7-flash",
+            AgentModel.Gemini_3_8_Flash => "gemini-3.8-flash",
+            _ => throw new ArgumentOutOfRangeException(nameof(model), model, "Unknown model")
         };
     }
 }
