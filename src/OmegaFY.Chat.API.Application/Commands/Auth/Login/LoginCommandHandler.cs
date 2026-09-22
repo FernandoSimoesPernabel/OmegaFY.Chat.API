@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.Login;
 using OmegaFY.Chat.API.Application.Extensions;
@@ -56,7 +56,7 @@ public sealed class LoginCommandHandler : CommandHandlerBase<LoginCommandHandler
             user.Id,
             user.DisplayName,
             user.Email,
-            new Token(authToken.Token, authToken.TokenExpirationDate),
-            request.RememberMe ? new Token(authToken.RefreshToken, authToken.RefreshTokenExpirationDate) : null));
+            new Token(user.Id, authToken.Token, authToken.TokenExpirationDate),
+            request.RememberMe ? new Token(user.Id, authToken.RefreshToken, authToken.RefreshTokenExpirationDate) : null));
     }
 }

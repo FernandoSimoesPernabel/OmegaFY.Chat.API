@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Common.Constants;
+namespace OmegaFY.Chat.API.Common.Constants;
 
 public static class HealthCheckConstants
 {

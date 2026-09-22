@@ -14,7 +14,7 @@ public static class CacheKeyGenerator
 
     public static string FriendshipByIdKey(Guid userId, Guid friendshipId) => $"users:friendship:{userId}:{friendshipId}";
 
-    public static string ConversationByIdKey(Guid conversationId) => $"chat:conversation:{conversationId}";
+    public static string ConversationByIdKey(Guid conversationId, Guid userId) => $"chat:conversation:{conversationId}:user:{userId}";
 
     public static string MessageFromMemberKey(Guid conversationId, Guid messageId, Guid userId) => $"chat:conversation:{conversationId}:message:{messageId}:user:{userId}";
 

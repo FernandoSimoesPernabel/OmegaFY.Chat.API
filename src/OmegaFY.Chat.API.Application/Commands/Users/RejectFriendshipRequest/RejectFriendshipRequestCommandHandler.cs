@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Users.RejectFriendshipRequest;
 using OmegaFY.Chat.API.Application.Extensions;
@@ -31,7 +31,7 @@ public sealed class RejectFriendshipRequestCommandHandler : CommandHandlerBase<R
     protected async override Task<HandlerResult<RejectFriendshipRequestCommandResult>> InternalHandleAsync(RejectFriendshipRequestCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<RejectFriendshipRequestCommandResult>();
+            return HandlerResult.CreateUnauthorized<RejectFriendshipRequestCommandResult>();
 
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 

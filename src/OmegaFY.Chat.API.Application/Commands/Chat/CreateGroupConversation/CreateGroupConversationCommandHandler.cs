@@ -31,7 +31,7 @@ public sealed class CreateGroupConversationCommandHandler : CommandHandlerBase<C
     protected async override Task<HandlerResult<CreateGroupConversationCommandResult>> InternalHandleAsync(CreateGroupConversationCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<CreateGroupConversationCommandResult>();
+            return HandlerResult.CreateUnauthorized<CreateGroupConversationCommandResult>();
 
         Conversation newGroupConversation = Conversation.CreateGroupChat(_userInformation.CurrentRequestUserId.Value, request.GroupName, request.MaxNumberOfMembers);
 

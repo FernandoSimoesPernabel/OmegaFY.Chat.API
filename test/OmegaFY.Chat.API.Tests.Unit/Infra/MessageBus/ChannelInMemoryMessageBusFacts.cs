@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
+using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using System.Collections.Concurrent;
 
@@ -22,7 +22,7 @@ public class ChannelInMemoryMessageBusFacts
 
         ParallelOptions parallelOptions = new ParallelOptions()
         {
-            CancellationToken = CancellationToken.None,
+            CancellationToken = TestContext.Current.CancellationToken,
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
@@ -46,11 +46,11 @@ public class ChannelInMemoryMessageBusFacts
         ChannelInMemoryMessageBus sut = new ChannelInMemoryMessageBus();
         MessageEnvelope message = new MessageEnvelope { Payload = "Hello World" };
 
-        await sut.PublishAsync(message, CancellationToken.None);
+        await sut.PublishAsync(message, TestContext.Current.CancellationToken);
 
         // Act
         int publishMessageCount = sut.GetMessageCount();
-        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(CancellationToken.None);
+        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(TestContext.Current.CancellationToken);
 
         // Assert
         Assert.NotNull(receivedMessage);
@@ -67,7 +67,7 @@ public class ChannelInMemoryMessageBusFacts
         ChannelInMemoryMessageBus sut = new ChannelInMemoryMessageBus();
 
         // Act
-        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(CancellationToken.None);
+        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Null(receivedMessage);
@@ -83,7 +83,7 @@ public class ChannelInMemoryMessageBusFacts
 
         ParallelOptions parallelOptions = new ParallelOptions
         {
-            CancellationToken = CancellationToken.None,
+            CancellationToken = TestContext.Current.CancellationToken,
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
@@ -91,14 +91,14 @@ public class ChannelInMemoryMessageBusFacts
         // Produtores: Múltiplas "threads" publicam mensagens em paralelo.
         Task producerTask = Parallel.ForEachAsync(Enumerable.Range(0, messagesToProcess), parallelOptions, async (index, _) =>
         {
-            await sut.PublishAsync(new MessageEnvelope { Payload = index }, CancellationToken.None);
+            await sut.PublishAsync(new MessageEnvelope { Payload = index }, TestContext.Current.CancellationToken);
         });
 
         Task consumerTask = Task.Run(async () =>
         {
             while (consumedMessages.Count < messagesToProcess)
             {
-                MessageEnvelope message = await sut.ReadMessageAsync(CancellationToken.None);
+                MessageEnvelope message = await sut.ReadMessageAsync(TestContext.Current.CancellationToken);
 
                 if (message is not null)
                 {
@@ -107,12 +107,12 @@ public class ChannelInMemoryMessageBusFacts
                 }
 
                 // Se a fila está vazia, espera um pouco. Apenas um laço de polling para gerenciar.
-                await Task.Delay(5);
+                await Task.Delay(5, TestContext.Current.CancellationToken);
             }
-        });
+        }, TestContext.Current.CancellationToken);
 
         // Espera no máximo um tempo razoável (ex: 5 segundos) para tudo terminar
-        await Task.WhenAll(producerTask, consumerTask).WaitAsync(TimeSpan.FromSeconds(10));
+        await Task.WhenAll(producerTask, consumerTask).WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(messagesToProcess, consumedMessages.Count);
@@ -130,8 +130,8 @@ public class ChannelInMemoryMessageBusFacts
         };
 
         // Act
-        await sut.PublishAsync(originalMessage, CancellationToken.None);
-        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(CancellationToken.None);
+        await sut.PublishAsync(originalMessage, TestContext.Current.CancellationToken);
+        MessageEnvelope receivedMessage = await sut.ReadMessageAsync(TestContext.Current.CancellationToken);
 
         // Assert
         Assert.NotNull(receivedMessage);

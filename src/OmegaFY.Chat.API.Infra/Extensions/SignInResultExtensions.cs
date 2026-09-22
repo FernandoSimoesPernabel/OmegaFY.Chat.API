@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using OmegaFY.Chat.API.Common.Exceptions;
 
 namespace OmegaFY.Chat.API.Infra.Extensions;
@@ -14,7 +14,7 @@ public static class SignInResultExtensions
             throw new UserLockedOutException();
 
         if (signInResult.IsNotAllowed)
-            throw new UnauthenticatedException();
+            throw new ForbiddenException();
 
         if (signInResult.RequiresTwoFactor)
             throw new RequiresTwoFactorException();

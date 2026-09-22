@@ -10,6 +10,10 @@ internal sealed class MemberMessageMapping : IEntityTypeConfiguration<MemberMess
     {
         builder.HasKey(message => message.Id);
 
+        builder.HasIndex(message => new { message.MessageId, message.SenderMemberId, message.DestinationMemberId }).IsUnique();
+
+        builder.Property(message => message.Id).IsRequired().ValueGeneratedOnAdd();
+
         builder.Property(message => message.MessageId).IsRequired();
 
         builder.Property(message => message.SenderMemberId).IsRequired();

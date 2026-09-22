@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using OmegaFY.Chat.API.Application.Events.Auth.Logoff;
 using OmegaFY.Chat.API.Application.Extensions;
@@ -25,7 +25,7 @@ public sealed class LogoffCommandHandler : CommandHandlerBase<LogoffCommandHandl
     protected async override Task<HandlerResult<LogoffCommandResult>> InternalHandleAsync(LogoffCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<LogoffCommandResult>();
+            return HandlerResult.CreateUnauthorized<LogoffCommandResult>();
 
         Guid userId = _userInformation.CurrentRequestUserId.Value;
 

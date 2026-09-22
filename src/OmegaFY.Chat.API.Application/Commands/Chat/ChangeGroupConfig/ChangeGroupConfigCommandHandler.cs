@@ -31,7 +31,7 @@ public sealed class ChangeGroupConfigCommandHandler : CommandHandlerBase<ChangeG
     protected async override Task<HandlerResult<ChangeGroupConfigCommandResult>> InternalHandleAsync(ChangeGroupConfigCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<ChangeGroupConfigCommandResult>();
+            return HandlerResult.CreateUnauthorized<ChangeGroupConfigCommandResult>();
 
         Conversation conversation = await _repository.GetConversationByIdAsync(request.ConversationId, cancellationToken);
 
@@ -39,7 +39,7 @@ public sealed class ChangeGroupConfigCommandHandler : CommandHandlerBase<ChangeG
             return HandlerResult.CreateNotFound<ChangeGroupConfigCommandResult>();
 
         if (conversation.GroupConfig.CreatedByUserId.Value != _userInformation.CurrentRequestUserId.Value)
-            return HandlerResult.CreateUnauthorized<ChangeGroupConfigCommandResult>();
+            return HandlerResult.CreateForbidden<ChangeGroupConfigCommandResult>();
 
         conversation.ChangeGroupConfig(request.NewGroupName, request.NewMaxNumberOfMembers);
 

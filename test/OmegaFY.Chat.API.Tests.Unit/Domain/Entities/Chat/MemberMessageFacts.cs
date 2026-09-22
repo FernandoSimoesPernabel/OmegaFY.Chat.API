@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Domain.Entities.Chat;
+using OmegaFY.Chat.API.Domain.Entities.Chat;
 using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
@@ -7,7 +7,7 @@ namespace OmegaFY.Chat.API.Tests.Unit.Domain.Entities.Chat;
 public sealed class MemberMessageFacts
 {
     [Fact]
-    public void Constructor_PassingValidParameters_ShouldCreateMemberMessageWithUnreadStatus()
+    public void Constructor_PassingValidParametersAndDifferentMembers_ShouldCreateMemberMessageWithUnreadStatus()
     {
         // Arrange
         ReferenceId messageId = Guid.NewGuid();
@@ -23,6 +23,26 @@ public sealed class MemberMessageFacts
         Assert.Equal(senderMemberId, sut.SenderMemberId);
         Assert.Equal(destinationMemberId, sut.DestinationMemberId);
         Assert.Equal(MemberMessageStatus.Unread, sut.Status);
+        Assert.True((DateTime.UtcNow - sut.DeliveryDate).TotalSeconds < 1);
+    }
+
+    [Fact]
+    public void Constructor_PassingValidParametersAndSameMembers_ShouldCreateMemberMessageWithReadStatus()
+    {
+        // Arrange
+        ReferenceId messageId = Guid.NewGuid();
+        ReferenceId senderMemberId = messageId;
+        ReferenceId destinationMemberId = messageId;
+
+        // Act
+        MemberMessage sut = new MemberMessage(messageId, senderMemberId, destinationMemberId);
+
+        // Assert
+        Assert.NotEqual(Guid.Empty, sut.Id.Value);
+        Assert.Equal(messageId, sut.MessageId);
+        Assert.Equal(senderMemberId, sut.SenderMemberId);
+        Assert.Equal(destinationMemberId, sut.DestinationMemberId);
+        Assert.Equal(MemberMessageStatus.Read, sut.Status);
         Assert.True((DateTime.UtcNow - sut.DeliveryDate).TotalSeconds < 1);
     }
 

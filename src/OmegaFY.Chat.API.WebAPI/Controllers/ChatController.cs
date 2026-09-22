@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Application.Commands.Chat.AddMemberToGroup;
+using OmegaFY.Chat.API.Application.Commands.Chat.AddMemberToGroup;
 using OmegaFY.Chat.API.Application.Commands.Chat.ChangeGroupConfig;
 using OmegaFY.Chat.API.Application.Commands.Chat.CreateGroupConversation;
 using OmegaFY.Chat.API.Application.Commands.Chat.MarkMessageAsDeleted;
@@ -88,15 +88,15 @@ public sealed class ChatController : ApiControllerBase
         return CreatedAtAction(nameof(GetMessageFromMember), new { result.Data?.ConversationId, result.Data?.MessageId }, result);
     }
 
-    [HttpPost("{conversationId:guid}/messages/{messageId:guid}/mark-as-read")]
-    [ProducesResponseType(typeof(ApiResponse<MarkMessageAsReadCommandResult>), StatusCodes.Status204NoContent)]
+    [HttpPost("{conversationId:guid}/messages/{messageId:guid}/read")]
+    [ProducesResponseType(typeof(ApiResponse<MarkMessageAsReadCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> MarkMessageAsRead(MarkMessageAsReadCommandHandler handler, [FromRoute] Guid conversationId, [FromRoute] Guid messageId, CancellationToken cancellationToken)
     {
         HandlerResult<MarkMessageAsReadCommandResult> result = await handler.HandleAsync(new MarkMessageAsReadCommand(conversationId, messageId), cancellationToken);
-        return result.Succeeded() ? NoContent() : BadRequest(result);
+        return result.Succeeded() ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost("{conversationId:guid}/members")]
@@ -121,7 +121,7 @@ public sealed class ChatController : ApiControllerBase
         => Ok(await handler.HandleAsync(request.ToCommand(conversationId), cancellationToken));
 
     [HttpDelete("{conversationId:guid}/members/{memberId:guid}")]
-    [ProducesResponseType(typeof(ApiResponse<RemoveMemberFromGroupCommandResult>), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<RemoveMemberFromGroupCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
@@ -129,11 +129,11 @@ public sealed class ChatController : ApiControllerBase
     public async Task<IActionResult> RemoveMemberFromGroup(RemoveMemberFromGroupCommandHandler handler, [FromRoute] Guid conversationId, [FromRoute] Guid memberId, CancellationToken cancellationToken)
     {
         HandlerResult<RemoveMemberFromGroupCommandResult> result = await handler.HandleAsync(new RemoveMemberFromGroupCommand(conversationId, memberId), cancellationToken);
-        return result.Succeeded() ? NoContent() : BadRequest(result);
+        return result.Succeeded() ? Ok(result) : BadRequest(result);
     }
 
     [HttpDelete("{conversationId:guid}/messages/{messageId:guid}")]
-    [ProducesResponseType(typeof(ApiResponse<MarkMessageAsDeletedCommandResult>), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<MarkMessageAsDeletedCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
@@ -141,6 +141,6 @@ public sealed class ChatController : ApiControllerBase
     public async Task<IActionResult> MarkMessageAsDeleted(MarkMessageAsDeletedCommandHandler handler, [FromRoute] Guid conversationId, [FromRoute] Guid messageId, CancellationToken cancellationToken)
     {
         HandlerResult<MarkMessageAsDeletedCommandResult> result = await handler.HandleAsync(new MarkMessageAsDeletedCommand(conversationId, messageId), cancellationToken);
-        return result.Succeeded() ? NoContent() : BadRequest(result);
+        return result.Succeeded() ? Ok(result) : BadRequest(result);
     }
 }

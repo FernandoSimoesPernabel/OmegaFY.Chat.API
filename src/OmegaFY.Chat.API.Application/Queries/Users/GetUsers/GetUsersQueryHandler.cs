@@ -29,7 +29,7 @@ public sealed class GetUsersQueryHandler : QueryHandlerBase<GetUsersQueryHandler
     protected async override Task<HandlerResult<GetUsersQueryResult>> InternalHandleAsync(GetUsersQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<GetUsersQueryResult>();
+            return HandlerResult.CreateUnauthorized<GetUsersQueryResult>();
 
         UserModel[] users = await _userQueryProvider.GetUsersAsync(_userInformation.CurrentRequestUserId.Value, request.DisplayName, request.Status, cancellationToken);
 

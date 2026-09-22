@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Application.Commands.Users.AcceptFriendshipRequest;
+using OmegaFY.Chat.API.Application.Commands.Users.AcceptFriendshipRequest;
 using OmegaFY.Chat.API.Application.Commands.Users.RejectFriendshipRequest;
 using OmegaFY.Chat.API.Application.Commands.Users.RemoveFriendship;
 using OmegaFY.Chat.API.Application.Commands.Users.SendFriendshipRequest;
@@ -60,31 +60,31 @@ public sealed class UsersController : ApiControllerBase
     }
 
     [HttpPost("me/friendships/{friendshipId:guid}/accept")]
-    [ProducesResponseType(typeof(ApiResponse<AcceptFriendshipRequestCommandResult>), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<AcceptFriendshipRequestCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AcceptFriendshipRequest(AcceptFriendshipRequestCommandHandler handler, [FromRoute] Guid friendshipId, CancellationToken cancellationToken)
     {
         HandlerResult<AcceptFriendshipRequestCommandResult> result = await handler.HandleAsync(new AcceptFriendshipRequestCommand(friendshipId), cancellationToken);
-        return result.Succeeded() ? NoContent() : BadRequest(result);
+        return result.Succeeded() ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost("me/friendships/{friendshipId:guid}/reject")]
-    [ProducesResponseType(typeof(ApiResponse<RejectFriendshipRequestCommandResult>), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<RejectFriendshipRequestCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RejectFriendshipRequest(RejectFriendshipRequestCommandHandler handler, [FromRoute] Guid friendshipId, CancellationToken cancellationToken)
     {
         HandlerResult<RejectFriendshipRequestCommandResult> result = await handler.HandleAsync(new RejectFriendshipRequestCommand(friendshipId), cancellationToken);
-        return result.Succeeded() ? NoContent() : BadRequest(result);
+        return result.Succeeded() ? Ok(result) : BadRequest(result);
     }
 
     [HttpDelete("me/friendships/{friendshipId:guid}")]
-    [ProducesResponseType(typeof(ApiResponse<RemoveFriendshipCommandResult>), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<RemoveFriendshipCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RemoveFriendship(RemoveFriendshipCommandHandler handler, [FromRoute] Guid friendshipId, CancellationToken cancellationToken)
     {
         HandlerResult<RemoveFriendshipCommandResult> result = await handler.HandleAsync(new RemoveFriendshipCommand(friendshipId), cancellationToken);
-        return result.Succeeded() ? NoContent() : BadRequest(result);
+        return result.Succeeded() ? Ok(result) : BadRequest(result);
     }
 }

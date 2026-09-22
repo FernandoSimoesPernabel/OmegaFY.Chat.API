@@ -1,10 +1,10 @@
-﻿namespace OmegaFY.Chat.API.Common.Exceptions.Constants;
+namespace OmegaFY.Chat.API.Common.Exceptions.Constants;
 
 public static class ApplicationErrorCodesConstants
 {
     public const string UNAUTHORIZED = nameof(UNAUTHORIZED);
 
-    public const string UNAUTHENTICATED = nameof(UNAUTHENTICATED);
+    public const string FORBIDDEN = nameof(FORBIDDEN);
 
     public const string DOMAIN_ARGUMENT_INVALID = nameof(DOMAIN_ARGUMENT_INVALID);
 

@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OmegaFY.Chat.API.Application.Events.Users.RemoveFriendship;
@@ -32,7 +32,7 @@ public sealed class RemoveFriendshipCommandHandler : CommandHandlerBase<RemoveFr
     protected async override Task<HandlerResult<RemoveFriendshipCommandResult>> InternalHandleAsync(RemoveFriendshipCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<RemoveFriendshipCommandResult>();
+            return HandlerResult.CreateUnauthorized<RemoveFriendshipCommandResult>();
 
         User user = await _repository.GetByIdAsync(_userInformation.CurrentRequestUserId.Value, cancellationToken);
 
