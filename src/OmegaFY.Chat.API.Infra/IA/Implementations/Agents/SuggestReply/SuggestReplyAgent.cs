@@ -1,13 +1,16 @@
 using Microsoft.Extensions.Logging;
 using OmegaFY.Chat.API.Infra.IA.Implementations.Agents.Base;
 using OmegaFY.Chat.API.Infra.IA.Models;
+using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Infra.IA.Implementations.Agents.SuggestReply;
 
 public sealed class SuggestReplyAgent : AgentBase<SuggestReplyRequest, SuggestReplyResult>
 {
-    public SuggestReplyAgent(ILogger<AgentBase<SuggestReplyRequest, SuggestReplyResult>> logger, IServiceProvider serviceProvider)
-        : base(logger, serviceProvider) { }
+    public SuggestReplyAgent(
+        ILogger<AgentBase<SuggestReplyRequest, SuggestReplyResult>> logger,
+        IServiceProvider serviceProvider,
+        IOpenTelemetryRegisterProvider openTelemetryRegisterProvider) : base(logger, serviceProvider, openTelemetryRegisterProvider) { }
 
     protected override string BuildSystemPrompt()
     {

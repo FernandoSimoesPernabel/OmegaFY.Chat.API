@@ -2,8 +2,11 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OmegaFY.Chat.API.Common.Helpers;
+using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.IA.Models;
+using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
+using System.Diagnostics;
 
 namespace OmegaFY.Chat.API.Infra.IA.Implementations.Agents.Base;
 
@@ -20,12 +23,16 @@ public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> w
 
     protected readonly IChatClient _chatClient;
 
+    protected readonly IOpenTelemetryRegisterProvider _openTelemetryRegisterProvider;
+
     protected readonly AgentOptions _agentOptions;
 
-    protected AgentBase(ILogger<AgentBase<TRequest, TResult>> logger, IServiceProvider serviceProvider)
+    protected AgentBase(ILogger<AgentBase<TRequest, TResult>> logger, IServiceProvider serviceProvider, IOpenTelemetryRegisterProvider openTelemetryRegisterProvider)
     {
         _logger = logger;
+        _openTelemetryRegisterProvider = openTelemetryRegisterProvider;
         _agentOptions = BuildAgentOptions();
+        
         _chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(_agentOptions.Model);
     }
 
@@ -43,22 +50,41 @@ public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> w
     {
         ValidateRequest(request);
 
-        TResult result = await GetChatResponseAync(request, cancellationToken);
+        TResult result = await GetChatResponseAsync(request, cancellationToken);
 
         ValidateResult(result);
 
         return result;
     }
 
-    private async Task<TResult> GetChatResponseAync(TRequest request, CancellationToken cancellationToken)
+    private async Task<TResult> GetChatResponseAsync(TRequest request, CancellationToken cancellationToken)
     {
-        ChatMessage[] messages = [new ChatMessage(ChatRole.System, BuildSystemPrompt()), new ChatMessage(ChatRole.User, BuildUserPrompt(request))];
+        using Activity activity = _openTelemetryRegisterProvider.StartActivity(OpenTelemetryConstants.ACTIVITY_AI_CHAT_COMPLETION_NAME);
 
-        ChatResponse response = await _chatClient.GetResponseAsync(messages, _agentOptions.ToChatOptions(), cancellationToken);
+        try
+        {
+            activity.SetAiAgentName(GetType().Name);
+            activity.SetAiRequest(_agentOptions);
 
-        LogChatResponse(response);
+            ChatMessage[] messages = [new ChatMessage(ChatRole.System, BuildSystemPrompt()), new ChatMessage(ChatRole.User, BuildUserPrompt(request))];
 
-        return JsonSerializerHelper.Deserialize<TResult>(response.Text);
+            ChatResponse response = await _chatClient.GetResponseAsync(messages, _agentOptions.ToChatOptions(), cancellationToken);
+
+            activity.SetAiResponse(response);
+            activity.SetOkStatus();
+
+            LogChatResponse(response);
+
+            return string.IsNullOrWhiteSpace(response.Text) ? default : JsonSerializerHelper.Deserialize<TResult>(response.Text);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while executing chat response for request: {Request}", request);
+            
+            activity.SetErrorStatus(ex);
+
+            throw;
+        }
     }
 
     private void LogChatResponse(ChatResponse response)

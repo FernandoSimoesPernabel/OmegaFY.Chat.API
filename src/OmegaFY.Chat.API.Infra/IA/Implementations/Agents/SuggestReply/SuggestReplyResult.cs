@@ -1,5 +1,5 @@
-﻿namespace OmegaFY.Chat.API.Infra.IA.Implementations.Agents.SuggestReply;
+namespace OmegaFY.Chat.API.Infra.IA.Implementations.Agents.SuggestReply;
 
-public sealed class SuggestReplyResult
+public sealed record class SuggestReplyResult
 {
 }

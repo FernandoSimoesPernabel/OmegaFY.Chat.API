@@ -1,4 +1,6 @@
-﻿using OmegaFY.Chat.API.Infra.Constants;
+using Microsoft.Extensions.AI;
+using OmegaFY.Chat.API.Infra.Constants;
+using OmegaFY.Chat.API.Infra.IA.Models;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;
 using System.Diagnostics;
 
@@ -22,6 +24,34 @@ public static class ActivityExtensions
     public static Activity SetCacheHit(this Activity activity, bool cacheHit) => activity.SetTag(OpenTelemetryConstants.CACHE_HIT, cacheHit);
 
     public static Activity SetCacheTags(this Activity activity, string[] tags) => activity.SetTag(OpenTelemetryConstants.CACHE_TAGS, string.Join(';', tags ?? []));
+
+    public static Activity SetAiRequest(this Activity activity, AgentOptions options)
+    {
+        activity.SetTag(OpenTelemetryConstants.AI_REQUEST_MODEL_KEY, options.ModelId);
+        activity.SetTag(OpenTelemetryConstants.AI_REQUEST_TEMPERATURE_KEY, options.Temperature);
+        activity.SetTag(OpenTelemetryConstants.AI_REQUEST_MAX_OUTPUT_TOKENS_KEY, options.MaxOutputTokens);
+
+        return activity;
+    }
+
+    public static Activity SetAiAgentName(this Activity activity, string agentName)
+        => activity.SetTag(OpenTelemetryConstants.AI_AGENT_NAME_KEY, agentName);
+
+    public static Activity SetAiResponse(this Activity activity, ChatResponse response)
+    {
+        activity.SetTag(OpenTelemetryConstants.AI_RESPONSE_ID_KEY, response.ResponseId);
+        activity.SetTag(OpenTelemetryConstants.AI_RESPONSE_MODEL_KEY, response.ModelId);
+        activity.SetTag(OpenTelemetryConstants.AI_RESPONSE_FINISH_REASON_KEY, response.FinishReason);
+
+        if (response.Usage is not null)
+        {
+            activity.SetTag(OpenTelemetryConstants.AI_USAGE_INPUT_TOKENS_KEY, response.Usage.InputTokenCount);
+            activity.SetTag(OpenTelemetryConstants.AI_USAGE_OUTPUT_TOKENS_KEY, response.Usage.OutputTokenCount);
+            activity.SetTag(OpenTelemetryConstants.AI_USAGE_TOTAL_TOKENS_KEY, response.Usage.TotalTokenCount);
+        }
+
+        return activity;
+    }
 
     public static Activity SetOkStatus(this Activity activity) => activity.SetStatus(ActivityStatusCode.Ok);
 
