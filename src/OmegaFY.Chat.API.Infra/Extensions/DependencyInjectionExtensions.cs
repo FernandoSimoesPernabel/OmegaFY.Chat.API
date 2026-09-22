@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +20,7 @@ using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.Hubs;
 using OmegaFY.Chat.API.Infra.Hubs.Implementations;
+using OmegaFY.Chat.API.Infra.IA.Implementations;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Configs;
@@ -240,6 +241,54 @@ public static class DependencyInjectionExtensions
     {
         services.AddSignalR();
         services.AddScoped<IChatNotificationProvider, ChatNotificationSignalRProvider>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddGoogleGeminiChatClients(this IServiceCollection services, IConfiguration configuration)
+    {
+        return services;
+    }
+
+    public static IServiceCollection AddAIAgents(this IServiceCollection services)
+    {
+        /*
+             public static IServiceCollection AddGoogleGeminiChatClients(this IServiceCollection services, IConfiguration configuration)
+    {
+        string apiKey = configuration["Google:Gemini:ApiKey"]
+            ?? throw new InvalidOperationException("Google:Gemini:ApiKey is not configured");
+
+        foreach (AgentModel model in Enum.GetValues<AgentModel>())
+        {
+            string modelId = model.ToModelId();
+            GoogleGenerativeAIChatClient chatClient = new(model: modelId, apiKey: apiKey);
+            services.AddKeyedSingleton<IChatClient>(model, chatClient.AsIChatClient());
+        }
+
+        return services;
+
+            protected AgentBase(
+        ILogger<AgentBase<TRequest, TResult>> logger,
+        [FromKeyedServices(AgentModel.Gemini_1_5_Turbo)] IChatClient chatClient)
+    {
+        _logger = logger;
+        _chatClient = chatClient;
+        _agentOptions = BuildAgentOptions();
+    }
+    }
+
+            public SuggestReplyAgent(
+        ILogger<AgentBase<object, object>> logger,
+        [FromKeyedServices(AgentModel.Gemini_2_0_Flash)] IChatClient chatClient)
+        : base(logger, chatClient) { }
+
+        ou isso aqui que parece bem melhor
+        _chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(_agentOptions.Model);
+         */
+
+        //services.AddChatClient(new OpenAI.Chat.ChatClient(model: "YOUR_MODEL", apiKey: configuration["OpenAI:ApiKey"]).AsIChatClient());
+
+        services.AddScoped<SuggestReplyAgent>();
 
         return services;
     }
