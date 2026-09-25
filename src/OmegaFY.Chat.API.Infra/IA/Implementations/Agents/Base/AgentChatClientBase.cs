@@ -28,8 +28,8 @@ public abstract class AgentChatClientBase<TRequest, TResult> : IAgent<TRequest, 
     protected readonly AgentOptions _agentOptions;
 
     protected AgentChatClientBase(
-        ILogger<AgentChatClientBase<TRequest, TResult>> logger, 
-        IServiceProvider serviceProvider, 
+        ILogger<AgentChatClientBase<TRequest, TResult>> logger,
+        IServiceProvider serviceProvider,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider)
     {
         _logger = logger;
@@ -52,7 +52,7 @@ public abstract class AgentChatClientBase<TRequest, TResult> : IAgent<TRequest, 
     public async Task<TResult> ExecuteAsync(TRequest request, CancellationToken cancellationToken)
     {
         ValidateRequest(request);
-        
+
         TResult result = await GetChatResponseAsync(request, cancellationToken);
 
         ValidateResult(result);
@@ -71,14 +71,14 @@ public abstract class AgentChatClientBase<TRequest, TResult> : IAgent<TRequest, 
 
             ChatMessage[] messages = [new ChatMessage(ChatRole.System, BuildSystemPrompt()), new ChatMessage(ChatRole.User, BuildUserPrompt(request))];
 
-            ChatResponse response = await _chatClient.GetResponseAsync<TResult>(messages, _agentOptions.ToChatOptions(), cancellationToken: cancellationToken);
+            ChatResponse<TResult> response = await _chatClient.GetResponseAsync<TResult>(messages, _agentOptions.ToChatOptions(), cancellationToken: cancellationToken);
 
             activity.SetAiResponse(response);
             activity.SetOkStatus();
 
             LogChatResponse(response);
 
-            return string.IsNullOrWhiteSpace(response.Text) ? default : JsonSerializerHelper.Deserialize<TResult>(response.Text);
+            return response.Result;
         }
         catch (Exception ex)
         {
@@ -90,7 +90,7 @@ public abstract class AgentChatClientBase<TRequest, TResult> : IAgent<TRequest, 
         }
     }
 
-    private void LogChatResponse(ChatResponse response)
+    private void LogChatResponse(ChatResponse<TResult> response)
     {
         _logger.LogInformation(
             "Chat response received: CreatedAt={CreatedAt} ResponseId={ResponseId}, ConversationId={ConversationId}, ModelId={ModelId}, MessagesCount={MessagesCount}, FinishReason={FinishReason}",
@@ -115,5 +115,7 @@ public abstract class AgentChatClientBase<TRequest, TResult> : IAgent<TRequest, 
 
         if (response.RawRepresentation is not null)
             _logger.LogInformation("Chat response raw representation type: {RawRepresentationType}", response.RawRepresentation.GetType().Name);
+
+        _logger.LogInformation("Chat response text: {Text}", response.Text);
     }
 }
