@@ -1,0 +1,44 @@
+using Microsoft.Extensions.Logging;
+using OmegaFY.Chat.API.Infra.IA.Implementations.Agents.Base;
+using OmegaFY.Chat.API.Infra.IA.Models;
+using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
+
+namespace OmegaFY.Chat.API.Infra.IA.Implementations.Agents.SuggestReply;
+
+public sealed class SuggestReplyAgent : AgentChatClientBase<SuggestReplyRequest, SuggestReplyResult>
+{
+    public SuggestReplyAgent(
+        ILogger<AgentChatClientBase<SuggestReplyRequest, SuggestReplyResult>> logger,
+        IServiceProvider serviceProvider,
+        IOpenTelemetryRegisterProvider openTelemetryRegisterProvider) : base(logger, serviceProvider, openTelemetryRegisterProvider) { }
+
+    protected override string BuildSystemPrompt()
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override string BuildUserPrompt(SuggestReplyRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void ValidateRequest(SuggestReplyRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void ValidateResult(SuggestReplyResult result)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override AgentOptions BuildAgentOptions()
+    {
+        return base.BuildAgentOptions() with
+        {
+            Model = AgentModel.Gemini_3_6_Flash,
+            Temperature = 0.7f,
+            MaxOutputTokens = 200
+        };
+    }
+}
