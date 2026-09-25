@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace OmegaFY.Chat.API.Infra.IA.Implementations.Agents.Base;
 
-public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> where TRequest : class where TResult : class
+public abstract class AgentChatClientBase<TRequest, TResult> : IAgent<TRequest, TResult> where TRequest : class where TResult : class
 {
     private static readonly AgentOptions DEFAULT_AGENT_OPTIONS = new()
     {
@@ -19,7 +19,7 @@ public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> w
         MaxOutputTokens = 1000
     };
 
-    protected readonly ILogger<AgentBase<TRequest, TResult>> _logger;
+    protected readonly ILogger<AgentChatClientBase<TRequest, TResult>> _logger;
 
     protected readonly IChatClient _chatClient;
 
@@ -27,13 +27,16 @@ public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> w
 
     protected readonly AgentOptions _agentOptions;
 
-    protected AgentBase(ILogger<AgentBase<TRequest, TResult>> logger, IServiceProvider serviceProvider, IOpenTelemetryRegisterProvider openTelemetryRegisterProvider)
+    protected AgentChatClientBase(
+        ILogger<AgentChatClientBase<TRequest, TResult>> logger, 
+        IServiceProvider serviceProvider, 
+        IOpenTelemetryRegisterProvider openTelemetryRegisterProvider)
     {
         _logger = logger;
         _openTelemetryRegisterProvider = openTelemetryRegisterProvider;
         _agentOptions = BuildAgentOptions();
-        
-        _chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(_agentOptions.Model);
+
+        _chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(_agentOptions.Provider);
     }
 
     protected abstract string BuildSystemPrompt();
@@ -49,7 +52,7 @@ public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> w
     public async Task<TResult> ExecuteAsync(TRequest request, CancellationToken cancellationToken)
     {
         ValidateRequest(request);
-
+        
         TResult result = await GetChatResponseAsync(request, cancellationToken);
 
         ValidateResult(result);
@@ -68,7 +71,7 @@ public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> w
 
             ChatMessage[] messages = [new ChatMessage(ChatRole.System, BuildSystemPrompt()), new ChatMessage(ChatRole.User, BuildUserPrompt(request))];
 
-            ChatResponse response = await _chatClient.GetResponseAsync(messages, _agentOptions.ToChatOptions(), cancellationToken);
+            ChatResponse response = await _chatClient.GetResponseAsync<TResult>(messages, _agentOptions.ToChatOptions(), cancellationToken: cancellationToken);
 
             activity.SetAiResponse(response);
             activity.SetOkStatus();
@@ -80,7 +83,7 @@ public abstract class AgentBase<TRequest, TResult> : IAgent<TRequest, TResult> w
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while executing chat response for request: {Request}", request);
-            
+
             activity.SetErrorStatus(ex);
 
             throw;

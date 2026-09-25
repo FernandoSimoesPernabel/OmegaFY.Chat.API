@@ -5,10 +5,10 @@ using OmegaFY.Chat.API.Infra.OpenTelemetry.Providers;
 
 namespace OmegaFY.Chat.API.Infra.IA.Implementations.Agents.SuggestReply;
 
-public sealed class SuggestReplyAgent : AgentBase<SuggestReplyRequest, SuggestReplyResult>
+public sealed class SuggestReplyAgent : AgentChatClientBase<SuggestReplyRequest, SuggestReplyResult>
 {
     public SuggestReplyAgent(
-        ILogger<AgentBase<SuggestReplyRequest, SuggestReplyResult>> logger,
+        ILogger<AgentChatClientBase<SuggestReplyRequest, SuggestReplyResult>> logger,
         IServiceProvider serviceProvider,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider) : base(logger, serviceProvider, openTelemetryRegisterProvider) { }
 
@@ -36,7 +36,7 @@ public sealed class SuggestReplyAgent : AgentBase<SuggestReplyRequest, SuggestRe
     {
         return base.BuildAgentOptions() with
         {
-            Model = AgentModel.Gemini_3_8_Flash,
+            Model = AgentModel.Gemini_3_6_Flash,
             Temperature = 0.7f,
             MaxOutputTokens = 200
         };
