@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace OmegaFY.Chat.API.Common.Models;
 
 public readonly record struct CursorPaginationResultInfo<T> where T : struct
@@ -8,6 +10,7 @@ public readonly record struct CursorPaginationResultInfo<T> where T : struct
 
     public bool HasMore => TotalOfItemsRemaining > 0;
 
+    [JsonConstructor]
     public CursorPaginationResultInfo(T? nextCursor, long totalOfItemsRemaining)
     {
         NextCursor = nextCursor;

@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Domain.Enums;
+using OmegaFY.Chat.API.Domain.Enums;
 using OmegaFY.Chat.API.Domain.ValueObjects.Shared;
 
 namespace OmegaFY.Chat.API.Domain.Entities.Chat;
@@ -22,7 +22,7 @@ public sealed class MemberMessage : Entity, IAggregateRoot<MemberMessage>
         MessageId = messageId;
         SenderMemberId = senderMemberId;
         DestinationMemberId = destinationMemberId;
-        Status = MemberMessageStatus.Unread;
+        Status = senderMemberId == destinationMemberId ? MemberMessageStatus.Read : MemberMessageStatus.Unread;
 
         DeliveryDate = DateTime.UtcNow;
     }

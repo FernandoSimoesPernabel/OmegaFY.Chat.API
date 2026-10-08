@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Domain.Enums;
+using OmegaFY.Chat.API.Domain.Enums;
 
 namespace OmegaFY.Chat.API.Application.Models;
 
@@ -13,4 +13,6 @@ public sealed record class UserConversationModel
     public ConversationStatus Status { get; init; }
 
     public LastMessageFromConversationModel LastMessage { get; init; }
+
+    public int UnreadMessagesCount { get; init; }
 }

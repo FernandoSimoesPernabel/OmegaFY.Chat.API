@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Application.Shared;
+using OmegaFY.Chat.API.Application.Shared;
 using OmegaFY.Chat.API.Common.Exceptions.Constants;
 using OmegaFY.Chat.API.Common.Extensions;
 
@@ -40,7 +40,7 @@ public class ApiResponse<T>
         if (Errors.Any(erro => erro.Code == ApplicationErrorCodesConstants.UNAUTHORIZED))
             return StatusCodes.Status401Unauthorized;
 
-        if (Errors.Any(erro => erro.Code == ApplicationErrorCodesConstants.UNAUTHENTICATED))
+        if (Errors.Any(erro => erro.Code == ApplicationErrorCodesConstants.FORBIDDEN))
             return StatusCodes.Status403Forbidden;
 
         return StatusCodes.Status500InternalServerError;

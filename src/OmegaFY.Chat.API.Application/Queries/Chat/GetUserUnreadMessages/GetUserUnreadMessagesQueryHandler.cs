@@ -30,7 +30,7 @@ public sealed class GetUserUnreadMessagesQueryHandler : QueryHandlerBase<GetUser
     protected async override Task<HandlerResult<GetUserUnreadMessagesQueryResult>> InternalHandleAsync(GetUserUnreadMessagesQuery request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<GetUserUnreadMessagesQueryResult>();
+            return HandlerResult.CreateUnauthorized<GetUserUnreadMessagesQueryResult>();
 
         (MessageModel[] unreadMessagesFromUser, PaginationResultInfo paginationInfo) = 
             await _chatQueryProvider.GetMessagesFromUserAsync(_userInformation.CurrentRequestUserId.Value, MemberMessageStatus.Unread, request.Pagination, cancellationToken);

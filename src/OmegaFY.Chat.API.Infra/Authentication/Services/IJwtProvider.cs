@@ -1,10 +1,10 @@
-﻿using OmegaFY.Chat.API.Infra.Authentication.Models;
+using OmegaFY.Chat.API.Infra.Authentication.Models;
 
 namespace OmegaFY.Chat.API.Infra.Authentication.Services;
 
 internal interface IJwtProvider
 {
-    public AuthenticationToken RefreshToken(AuthenticationToken currentToken, RefreshTokenInput refreshTokenInput);
+    public AuthenticationToken RefreshToken(RefreshTokenInput refreshTokenInput);
 
     public AuthenticationToken WriteToken(LoginInput loginOptions);
 

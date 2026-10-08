@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using OmegaFY.Chat.API.Application.Commands.Auth.Login;
 using OmegaFY.Chat.API.Application.Commands.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Common.Constants;
 using OmegaFY.Chat.API.Infra.MessageBus;
+using OmegaFY.Chat.API.Tests.Integration.Extensions;
 using OmegaFY.Chat.API.WebAPI.Models;
 using System.Net.Http.Headers;
 
@@ -37,7 +39,7 @@ public abstract class IntegrationTestBase
 
         response.EnsureSuccessStatusCode();
 
-        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterNewUserCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadApiResponseAsync<RegisterNewUserCommandResult>();
 
         return content?.Data ?? throw new InvalidOperationException("Failed to register user");
     }
@@ -50,7 +52,7 @@ public abstract class IntegrationTestBase
 
         response.EnsureSuccessStatusCode();
 
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadApiResponseAsync<LoginCommandResult>();
 
         return content?.Data?.Token.Value ?? throw new InvalidOperationException("Failed to get access token");
     }
@@ -63,7 +65,7 @@ public abstract class IntegrationTestBase
 
         response.EnsureSuccessStatusCode();
 
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadApiResponseAsync<LoginCommandResult>();
 
         return (
             content?.Data?.Token.Value ?? throw new InvalidOperationException("Failed to get access token"),

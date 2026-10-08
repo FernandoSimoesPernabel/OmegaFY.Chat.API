@@ -13,7 +13,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
 	public ChatQueryProvider(IDbConnection dbConnection) => _dbConnection = dbConnection;
 
-	public async Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, CancellationToken cancellationToken)
+	public async Task<ConversationAndMembersModel> GetConversationByIdAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -23,6 +23,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				C.Type, 
 				C.Status,
 				C.CreatedDate,
+                COALESCE(GC.GroupName, OtherUser.DisplayName) AS DisplayName,
 				GC.Id AS GroupConfigId,
 				GC.ConversationId,
 				GC.CreatedByUserId,
@@ -33,7 +34,13 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				Conversations AS C
 
 			LEFT JOIN
-				GroupConfigs AS GC ON C.Id = GC.ConversationId 
+				GroupConfigs AS GC ON GC.ConversationId = C.Id
+
+			LEFT JOIN
+				Members AS OtherMember ON OtherMember.ConversationId = C.Id AND OtherMember.UserId <> @UserId AND C.Type = 'MemberToMember'
+
+			LEFT JOIN
+				Users AS OtherUser ON OtherUser.Id = OtherMember.UserId
 
 			WHERE 
 				C.Id = @ConversationId
@@ -44,15 +51,22 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				M.Id AS MemberId,
 				M.ConversationId,
 				M.UserId, 
+                U.DisplayName,
 				M.JoinedDate
 
 			FROM
 				Members AS M
 
-			WHERE
-				M.ConversationId = @ConversationId";
+            INNER JOIN
+                Users AS U ON U.Id = M.UserId
 
-		await using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { ConversationId = conversationId });
+			WHERE
+				M.ConversationId = @ConversationId
+            
+            ORDER BY
+                U.DisplayName";
+
+		await using SqlMapper.GridReader gridReader = await _dbConnection.QueryMultipleAsync(sql, new { ConversationId = conversationId, UserId = userId });
 
 		ConversationAndMembersModel conversation = gridReader.Read<ConversationAndMembersModel, GroupConfigModel, ConversationAndMembersModel>(
 			(conversation, groupConfig) => conversation with { GroupConfig = groupConfig },
@@ -106,7 +120,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				MemberMessage.DeliveryDate,
 				Message.Type,
 				MemberMessage.Status,
-				Message.Content
+				IIF(MemberMessage.Status = 'Deleted', 'Mensagem deletada', Message.Content) AS Content
 
 			FROM
 				Messages AS Message
@@ -134,7 +148,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 		return await _dbConnection.QueryFirstOrDefaultAsync<MessageFromMemberModel>(sql, new { MessageId = messageId, UserId = userId });
 	}
 
-	public async Task<(MessageFromMemberModel[], CursorPaginationResultInfo<DateTime> paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, CursorPagination<DateTime> pagination, CancellationToken cancellationToken)
+	public async Task<(MessageFromMemberModel[] messageFromMembers, CursorPaginationResultInfo<DateTime> paginationInfo)> GetMessagesFromMemberAsync(Guid conversationId, Guid userId, CursorPagination<DateTime> pagination, CancellationToken cancellationToken)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -175,7 +189,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				MemberMessage.DeliveryDate,
 				Message.Type,
 				MemberMessage.Status,
-				Message.Content
+				IIF(MemberMessage.Status = 'Deleted', 'Mensagem deletada', Message.Content) AS Content
 
 			{baseSqlQuery}
 
@@ -186,11 +200,11 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 
 		IEnumerable<MessageFromMemberModel> messages = await _dbConnection.QueryAsync<MessageFromMemberModel>(
 			sql,
-			new { ConversationId = conversationId, UserId = userId, pagination.Cursor, Take = pagination.Take });
+			new { ConversationId = conversationId, UserId = userId, pagination.Cursor, pagination.Take });
 
 		MessageFromMemberModel[] messagesArray = messages.ToArray();
 
-		return (messagesArray, new CursorPaginationResultInfo<DateTime>(messagesArray.FirstOrDefault()?.SendDate, totalOfItemsRemaining - messagesArray.Length));
+		return (messagesArray, new CursorPaginationResultInfo<DateTime>(messagesArray.LastOrDefault()?.SendDate, totalOfItemsRemaining - messagesArray.Length));
 	}
 
 	public async Task<UserConversationModel[]> GetUserConversationsAsync(Guid userId, CancellationToken cancellationToken)
@@ -210,7 +224,8 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				LastMessage.Content,
 				LastMessage.SenderDisplayName,
 				LastMessage.Type AS LastMessageType,
-				LastMessage.Status AS LastMessageStatus
+				LastMessage.Status AS LastMessageStatus,
+                (SELECT COUNT(*) FROM MemberMessages AS Aux WHERE Aux.DestinationMemberId = Member.Id AND Aux.Status = 'Unread') AS UnreadMessagesCount
 
 			FROM 
 				Conversations AS Conversation
@@ -235,7 +250,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 					Message.SenderMemberId,
 					SenderMember.UserId AS SenderUserId,
 					Message.SendDate,
-					Message.Content,
+					IIF(MemberMessage.Status = 'Deleted', 'Mensagem deletada', Message.Content) AS Content,
 					Message.Type,
 					MemberMessage.Status,
 					MemberMessage.DestinationMemberId,
@@ -270,7 +285,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 		return userConversations.ToArray();
 	}
 
-	public async Task<(MessageModel[], PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken)
+	public async Task<(MessageModel[] messageFromMembers, PaginationResultInfo paginationInfo)> GetMessagesFromUserAsync(Guid userId, MemberMessageStatus? messageStatus, Pagination pagination, CancellationToken cancellationToken)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -296,7 +311,7 @@ internal sealed class ChatQueryProvider : IChatQueryProvider
 				Message.SenderMemberId,
 				Message.SendDate,
 				Message.Type,
-				Message.Content
+				IIF(MemberMessage.Status = 'Deleted', 'Mensagem deletada', Message.Content) AS Content
 
 			{baseSqlQuery}
 

@@ -10,6 +10,8 @@ internal sealed class ConversationMapping : IEntityTypeConfiguration<Conversatio
     {
         builder.HasKey(conversation => conversation.Id);
 
+        builder.Property(conversation => conversation.Id).IsRequired().ValueGeneratedNever();
+
         builder.Property(conversation => conversation.Type).HasConversion<string>().HasMaxLength(15).IsUnicode(false).IsRequired();
 
         builder.Property(conversation => conversation.Status).HasConversion<string>().HasMaxLength(10).IsUnicode(false).IsRequired();

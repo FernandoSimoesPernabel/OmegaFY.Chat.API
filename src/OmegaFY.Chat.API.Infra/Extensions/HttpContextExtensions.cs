@@ -17,7 +17,7 @@ public static class HttpContextExtensions
 
     public static string GetAccessTokenFromQueryString(this HttpContext httpContext)
     {
-        string accessToken = httpContext.GetRequestHeaderByName(QueryStringConstants.ACCESS_TOKEN);
+        string accessToken = httpContext.Request.Query[QueryStringConstants.ACCESS_TOKEN];
         return string.IsNullOrWhiteSpace(accessToken) ? null : accessToken;
     }
 

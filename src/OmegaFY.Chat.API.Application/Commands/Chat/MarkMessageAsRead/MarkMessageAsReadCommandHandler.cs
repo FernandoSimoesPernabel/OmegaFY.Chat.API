@@ -35,7 +35,7 @@ public sealed class MarkMessageAsReadCommandHandler : CommandHandlerBase<MarkMes
     protected async override Task<HandlerResult<MarkMessageAsReadCommandResult>> InternalHandleAsync(MarkMessageAsReadCommand request, CancellationToken cancellationToken)
     {
         if (!_userInformation.IsAuthenticated)
-            return HandlerResult.CreateUnauthenticated<MarkMessageAsReadCommandResult>();
+            return HandlerResult.CreateUnauthorized<MarkMessageAsReadCommandResult>();
 
         Member userMember = await _conversationRepository.GetMemberAsync(request.ConversationId, _userInformation.CurrentRequestUserId.Value, cancellationToken);
 
