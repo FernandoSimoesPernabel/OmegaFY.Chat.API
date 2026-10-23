@@ -1,15 +1,18 @@
-﻿namespace OmegaFY.Chat.API.Application.Models;
+namespace OmegaFY.Chat.API.Application.Models;
 
 public readonly record struct Token
 {
+    public Guid UserId { get; init; }
+
     public string Value { get; init; }
 
     public DateTime ExpirationDate { get; init; }
 
     public Token() { }
 
-    public Token(string value, DateTime expirationDate)
+    public Token(Guid userId, string value, DateTime expirationDate)
     {
+        UserId = userId;
         Value = value;
         ExpirationDate = expirationDate;
     }

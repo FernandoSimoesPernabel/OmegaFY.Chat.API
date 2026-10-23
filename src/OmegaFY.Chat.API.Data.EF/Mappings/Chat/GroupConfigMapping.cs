@@ -11,6 +11,10 @@ internal sealed class GroupConfigMapping : IEntityTypeConfiguration<GroupConfig>
     {
         builder.HasKey(group => group.Id);
 
+        builder.HasIndex(group => group.ConversationId).IsUnique();
+
+        builder.Property(group => group.Id).IsRequired().ValueGeneratedNever();
+
         builder.Property(group => group.ConversationId).IsRequired();
 
         builder.Property(group => group.CreatedByUserId).IsRequired();

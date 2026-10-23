@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Application.Models;
+namespace OmegaFY.Chat.API.Application.Models;
 
 public sealed record class MemberModel
 {
@@ -7,6 +7,8 @@ public sealed record class MemberModel
     public Guid ConversationId { get; init; }
 
     public Guid UserId { get; init; }
+
+    public string DisplayName { get; init; }
 
     public DateTime JoinedDate { get; init; }
 }

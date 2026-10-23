@@ -36,10 +36,14 @@ internal sealed class UserQueryProvider : IUserQueryProvider
                 F.RequestingUserId,
                 F.InvitedUserId,
                 F.StartedDate,
-                F.Status
+                F.Status,
+                U.DisplayName
 
             FROM 
                 Friendships AS F
+
+            INNER JOIN
+                Users AS U ON (F.RequestingUserId = U.Id OR F.InvitedUserId = U.Id) AND U.Id <> @UserId
 
             WHERE 
                 (F.RequestingUserId = @UserId OR F.InvitedUserId = @UserId)";

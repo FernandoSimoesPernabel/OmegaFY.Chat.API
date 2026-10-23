@@ -1,4 +1,4 @@
-﻿namespace OmegaFY.Chat.API.Infra.Authentication.Models;
+namespace OmegaFY.Chat.API.Infra.Authentication.Models;
 
 public readonly record struct RefreshTokenInput
 {
