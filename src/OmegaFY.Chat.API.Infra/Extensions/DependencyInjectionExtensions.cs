@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,8 @@ using OmegaFY.Chat.API.Infra.Constants;
 using OmegaFY.Chat.API.Infra.Extensions;
 using OmegaFY.Chat.API.Infra.Hubs;
 using OmegaFY.Chat.API.Infra.Hubs.Implementations;
+using OmegaFY.Chat.API.Infra.IA.Implementations.Agents.SuggestReply;
+using OmegaFY.Chat.API.Infra.IA.Models;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Implementations;
 using OmegaFY.Chat.API.Infra.OpenTelemetry.Configs;
@@ -240,6 +243,26 @@ public static class DependencyInjectionExtensions
     {
         services.AddSignalR();
         services.AddScoped<IChatNotificationProvider, ChatNotificationSignalRProvider>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddGoogleChatClients(this IServiceCollection services, IConfiguration configuration)
+    {
+        OpenTelemetrySettings openTelemetrySettings = configuration.GetSection(nameof(OpenTelemetrySettings)).Get<OpenTelemetrySettings>();
+
+        IChatClient googleClient = new Google.GenAI.Client(apiKey: configuration["ApiKeysIA:Google"]).AsIChatClient().AsBuilder()
+            .UseOpenTelemetry(sourceName: openTelemetrySettings.ServiceName).UseLogging()
+            .Build();
+
+        services.AddKeyedSingleton(AgentModelProvider.Google, (_, _) => googleClient);
+
+        return services;
+    }
+
+    public static IServiceCollection AddAIAgents(this IServiceCollection services)
+    {
+        services.AddScoped<SuggestReplyAgent>();
 
         return services;
     }
