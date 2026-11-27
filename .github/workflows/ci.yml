@@ -54,3 +54,4 @@ jobs:
           IpOrUserTokenBucketPolicySettings__UserTokensPerPeriod: ${{ secrets.TOKEN_USER_TOKENS_PER_PERIOD }}
           IpOrUserTokenBucketPolicySettings__IpTokenLimit: ${{ secrets.TOKEN_IP_TOKEN_LIMIT }}
           IpOrUserTokenBucketPolicySettings__IpTokensPerPeriod: ${{ secrets.TOKEN_IP_TOKENS_PER_PERIOD }}
+          ApiKeysIA__Google: ${{ secrets.API_KEYS_IA_GOOGLE }}

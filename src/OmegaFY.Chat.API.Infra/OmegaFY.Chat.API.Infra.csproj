@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.GenAI" Version="2.2.0" />
     <PackageReference Include="Honeycomb.AspNetCore" Version="1.4.0" />
     <PackageReference Include="Honeycomb.OpenTelemetry" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="11.0.0" />
@@ -21,6 +22,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.21.0-beta.2" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.21.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.21.0" />
+    <PackageReference Include="Microsoft.Extensions.AI" Version="11.0.1" />
   </ItemGroup>
 
   <ItemGroup>
