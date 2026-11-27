@@ -29,7 +29,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync("/api/users", token);
-        ApiResponse<GetUsersQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUsersQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUsersQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUsersQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -51,7 +51,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/users?displayName={uniqueName}", token);
-        ApiResponse<GetUsersQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUsersQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUsersQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUsersQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -70,7 +70,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/users?status={FriendshipStatus.Accepted}", token);
-        ApiResponse<GetUsersQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUsersQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUsersQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUsersQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -100,7 +100,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync("/api/users/me", token);
-        ApiResponse<GetCurrentUserInfoQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetCurrentUserInfoQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetCurrentUserInfoQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetCurrentUserInfoQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -135,7 +135,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/users/{registeredUser.UserId}", token);
-        ApiResponse<GetUserByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUserByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -160,7 +160,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/users/{nonExistentUserId}", token);
-        ApiResponse<GetUserByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetUserByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -212,7 +212,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/users/me/friendships", request, token);
-        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -235,7 +235,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/users/me/friendships", request, token);
-        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -256,7 +256,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/users/me/friendships", request, token);
-        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -277,7 +277,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync("/api/users/me/friendships", request, token);
-        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -304,7 +304,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act - Second request (duplicate)
         HttpResponseMessage response = await PostAsync("/api/users/me/friendships", request, token);
-        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -339,11 +339,11 @@ public class UsersControllerTests : IntegrationTestBase
 
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, token);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}", token);
-        ApiResponse<GetFriendshipByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetFriendshipByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetFriendshipByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetFriendshipByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -367,7 +367,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await GetAsync($"/api/users/me/friendships/{nonExistentFriendshipId}", token);
-        ApiResponse<GetFriendshipByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetFriendshipByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetFriendshipByIdQueryResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<GetFriendshipByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -402,7 +402,7 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         string invitedToken = await AuthenticateAsync(invitedEmail, TestConstants.DEFAULT_PASSWORD);
 
@@ -426,14 +426,14 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         string invitedToken = await AuthenticateAsync(invitedEmail, TestConstants.DEFAULT_PASSWORD);
         await PostAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}/accept", new { }, invitedToken);
 
         // Act - Get friendship to verify status
         HttpResponseMessage getResponse = await GetAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}", invitedToken);
-        ApiResponse<GetFriendshipByIdQueryResult> getContent = await getResponse.Content.ReadFromJsonAsync<ApiResponse<GetFriendshipByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetFriendshipByIdQueryResult> getContent = await getResponse.Content.ReadFromJsonAsync<ApiResponse<GetFriendshipByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
@@ -453,7 +453,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/users/me/friendships/{nonExistentFriendshipId}/accept", new { }, token);
-        ApiResponse<AcceptFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<AcceptFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<AcceptFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<AcceptFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -475,11 +475,11 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Act - Requester tries to accept their own request
         HttpResponseMessage response = await PostAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}/accept", new { }, requesterToken);
-        ApiResponse<AcceptFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<AcceptFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<AcceptFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<AcceptFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -514,7 +514,7 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         string invitedToken = await AuthenticateAsync(invitedEmail, TestConstants.DEFAULT_PASSWORD);
 
@@ -538,14 +538,14 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         string invitedToken = await AuthenticateAsync(invitedEmail, TestConstants.DEFAULT_PASSWORD);
         await PostAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}/reject", new { }, invitedToken);
 
         // Act - Get friendship to verify status
         HttpResponseMessage getResponse = await GetAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}", invitedToken);
-        ApiResponse<GetFriendshipByIdQueryResult> getContent = await getResponse.Content.ReadFromJsonAsync<ApiResponse<GetFriendshipByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<GetFriendshipByIdQueryResult> getContent = await getResponse.Content.ReadFromJsonAsync<ApiResponse<GetFriendshipByIdQueryResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
@@ -565,7 +565,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await PostAsync($"/api/users/me/friendships/{nonExistentFriendshipId}/reject", new { }, token);
-        ApiResponse<RejectFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RejectFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RejectFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RejectFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -587,11 +587,11 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Act - Requester tries to reject their own request
         HttpResponseMessage response = await PostAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}/reject", new { }, requesterToken);
-        ApiResponse<RejectFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RejectFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RejectFriendshipRequestCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RejectFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -626,7 +626,7 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         string invitedToken = await AuthenticateAsync(invitedEmail, TestConstants.DEFAULT_PASSWORD);
         await PostAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}/accept", new { }, invitedToken);
@@ -651,7 +651,7 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         string invitedToken = await AuthenticateAsync(invitedEmail, TestConstants.DEFAULT_PASSWORD);
         await PostAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}/accept", new { }, invitedToken);
@@ -674,7 +674,7 @@ public class UsersControllerTests : IntegrationTestBase
 
         // Act
         HttpResponseMessage response = await DeleteAsync($"/api/users/me/friendships/{nonExistentFriendshipId}", token);
-        ApiResponse<RemoveFriendshipCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RemoveFriendshipCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RemoveFriendshipCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RemoveFriendshipCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -696,7 +696,7 @@ public class UsersControllerTests : IntegrationTestBase
         string requesterToken = await AuthenticateAsync(requestingEmail, TestConstants.DEFAULT_PASSWORD);
         object request = new { InvitedUserId = invitedUser.UserId };
         HttpResponseMessage createResponse = await PostAsync("/api/users/me/friendships", request, requesterToken);
-        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<SendFriendshipRequestCommandResult> createContent = await createResponse.Content.ReadFromJsonAsync<ApiResponse<SendFriendshipRequestCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         // Act - Remove pending friendship
         HttpResponseMessage response = await DeleteAsync($"/api/users/me/friendships/{createContent.Data.FriendshipId}", requesterToken);
