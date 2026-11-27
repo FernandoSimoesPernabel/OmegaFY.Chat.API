@@ -249,13 +249,19 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddGoogleChatClients(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddLogging();
+
         OpenTelemetrySettings openTelemetrySettings = configuration.GetSection(nameof(OpenTelemetrySettings)).Get<OpenTelemetrySettings>();
 
-        IChatClient googleClient = new Google.GenAI.Client(apiKey: configuration["ApiKeysIA:Google"]).AsIChatClient().AsBuilder()
-            .UseOpenTelemetry(sourceName: openTelemetrySettings.ServiceName).UseLogging()
-            .Build();
+        services.AddKeyedSingleton<IChatClient>(AgentModelProvider.Google, (serviceProvider, _) =>
+        {
+            ILoggerFactory loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
 
-        services.AddKeyedSingleton(AgentModelProvider.Google, (_, _) => googleClient);
+            return new Google.GenAI.Client(apiKey: configuration["ApiKeysIA:Google"]).AsIChatClient().AsBuilder()
+                .UseOpenTelemetry(sourceName: openTelemetrySettings.ServiceName)
+                .UseLogging(loggerFactory)
+                .Build(serviceProvider);
+        });
 
         return services;
     }
