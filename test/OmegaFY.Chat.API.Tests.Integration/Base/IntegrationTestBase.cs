@@ -37,7 +37,7 @@ public abstract class IntegrationTestBase
 
         response.EnsureSuccessStatusCode();
 
-        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterNewUserCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<RegisterNewUserCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterNewUserCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         return content?.Data ?? throw new InvalidOperationException("Failed to register user");
     }
@@ -50,7 +50,7 @@ public abstract class IntegrationTestBase
 
         response.EnsureSuccessStatusCode();
 
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         return content?.Data?.Token.Value ?? throw new InvalidOperationException("Failed to get access token");
     }
@@ -63,7 +63,7 @@ public abstract class IntegrationTestBase
 
         response.EnsureSuccessStatusCode();
 
-        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS);
+        ApiResponse<LoginCommandResult> content = await response.Content.ReadFromJsonAsync<ApiResponse<LoginCommandResult>>(JsonSerializerConstants.SERIALIZER_OPTIONS, TestContext.Current.CancellationToken);
 
         return (
             content?.Data?.Token.Value ?? throw new InvalidOperationException("Failed to get access token"),
