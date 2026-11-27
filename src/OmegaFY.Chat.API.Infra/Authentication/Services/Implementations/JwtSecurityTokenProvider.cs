@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,32 +11,9 @@ internal sealed class JwtSecurityTokenProvider : IJwtProvider
 {
     private readonly JwtSettings _jwtSettings;
 
-    private readonly TokenValidationParameters _tokenValidationParameters;
+    public JwtSecurityTokenProvider(IOptions<JwtSettings> options) => _jwtSettings = options.Value;
 
-    public JwtSecurityTokenProvider(IOptions<JwtSettings> options, TokenValidationParameters tokenValidationParameters)
-    {
-        _jwtSettings = options.Value;
-        _tokenValidationParameters = tokenValidationParameters;
-    }
-
-    public AuthenticationToken RefreshToken(AuthenticationToken currentToken, RefreshTokenInput refreshTokenInput)
-    {
-        ClaimsPrincipal claims = new JwtSecurityTokenHandler().ValidateToken(currentToken.Token, _tokenValidationParameters, out SecurityToken securityToken);
-
-        if (claims is null || securityToken is not JwtSecurityToken jwtSecurityToken)
-            throw new UnauthorizedException();
-
-        if (jwtSecurityToken.ValidTo < DateTime.UtcNow || jwtSecurityToken.Header.Alg != SecurityAlgorithms.HmacSha256Signature)
-            throw new UnauthorizedException();
-
-        if (currentToken.RefreshTokenExpirationDate < DateTime.UtcNow)
-            throw new UnauthorizedException();
-
-        if (jwtSecurityToken.Issuer != _jwtSettings.Issuer || !jwtSecurityToken.Audiences.Contains(_jwtSettings.Audience))
-            throw new UnauthorizedException();
-
-        return WriteToken(refreshTokenInput.UserId, refreshTokenInput.Email, refreshTokenInput.UserName);
-    }
+    public AuthenticationToken RefreshToken(RefreshTokenInput refreshTokenInput) => WriteToken(refreshTokenInput.UserId, refreshTokenInput.Email, refreshTokenInput.UserName);
 
     public AuthenticationToken WriteToken(LoginInput loginInput) => WriteToken(loginInput.UserId, loginInput.Email, loginInput.UserName);
 

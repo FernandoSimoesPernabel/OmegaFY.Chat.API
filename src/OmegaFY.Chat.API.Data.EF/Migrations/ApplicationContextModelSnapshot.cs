@@ -16,7 +16,7 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.3");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
@@ -278,7 +278,8 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ConversationId");
+                    b.HasIndex("ConversationId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("Members", (string)null);
                 });
@@ -286,6 +287,7 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
             modelBuilder.Entity("OmegaFY.Chat.API.Domain.Entities.Chat.MemberMessage", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DeliveryDate")
@@ -307,6 +309,9 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MessageId", "SenderMemberId", "DestinationMemberId")
+                        .IsUnique();
 
                     b.ToTable("MemberMessages", (string)null);
                 });
@@ -369,7 +374,8 @@ namespace OmegaFY.Chat.API.Data.EF.Migrations
 
                     b.HasIndex("InvitedUserId");
 
-                    b.HasIndex("RequestingUserId");
+                    b.HasIndex("RequestingUserId", "InvitedUserId")
+                        .IsUnique();
 
                     b.ToTable("Friendships", (string)null);
                 });

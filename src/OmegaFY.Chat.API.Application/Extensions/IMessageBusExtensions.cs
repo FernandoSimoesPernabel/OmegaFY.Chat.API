@@ -1,4 +1,3 @@
-﻿using OmegaFY.Chat.API.Application.Events.Auth.RegisterNewUser;
 using OmegaFY.Chat.API.Common.Helpers;
 using OmegaFY.Chat.API.Infra.MessageBus;
 using OmegaFY.Chat.API.Infra.MessageBus.Models;

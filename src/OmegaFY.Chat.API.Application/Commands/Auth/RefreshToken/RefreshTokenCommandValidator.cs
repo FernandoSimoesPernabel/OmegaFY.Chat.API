@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace OmegaFY.Chat.API.Application.Commands.Auth.RefreshToken;
 
@@ -6,6 +6,8 @@ public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshToke
 {
     public RefreshTokenCommandValidator()
     {
+        RuleFor(x => x.UserId).NotEmpty().WithMessage("O Id do usuário não foi informado.");
+
         RuleFor(x => x.CurrentToken).NotEmpty().WithMessage("O Token atual não foi informado.");
 
         RuleFor(x => x.RefreshToken).NotEmpty().WithMessage("O Refresh Token não foi informado.");

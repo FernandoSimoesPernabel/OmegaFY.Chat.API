@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using OmegaFY.Chat.API.Common.Exceptions;
 using OmegaFY.Chat.API.Infra.Authentication.Models;
 using OmegaFY.Chat.API.Infra.Extensions;
@@ -41,13 +41,13 @@ internal sealed class IdentityAuthenticationService : IAuthenticationService
         return _jwtProvider.WriteToken(loginInput);
     }
 
-    public async Task<AuthenticationToken> RefreshTokenAsync(AuthenticationToken currentToken, RefreshTokenInput refreshTokenInput, CancellationToken cancellationToken)
+    public async Task<AuthenticationToken> RefreshTokenAsync(RefreshTokenInput refreshTokenInput, CancellationToken cancellationToken)
     {
         IdentityUser<Guid> identityUser = await _userManager.FindByEmailAsync(refreshTokenInput.Email, cancellationToken);
 
         if (identityUser is null)
             throw new UnauthorizedException();
 
-        return _jwtProvider.RefreshToken(currentToken, refreshTokenInput);
+        return _jwtProvider.RefreshToken(refreshTokenInput);
     }
 }

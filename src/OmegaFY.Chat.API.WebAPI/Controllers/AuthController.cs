@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using OmegaFY.Chat.API.Application.Commands.Auth.Login;
 using OmegaFY.Chat.API.Application.Commands.Auth.Logoff;
 using OmegaFY.Chat.API.Application.Commands.Auth.RefreshToken;
@@ -25,6 +25,7 @@ public sealed class AuthController : ApiControllerBase
     public async Task<IActionResult> Login(LoginCommandHandler handler, [FromBody] LoginRequest request, CancellationToken cancellationToken) 
         => Ok(await handler.HandleAsync(request.ToCommand(), cancellationToken));
 
+    [AllowAnonymous]
     [HttpPost("refresh-token")]
     [ProducesResponseType(typeof(ApiResponse<RefreshTokenCommandResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]

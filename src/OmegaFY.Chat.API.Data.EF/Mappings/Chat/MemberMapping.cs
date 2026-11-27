@@ -10,6 +10,10 @@ internal sealed class MemberMapping : IEntityTypeConfiguration<Member>
     {
         builder.HasKey(member => member.Id);
 
+        builder.HasIndex(member => new { member.ConversationId, member.UserId }).IsUnique();
+
+        builder.Property(member => member.Id).IsRequired().ValueGeneratedNever();
+
         builder.Property(member => member.ConversationId).IsRequired();
 
         builder.Property(member => member.UserId).IsRequired();

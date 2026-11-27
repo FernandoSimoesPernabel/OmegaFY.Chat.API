@@ -158,8 +158,6 @@ public static class DependencyInjectionExtensions
                 .RequireAuthenticatedUser()
                 .Build()));
 
-        services.AddSingleton(tokenValidationParameters);
-
         return services;
     }
 
