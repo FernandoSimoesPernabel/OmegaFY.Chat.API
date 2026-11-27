@@ -191,7 +191,7 @@ public sealed class ConversationFacts
     }
 
     [Fact]
-    public void RemoveMemberFromGroup_RemovingNonExistentMember_ShouldNotThrowException()
+    public void RemoveMemberFromGroup_RemovingNonExistentMember_ShouldThrowNotFoundException()
     {
         // Arrange
         ReferenceId createdByUserId = Guid.NewGuid();
@@ -199,10 +199,10 @@ public sealed class ConversationFacts
         ReferenceId nonExistentMemberId = Guid.NewGuid();
 
         // Act
-        sut.RemoveMemberFromGroup(nonExistentMemberId);
+        NotFoundException exception = Assert.Throws<NotFoundException>(() => sut.RemoveMemberFromGroup(nonExistentMemberId));
 
         // Assert
-        Assert.Single(sut.Members);
+        Assert.Equal("NOT_FOUND", exception.ErrorCode);
     }
 
     [Fact]

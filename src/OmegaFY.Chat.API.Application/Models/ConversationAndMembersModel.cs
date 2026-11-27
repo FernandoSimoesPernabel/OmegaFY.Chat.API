@@ -1,4 +1,4 @@
-﻿using OmegaFY.Chat.API.Domain.Enums;
+using OmegaFY.Chat.API.Domain.Enums;
 
 namespace OmegaFY.Chat.API.Application.Models;
 
@@ -11,6 +11,8 @@ public sealed record class ConversationAndMembersModel
     public ConversationStatus Status { get; init; }
 
     public DateTime CreatedDate { get; init; }
+
+    public string DisplayName { get; init; }
 
     public GroupConfigModel GroupConfig { get; init; }
 

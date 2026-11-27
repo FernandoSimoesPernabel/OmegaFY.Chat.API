@@ -7,6 +7,7 @@
     <IsPackable>false</IsPackable>
     <OutputType>Exe</OutputType>
     <UserSecretsId>57ad1d17-d237-4abf-b154-23cd42cdb4b3</UserSecretsId>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
   <ItemGroup>

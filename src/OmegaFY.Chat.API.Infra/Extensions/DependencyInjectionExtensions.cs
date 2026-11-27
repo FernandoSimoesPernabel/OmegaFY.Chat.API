@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -154,8 +154,6 @@ public static class DependencyInjectionExtensions
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
                 .RequireAuthenticatedUser()
                 .Build()));
-
-        services.AddSingleton(tokenValidationParameters);
 
         return services;
     }

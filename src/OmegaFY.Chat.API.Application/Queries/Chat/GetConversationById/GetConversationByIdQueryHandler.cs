@@ -17,28 +17,41 @@ public sealed class GetConversationByIdQueryHandler : QueryHandlerBase<GetConver
 
     private readonly IHybridCacheProvider _hybridCacheProvider;
 
+    private readonly IUserInformation _userInformation;
+
     public GetConversationByIdQueryHandler(
         IHostEnvironment hostEnvironment,
         IOpenTelemetryRegisterProvider openTelemetryRegisterProvider,
         IValidator<GetConversationByIdQuery> validator,
         ILogger<GetConversationByIdQueryHandler> logger,
         IChatQueryProvider chatQueryProvider,
-        IHybridCacheProvider hybridCacheProvider) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
+        IHybridCacheProvider hybridCacheProvider,
+        IUserInformation userInformation) : base(hostEnvironment, openTelemetryRegisterProvider, validator, logger)
     {
         _chatQueryProvider = chatQueryProvider;
         _hybridCacheProvider = hybridCacheProvider;
+        _userInformation = userInformation;
     }
 
     protected async override Task<HandlerResult<GetConversationByIdQueryResult>> InternalHandleAsync(GetConversationByIdQuery request, CancellationToken cancellationToken)
     {
+        if (!_userInformation.IsAuthenticated)
+            return HandlerResult.CreateUnauthorized<GetConversationByIdQueryResult>();
+
         (_, ConversationAndMembersModel conversation) = await _hybridCacheProvider.GetOrCreateAsync(
-            CacheKeyGenerator.ConversationByIdKey(request.ConversationId),
-            async (cancellationToken) => await _chatQueryProvider.GetConversationByIdAsync(request.ConversationId, cancellationToken),
+            CacheKeyGenerator.ConversationByIdKey(request.ConversationId, _userInformation.CurrentRequestUserId.Value),
+            async (cancellationToken) => await _chatQueryProvider.GetConversationByIdAsync(request.ConversationId, _userInformation.CurrentRequestUserId.Value, cancellationToken),
             new CacheOptions()
             {
                 Expiration = TimeSpanConstants.TWELVE_HOURS,
                 LocalCacheExpiration = TimeSpanConstants.TWELVE_HOURS,
-                Tags = [CacheTagsGenerator.ChatTag(), CacheTagsGenerator.ChatConversationsTag(), CacheTagsGenerator.ChatConversationIdTag(request.ConversationId)]
+                Tags =
+                [
+                    CacheTagsGenerator.ChatTag(),
+                    CacheTagsGenerator.ChatConversationsTag(),
+                    CacheTagsGenerator.ChatConversationIdTag(request.ConversationId),
+                    CacheTagsGenerator.ChatUserIdTag(_userInformation.CurrentRequestUserId.Value)
+                ]
             },
             cancellationToken);
 

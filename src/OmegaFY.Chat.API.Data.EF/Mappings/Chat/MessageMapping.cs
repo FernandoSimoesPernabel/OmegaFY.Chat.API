@@ -12,6 +12,8 @@ internal sealed class MessageMapping : IEntityTypeConfiguration<Message>
     {
         builder.HasKey(message => message.Id);
 
+        builder.Property(message => message.Id).IsRequired().ValueGeneratedNever();
+
         builder.Property(message => message.ConversationId).IsRequired();
 
         builder.Property(message => message.SenderMemberId).IsRequired();
